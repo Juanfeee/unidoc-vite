@@ -13,6 +13,10 @@ import AgregarExperiencia from './protected/agregar/AgregarExperiencia.tsx'
 import AgregarIdioma from './protected/agregar/AgregarIdioma.tsx'
 import PreEstudio from './protected/editar/estudio/pre-estudio.tsx'
 import EditarEstudio from './protected/editar/estudio/EditarEstudio.tsx'
+import PreIdioma from './protected/editar/idioma/pre-idioma.tsx'
+import EditarIdioma from './protected/editar/idioma/EditarIdioma.tsx'
+import EditarExperiencia from './protected/editar/experiencia/EditarExperiencia.tsx'
+import PreExperiencia from './protected/editar/experiencia/pre-experiencia.tsx'
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <Routes>
@@ -37,6 +41,10 @@ createRoot(document.getElementById('root')!).render(
           <Route path="editar">
             <Route path="estudios" element={<PreEstudio />} />
             <Route path="estudio/:id" element={<EditarEstudio />} />
+            <Route path="idiomas" element={<PreIdioma />} />
+            <Route path="idioma/:id" element={<EditarIdioma />} />
+            <Route path="experiencias" element={<PreExperiencia />} />
+            <Route path="experiencia/:id" element={<EditarExperiencia />} />
           </Route>
         </Route>
 
