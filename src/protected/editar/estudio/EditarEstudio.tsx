@@ -23,7 +23,7 @@ type Inputs = {
   titulo_convalidado: string;
   fecha_convalidacion: string;
   resolucion_convalidacion?: string;
-  posible_fecha_convalidacion?: string;
+  posible_fecha_graduacion?: string;
   titulo_estudio: string;
   fecha_inicio: string;
   fecha_fin: string;
@@ -57,7 +57,7 @@ const EditarEstudio = () => {
  // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
   useEffect(() => {
     if (graduado === 'Si') {
-      setValue('posible_fecha_convalidacion', '');
+      setValue('posible_fecha_graduacion', '');
     } else if (graduado === 'No') {
       setValue('fecha_graduacion', '');
     }
@@ -94,7 +94,7 @@ const EditarEstudio = () => {
         setValue('titulo_convalidado', data.estudio.titulo_convalidado);
         setValue('fecha_convalidacion', data.estudio.fecha_convalidacion || '');
         setValue('resolucion_convalidacion', data.estudio.resolucion_convalidacion || '');
-        setValue('posible_fecha_convalidacion', data.estudio.posible_fecha_convalidacion || '');
+        setValue('posible_fecha_graduacion', data.estudio.posible_fecha_graduacion || '');
         setValue('titulo_estudio', data.estudio.titulo_estudio);
         setValue('fecha_inicio', data.estudio.fecha_inicio);
         setValue('fecha_fin', data.estudio.fecha_fin || '');
@@ -112,6 +112,7 @@ const EditarEstudio = () => {
   // Función para manejar el envío del formulario
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     const formData = new FormData();
+    formData.append('_method', 'PUT');
     formData.append("tipo_estudio", data.tipo_estudio);
     formData.append("graduado", data.graduado);
     formData.append("institucion", data.institucion);
@@ -119,7 +120,7 @@ const EditarEstudio = () => {
     formData.append("titulo_convalidado", data.titulo_convalidado);
     formData.append("fecha_convalidacion", data.fecha_convalidacion || '');
     formData.append("resolucion_convalidacion", data.resolucion_convalidacion || '');
-    formData.append("posible_fecha_convalidacion", data.posible_fecha_convalidacion || '');
+    formData.append("posible_fecha_graduacion", data.posible_fecha_graduacion || '');
     formData.append("titulo_estudio", data.titulo_estudio);
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_fin", data.fecha_fin || '');
@@ -128,7 +129,7 @@ const EditarEstudio = () => {
     const token = Cookies.get("token");
     const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-estudio/${id}`;
 
-    const putPromise = axiosInstance.put(url, formData, {
+    const putPromise = axiosInstance.post(url, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -178,11 +179,11 @@ const EditarEstudio = () => {
     <form className='flex flex-col gap-y-4 rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative'
     onSubmit={handleSubmit(onSubmit)} >
     <div className='flex flex-col sm:grid grid-cols-3 gap-x-8 bg-white gap-y-6 py-12 px-8 rounded-xl' >
-      <div className='flex gap-x-4 col-span-full'>
-        <Link to={"/index"}>
+      <div className='flex gap-x-4 col-span-full items-center'>
+        <Link to={"/editar/estudios"}>
           <ButtonRegresar />
         </Link>
-        < h3 className="font-bold text-3xl col-span-full" > Agregar estudio </h3>
+        < h3 className="font-bold text-3xl col-span-full" > Editar estudio </h3>
       </div>
       < div className='flex flex-col sm:grid sm:grid-cols-3 sm:col-span-full gap-4' >
         <div className='flex flex-col w-full' >
@@ -229,11 +230,11 @@ const EditarEstudio = () => {
         } {watch('graduado') === 'No' && (
           <>
             < div className='flex flex-col w-full' >
-              <InputLabel htmlFor='posible_fecha_convalidacion' value='Posible fecha de convalidación' />
+              <InputLabel htmlFor='posible_fecha_graduacion' value='Posible fecha de graduacion' />
               <TextInput
-                id='posible_fecha_convalidacion'
+                id='posible_fecha_graduacion'
                 type='date'
-                {...register('posible_fecha_convalidacion')} />
+                {...register('posible_fecha_graduacion')} />
               < InputErrors errors={errors} name="posible_fecha_convalidacion" />
             </div>
           </>

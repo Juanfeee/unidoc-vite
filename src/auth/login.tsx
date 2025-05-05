@@ -57,7 +57,7 @@ const Login = () => {
           });
           // Redirige después de un pequeño delay
           setTimeout(() => {
-            navigate("/datos-personales");
+            navigate("datos-personales");
           }, 500);
 
           return "¡Bienvenido!";

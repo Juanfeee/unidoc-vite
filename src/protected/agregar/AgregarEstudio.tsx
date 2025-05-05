@@ -24,7 +24,7 @@ type Inputs = {
   titulo_convalidado: string;
   fecha_convalidacion: string;
   resolucion_convalidacion?: string;
-  posible_fecha_convalidacion?: string;
+  posible_fecha_graduacion?: string;
   titulo_estudio: string;
   fecha_inicio: string;
   fecha_fin: string;
@@ -49,7 +49,7 @@ const AgregarEstudio = () => {
  // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
   useEffect(() => {
     if (watch('graduado') === 'Si') {
-      setValue('posible_fecha_convalidacion', '');
+      setValue('posible_fecha_graduacion', '');
     } else if (watch('graduado') === 'No') {
       setValue('fecha_graduacion', '');
     }
@@ -186,12 +186,12 @@ const AgregarEstudio = () => {
             } {watch('graduado') === 'No' && (
               <>
                 < div className='flex flex-col w-full' >
-                  <InputLabel htmlFor='posible_fecha_convalidacion' value='Posible fecha de convalidación' />
+                  <InputLabel htmlFor='posible_fecha_graduacion' value='Posible fecha de graduacion' />
                   <TextInput
-                    id='posible_fecha_convalidacion'
+                    id='posible_fecha_graduacion'
                     type='date'
-                    {...register('posible_fecha_convalidacion')} />
-                  < InputErrors errors={errors} name="posible_fecha_convalidacion" />
+                    {...register('posible_fecha_graduacion')} />
+                  < InputErrors errors={errors} name="posible_fecha_graduacion" />
                 </div>
               </>
             )}

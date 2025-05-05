@@ -1,22 +1,28 @@
-import { AcademicCapIcon, PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
+import ModalTrash from '../../../componentes/Modal';
+import Modal from '../../../componentes/Modal';
+import EliminarBoton from '../../../componentes/EliminarBoton';
 
 const PreEstudio = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchDatos = async () => {
-      try {
-        const response = await axiosInstance.get('/aspirante/obtener-estudios');
-        const datos = response.data;
-        setEstudios(datos.estudios);
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-      }
-    };
 
+
+
+
+  const fetchDatos = async () => {
+    try {
+      const response = await axiosInstance.get('/aspirante/obtener-estudios');
+      setEstudios(response.data.estudios);
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchDatos();
   }, []);
 
@@ -60,10 +66,22 @@ const PreEstudio = () => {
                 >
                   <PencilSquareIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
                 </Link>
+                <EliminarBoton
+                  id={item.id_estudio}
+                  onConfirmDelete={async (id) => {
+                    try {
+                      await axiosInstance.delete(`/aspirante/eliminar-estudio/${id}`);
+                      setEstudios(estudios.filter(e => e.id_estudio !== id));
+                    } catch (err) {
+                      console.error('Error al eliminar:', err);
+                    }
+                  }}
+                />
               </li>
             ))}
           </ul>
         )}
+
       </div>
     </div>
   );

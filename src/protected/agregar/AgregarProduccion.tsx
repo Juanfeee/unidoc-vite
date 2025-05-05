@@ -1,17 +1,16 @@
 "use client";
-import { AdjuntarArchivo } from "@/app/componentes/formularios/AdjuntarArchivo";
-import { ButtonPrimary } from "@/app/componentes/formularios/ButtonPrimary";
-import { ButtonRegresar } from "@/app/componentes/formularios/ButtonRegresar";
-import InputErros from "@/app/componentes/formularios/InputErrors";
-import { InputLabel } from "@/app/componentes/formularios/InputLabel";
-import { SelectForm } from "@/app/componentes/formularios/SelectForm";
-import TextInput from "@/app/componentes/formularios/TextInput";
-import { productionSchema } from "@/validaciones/productionSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
 
-type Props = {};
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { productionSchema } from "../../validaciones/productionSchema";
+import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
+import { Link } from "react-router";
+import { InputLabel } from "../../componentes/formularios/InputLabel";
+import { SelectForm } from "../../componentes/formularios/SelectForm";
+import InputErrors from "../../componentes/formularios/InputErrors";
+import TextInput from "../../componentes/formularios/TextInput";
+import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
+
 type Inputs = {
   tipo_produccion: string;
   titulo: string;
@@ -42,7 +41,7 @@ const AgregarProduccion = () => {
         <div className="flex flex-col sm:grid grid-cols-3  
         bg-white gap-y-10  py-12 px-8 rounded-xl">
           <div className='flex gap-x-4 col-span-full' >
-            <Link href={"/index"}>
+            <Link to={"/index"}>
               <ButtonRegresar />
             </Link>
             <h3 className="font-bold text-3xl col-span-full">
@@ -56,7 +55,7 @@ const AgregarProduccion = () => {
                 id="tipo_produccion"
                 register={register("tipo_produccion")}
               />
-              <InputErros errors={errors} name="tipo_produccion" />
+              <InputErrors errors={errors} name="tipo_produccion" />
             </div>
             <div className="flex flex-col w-full">
               <InputLabel
@@ -68,7 +67,7 @@ const AgregarProduccion = () => {
                 id="tipo_ambito_divulgacion"
                 {...register("tipo_ambito_divulgacion")}
               />
-              <InputErros errors={errors} name="tipo_ambito_divulgacion" />
+              <InputErrors errors={errors} name="tipo_ambito_divulgacion" />
             </div>
           </div>
 
@@ -80,7 +79,7 @@ const AgregarProduccion = () => {
                 placeholder="Titulo"
                 {...register("titulo")}
               />
-              <InputErros errors={errors} name="titulo" />
+              <InputErrors errors={errors} name="titulo" />
             </div>
             <div className="flex flex-col w-full">
               <InputLabel htmlFor="numero_autores" value="Número de autores" />
@@ -90,7 +89,7 @@ const AgregarProduccion = () => {
                 placeholder="Numero de autores..."
                 {...register("numero_autores")}
               />
-              <InputErros errors={errors} name="numero_autores" />
+              <InputErrors errors={errors} name="numero_autores" />
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4">
@@ -104,7 +103,7 @@ const AgregarProduccion = () => {
                 placeholder="medio_divulgacion"
                 {...register("medio_divulgacion")}
               />
-              <InputErros errors={errors} name="medio_divulgacion" />
+              <InputErrors errors={errors} name="medio_divulgacion" />
             </div>
             <div className="flex flex-col w-full">
               <InputLabel
@@ -116,13 +115,9 @@ const AgregarProduccion = () => {
                 type="date"
                 {...register("fecha_divulgacion")}
               />
-              <InputErros errors={errors} name="fecha_divulgacion" />
+              <InputErrors errors={errors} name="fecha_divulgacion" />
             </div>
           </div>
-          <AdjuntarArchivo
-            id="adjuntar_archivo"
-            value="Adjuntar archivo de producción académica"
-          />
           <div className="flex justify-center col-span-full">
             <ButtonPrimary value="Agregar producción" />
           </div>
