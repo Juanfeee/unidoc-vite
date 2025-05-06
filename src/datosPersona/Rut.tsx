@@ -50,12 +50,15 @@ export const Rut = () => {
             timeout: 20000
           });
             const data = response.data.rut;
-            setValue("numero_rut", data.numero_rut);
-            setValue("razon_social", data.razon_social);
-            setValue("tipo_persona", data.tipo_persona);
-            setValue("codigo_ciiu", data.codigo_ciiu);
-            setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
-          
+            if(data){
+              setValue("numero_rut", data.numero_rut);
+              setValue("razon_social", data.razon_social);
+              setValue("tipo_persona", data.tipo_persona);
+              setValue("codigo_ciiu", data.codigo_ciiu);
+              setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
+            }else{
+              console.log("No se encontraron datos del RUT")
+            }
         } catch (error) {
           console.error("Error al cargar los datos del usuario:", error);
         }
