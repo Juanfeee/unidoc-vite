@@ -48,18 +48,24 @@ const Header = () => {
 
   const logout = async () => {
     try {
+      const token = Cookies.get("token"); // Obtén el token
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/cerrar-sesion`,
         {},
         {
-          withCredentials: true,
+          headers: {
+            'Authorization': `Bearer ${token}`, // Aquí envías tu token
+            'Content-Type': 'application/json',
+          },
         }
       );
-      Cookies.remove("token");
+
+      Cookies.remove("token"); // Borra el token de cookies
       setTimeout(() => {
         toast.success("Sesión cerrada correctamente");
       }, 100);
-      window.location.href = "/";
+      window.location.href = "/"; // Redirige a la página de inicio
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
