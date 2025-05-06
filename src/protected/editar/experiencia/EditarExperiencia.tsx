@@ -13,6 +13,7 @@ import InputErrors from "../../../componentes/formularios/InputErrors";
 import TextInput from "../../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import { experienciaSchema } from "../../../validaciones/experienceSchema";
+import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
 
 type Inputs = {
   tipo_experiencia: string;
@@ -70,7 +71,7 @@ const EditarExperiencia = () => {
         setValue("experiencia_radio", data.experiencia.experiencia_radio);
         setValue("fecha_inicio", data.experiencia.fecha_inicio);
         setValue("fecha_finalizacion", data.experiencia.fecha_finalizacion || "");
-        
+
         console.log(watch());
       } catch (error) {
         toast.error("Error al cargar los datos de la experiencia.");
@@ -119,7 +120,7 @@ const EditarExperiencia = () => {
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_finalizacion", data.fecha_finalizacion || "");
     formData.append("archivo", data.archivo[0]);
-    
+
     const token = Cookies.get("token");
     const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-experiencia/${id}`;
 
@@ -299,12 +300,9 @@ const EditarExperiencia = () => {
 
         <div>
           <InputLabel htmlFor="archivo" value="Archivo" />
-          <input
-            type="file"
+          <AdjuntarArchivo
             id="archivo"
-            {...register("archivo")}
-            accept=".pdf, .jpg, .png"
-            className="w-full h-11 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-3 text-sm text-slate-950/90 placeholder-slate-950/60 outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition duration-300 ease-in-out"
+            register={register('archivo')}
           />
           <InputErrors errors={errors} name="archivo" />
         </div>

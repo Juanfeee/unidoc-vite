@@ -38,24 +38,28 @@ export const epsSchema = z.object({
     }),
 
     archivo: z
-    .custom<FileList>((val) => val instanceof FileList && val.length > 0, {
-      message: "Debes subir un archivo",
-    })
-    .refine(
-      (fileList) =>
-        fileList instanceof FileList &&
-        fileList[0].size <= 2 * 1024 * 1024,
-      {
-        message: "Archivo demasiado grande (máx 2MB)",
-      }
-    )
-    .refine(
-      (fileList) =>
-        fileList instanceof FileList &&
-        ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type),
-      {
-        message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
-      }
-    )
+    .union([
+      z.string().url("URL inválida").optional(), // Permite la URL si ya existe un archivo
+      z.custom<FileList>((val) => val instanceof FileList && val.length > 0, {
+        message: "Debes subir un archivo",
+      })
+        .refine(
+          (fileList) =>
+            fileList instanceof FileList &&
+            fileList[0].size <= 2 * 1024 * 1024, // Validación tamaño
+          {
+            message: "Archivo demasiado grande (máx 2MB)",
+          }
+        )
+        .refine(
+          (fileList) =>
+            fileList instanceof FileList &&
+            ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type), // Validación tipo
+          {
+            message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
+          }
+        ),
+    ])
+    .optional(),
   
 });

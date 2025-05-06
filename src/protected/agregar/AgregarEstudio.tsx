@@ -16,6 +16,7 @@ import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
 import axiosInstance from "../../utils/axiosConfig";
 import FileUpload from "../../componentes/FileUpload";
+import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
 
 type Inputs = {
   tipo_estudio: string;
@@ -295,19 +296,10 @@ const AgregarEstudio = () => {
 
           {/* Archivo */}
           <div className="col-span-full">
-            <div className="col-span-full border-2 border-dashed border-gray-400 p-6 rounded-md w-full flex flex-col items-center">
-              <label htmlFor="archivo" className="text-lg font-bold text-gray-700 mb-2">
-                Cargar archivo
-              </label>
-
-              <input
-                id="archivo"
-                type="file"
-                accept=".pdf,application/pdf,.png,image/png,.jpg,image/jpeg"
-                {...register("archivo")}
-                className="file:bg-gray-200 file:text-gray-700 file:rounded-md file:px-4 file:py-2 file:border-none file:shadow-sm file:hover:bg-gray-300 transition text-sm"
+            <AdjuntarArchivo
+              id="archivo"
+              register={register('archivo')}
               />
-            </div>
 
             <InputErrors errors={errors} name="archivo" />
           </div>

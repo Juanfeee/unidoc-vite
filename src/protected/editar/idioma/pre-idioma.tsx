@@ -22,8 +22,8 @@ const PreIdioma = () => {
     fetchDatos();
   }, []);
 
-  if (!idiomas || idiomas.length === 0) {
-    return <div className="flex justify-center items-center h-full">Cargando...</div>;
+  if (!idiomas) {
+    return <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">Cargando...</div>;
   }
 
   return (

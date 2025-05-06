@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import { toast } from 'react-toastify'
+import AgregarLink from '../../../componentes/ButtonAgregar'
 
 const FormacionExperiencia = () => {
   const [experiencias, setExperiencias] = useState<any[]>([])
@@ -16,13 +17,12 @@ const FormacionExperiencia = () => {
         setExperiencias(datos.experiencias)
       } catch (error) {
         console.error('Error al obtener los datos:', error)
-        toast.error('Error al cargar experiencias')
       }
     }
-  
+
     fetchDatos()
   }, [])
-  
+
   if (!experiencias) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>
   }
@@ -42,9 +42,12 @@ const FormacionExperiencia = () => {
       </div>
       <div>
         {experiencias.length === 0 ? (
-          <p>No hay experiencias registradas</p>
+          <AgregarLink
+            to="/agregar/experiencia"
+            texto="Agregar experiencia profesional"
+          />
         ) : (
-          <ul className='flex flex-col gap-4'>
+          <ul className="flex flex-col gap-4">
             {experiencias.map((item, index) => (
               <li className="flex flex-col sm:flex-row gap-6" key={index}>
                 <BriefcaseIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
@@ -52,16 +55,16 @@ const FormacionExperiencia = () => {
                   <p className="font-semibold text-[#121417]">{item.tipo_experiencia}</p>
                   <p>{item.cargo}</p>
                   <p>{item.institucion_experiencia}</p>
-                  <p>
-                    {item.fecha_inicio} / {item.fecha_finalizacion || 'Actual'}
-                  </p>
+                  <p>{item.fecha_inicio} / {item.fecha_finalizacion || 'Actual'}</p>
                 </div>
               </li>
             ))}
           </ul>
         )}
+
       </div>
     </div>
+
   )
 }
 

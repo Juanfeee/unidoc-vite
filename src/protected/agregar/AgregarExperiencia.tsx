@@ -13,6 +13,7 @@ import { SelectForm } from '../../componentes/formularios/SelectForm';
 import InputErrors from '../../componentes/formularios/InputErrors';
 import TextInput from '../../componentes/formularios/TextInput';
 import { ButtonPrimary } from '../../componentes/formularios/ButtonPrimary';
+import { AdjuntarArchivo } from '../../componentes/formularios/AdjuntarArchivo';
 
 type Inputs = {
   tipo_experiencia: string;
@@ -86,7 +87,7 @@ const AgregarExperiencia = () => {
       fecha_finalizacion: watch('fecha_finalizacion'),
       archivo: watch('archivo')
     };
-  
+
     const formData = new FormData();
     formData.append('tipo_experiencia', formValues.tipo_experiencia);
     formData.append('institucion_experiencia', formValues.institucion_experiencia);
@@ -96,19 +97,19 @@ const AgregarExperiencia = () => {
     formData.append('experiencia_radio', formValues.experiencia_radio);
     formData.append('fecha_inicio', formValues.fecha_inicio);
     formData.append('fecha_finalizacion', formValues.fecha_finalizacion);
-  
+
     if (formValues.archivo && formValues.archivo[0]) {
       formData.append('archivo', formValues.archivo[0]);
     }
-  
+
     const token = Cookies.get("token");
     if (!token) {
       toast.error("No hay token de autenticación");
       return;
     }
-  
+
     const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-experiencia`;
-  
+
     const postPromise = axios.post(url, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -116,7 +117,7 @@ const AgregarExperiencia = () => {
       },
       timeout: 20000
     });
-  
+
     toast.promise(postPromise, {
       pending: "Enviando datos...",
       success: {
@@ -153,11 +154,11 @@ const AgregarExperiencia = () => {
         autoClose: 3000,
       },
     });
-  
+
     console.log("Datos enviados:", formValues);
   };
-  
-  
+
+
 
   return (
     <form
@@ -173,7 +174,7 @@ const AgregarExperiencia = () => {
             Agregar experiencia
           </h3>
         </div>
-        
+
         <div className="flex flex-col sm:grid md:grid-cols-2 sm:col-span-full gap-4">
           <div className="flex flex-col w-full">
             <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia" />
@@ -291,11 +292,14 @@ const AgregarExperiencia = () => {
         </div>
 
         <div>
-            <InputLabel htmlFor="archivo" value="Archivo" />
-            <input type="file" id="archivo" {...register("archivo")} accept=".pdf, .jpg, .png" className="w-full h-11 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-3 text-sm text-slate-950/90 placeholder-slate-950/60 outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition duration-300 ease-in-out" />
-            <InputErrors errors={errors} name="archivo" />
-          </div>
-        
+          <InputLabel htmlFor="archivo" value="Archivo" />
+          <AdjuntarArchivo
+            id="archivo"
+            register={register('archivo')}
+          />
+          <InputErrors errors={errors} name="archivo" />
+        </div>
+
         <div className="flex justify-center col-span-full">
           <ButtonPrimary type="submit" value="Agregar experiencia" />
         </div>

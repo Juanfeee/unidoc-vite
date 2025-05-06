@@ -12,8 +12,9 @@ import { LabelRadio } from "../componentes/formularios/LabelRadio";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
 import { userSchema } from "../validaciones/datosPersonaSchema";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosConfig";
+import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 
 
 export type Inputs = {
@@ -30,6 +31,7 @@ export type Inputs = {
 };
 
 export const DatosPersonales = () => {
+  const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
 
 
   const {
@@ -63,19 +65,32 @@ export const DatosPersonales = () => {
       //mapear los datos del usuario a los campos del formulario
       setValue("tipo_identificacion", data.tipo_identificacion || "");
       setValue("numero_identificacion", data.numero_identificacion || "");
-      setValue("primer_nombre", data.primer_nombre || ""); 
+      setValue("primer_nombre", data.primer_nombre || "");
       setValue("segundo_nombre", data.segundo_nombre || "");
-      setValue("primer_apellido", data.primer_apellido  || "");
+      setValue("primer_apellido", data.primer_apellido || "");
       setValue("segundo_apellido", data.segundo_apellido || "");
       setValue("fecha_nacimiento", data.fecha_nacimiento || "");
       setValue("genero", data.genero || "");
       setValue("estado_civil", data.estado_civil || "");
 
+
+      if (data.documentos_user && data.documentos_user.length > 0) {
+        const archivo = data.documentos_user[0];
+        setExistingFile({
+          url: archivo.archivo_url,
+          name: archivo.archivo.split("/").pop() || "Archivo existente",
+        });
+
+        // Cargar el archivo en el formulario (pero como no podemos establecer un File directamente, solo lo referenciamos)
+        setValue("archivo", archivo.archivo_url); // Aquí solo ponemos la URL del archivo
+      }
+
+
     });
   }, [setValue]);
 
   // Obtener los valores del formulario y enviarlos a la API
-  const onSubmit: SubmitHandler<Inputs> = async (data:Inputs) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
 
     //crear formdata para enviar a la API
 
@@ -215,7 +230,7 @@ export const DatosPersonales = () => {
         </div>
 
         {/* Género */}
-        <div className="col-span-full">
+        <div className="">
           <InputLabel htmlFor="genero" value="Género" />
           <div className="flex flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-4">
             <LabelRadio
@@ -238,15 +253,20 @@ export const DatosPersonales = () => {
             />
           </div>
           <InputErrors errors={errors} name="genero" />
-          <div>
-            <input type="file"
-              id="archivo"
-              accept=".pdf"
-              {...register("archivo")}
-            ></input>
-            <InputErrors errors={errors} name="archivo" />
-          </div>
         </div>
+        
+        <div className="col-span-full">
+          <AdjuntarArchivo
+            id="archivo"
+            register={register("archivo")}
+          />
+          <InputErrors errors={errors} name="archivo" />
+        </div>
+        {existingFile && (
+          <div className="text-sm text-gray-700 mt-2">
+            <p>Archivo cargado: <a href={existingFile.url} target="_blank" className="text-blue-600 underline">{existingFile.name}</a></p>
+          </div>
+        )}
         <div className="col-span-full text-center">
           <ButtonPrimary type="submit" value="Guardar" />
         </div>

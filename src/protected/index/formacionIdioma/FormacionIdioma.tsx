@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
+import AgregarLink from '../../../componentes/ButtonAgregar'
 
 const FormacionIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([])
@@ -19,11 +20,11 @@ const FormacionIdioma = () => {
         console.error('Error al obtener los datos:', error)
       }
     }
-  
+
     fetchDatos()
   }, [])
-  
-  if(!idiomas) {
+
+  if (!idiomas) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>
   }
 
@@ -41,11 +42,14 @@ const FormacionIdioma = () => {
         </div>
       </div>
       <div>
-        <ul className='flex flex-col gap-4'>
-          {idiomas.length === 0 ? (
-            <p>No hay idiomas registrados</p>
-          ) : (
-            idiomas.map((item, index) => (
+        {idiomas.length === 0 ? (
+          <AgregarLink
+            to={'/agregar/idioma'}
+            texto="Agregar idioma"
+          />
+        ) : (
+          <ul className="flex flex-col gap-4">
+            {idiomas.map((item, index) => (
               <li className="flex flex-col sm:flex-row gap-6" key={index}>
                 <GlobeAmericasIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
                 <div className="text-[#637887]">
@@ -55,11 +59,12 @@ const FormacionIdioma = () => {
                   <p>Certificado: {item.fecha_certificado}</p>
                 </div>
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
+
   )
 }
 

@@ -4,6 +4,7 @@ import { z } from "zod";
 
 //validacion de los datos
 export const studySchema = z.object({
+  
   tipo_estudio: z.string().min(1, { message: "Campo vacio" }),
 
   graduado: z.enum(["Si", "No"], {

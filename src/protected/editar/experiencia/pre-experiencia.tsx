@@ -2,8 +2,7 @@ import { AcademicCapIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroico
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
-import ModalTrash from '../../../componentes/Modal';
-import Modal from '../../../componentes/Modal';
+
 import EliminarBoton from '../../../componentes/EliminarBoton';
 
 const PreExperiencia = () => {
@@ -22,8 +21,8 @@ const PreExperiencia = () => {
     fetchDatos()
   }, [])
 
-  if (!experiencias || experiencias.length === 0) {
-    return <div className="flex justify-center items-center h-full">Cargando...</div>
+  if (!experiencias) {
+    return <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">Cargando...</div>;
   }
 
   return (
@@ -66,10 +65,10 @@ const PreExperiencia = () => {
                   id={item.id_experiencia}
                   onConfirmDelete={async (id) => {
                     try {
-                      await axiosInstance.delete(`/aspirante/eliminar-experiencia/${id}`)
-                      setExperiencias(experiencias.filter(e => e.id_experiencia !== id))
+                      await axiosInstance.delete(`/aspirante/eliminar-experiencia/${id}`);
+                      setExperiencias(experiencias.filter(e => e.id_experiencia !== id));
                     } catch (err) {
-                      console.error('Error al eliminar:', err)
+                      console.error('Error al eliminar:', err);
                     }
                   }}
                 />
@@ -79,6 +78,7 @@ const PreExperiencia = () => {
         )}
       </div>
     </div>
+
   )
 }
 

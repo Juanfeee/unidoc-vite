@@ -14,6 +14,7 @@ import { LabelRadio } from "../../../componentes/formularios/LabelRadio";
 import TextInput from "../../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import { studySchema } from "../../../validaciones/studySchema";
+import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
 
 type Inputs = {
   tipo_estudio: string;
@@ -328,7 +329,10 @@ const EditarEstudio = () => {
         </div>
         <div>
           <InputLabel htmlFor="archivo" value="Archivo" />
-          <input type="file" id="archivo" {...register("archivo")} accept=".pdf, .jpg, .png" className="w-full h-11 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-3 text-sm text-slate-950/90 placeholder-slate-950/60 outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition duration-300 ease-in-out" />
+            <AdjuntarArchivo
+              id="archivo"
+              register={register('archivo')}
+              />
           <InputErrors errors={errors} name="archivo" />
         </div>
         <div className='flex justify-center col-span-full' >

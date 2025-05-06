@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { rutSchema } from "../validaciones/rutSchema";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -12,6 +12,7 @@ import TextInput from "../componentes/formularios/TextInput";
 import InputErrors from "../componentes/formularios/InputErrors";
 import { SelectForm } from "../componentes/formularios/SelectForm";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
+import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 
 
 type Inputs = {
@@ -24,6 +25,8 @@ type Inputs = {
 };
 
 export const Rut = () => {
+
+  const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
 
    const {
       register,
@@ -56,6 +59,18 @@ export const Rut = () => {
               setValue("tipo_persona", data.tipo_persona);
               setValue("codigo_ciiu", data.codigo_ciiu);
               setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
+
+              if (data.documentos_rut && data.documentos_rut.length > 0) {
+                const archivo = data.documentos_rut[0];
+                setExistingFile({
+                  url: archivo.archivo_url,
+                  name: archivo.archivo.split("/").pop() || "Archivo existente",
+                });
+    
+                // Cargar el archivo en el formulario (pero como no podemos establecer un File directamente, solo lo referenciamos)
+                setValue("archivo", archivo.archivo_url); // Aquí solo ponemos la URL del archivo
+              }
+
             }else{
               console.log("No se encontraron datos del RUT")
             }
@@ -168,11 +183,18 @@ export const Rut = () => {
       </div>
 
        {/* Archivo */}
-        <div>
-          <InputLabel htmlFor="archivo" value="Archivo" />
-          <input type="file" id="archivo" {...register("archivo")} accept=".pdf, .jpg, .png" className="w-full h-11 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-3 text-sm text-slate-950/90 placeholder-slate-950/60 outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition duration-300 ease-in-out" />
+       <div className="col-span-full">
+          <AdjuntarArchivo
+            id="archivo"
+            register={register("archivo")}
+          />
           <InputErrors errors={errors} name="archivo" />
         </div>
+        {existingFile && (
+          <div className="text-sm text-gray-700 mt-2">
+            <p>Archivo cargado: <a href={existingFile.url} target="_blank" className="text-blue-600 underline">{existingFile.name}</a></p>
+          </div>
+        )}
 
         <div className="col-span-full text-center">
           <ButtonPrimary type="submit" value="Guardar" />

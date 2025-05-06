@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
+import AgregarLink from '../../../componentes/ButtonAgregar'
 
 
 const FormacionEducativa = () => {
@@ -22,11 +23,11 @@ const FormacionEducativa = () => {
         console.error('Error al obtener los datos:', error);
       }
     };
-  
+
     fetchDatos();
   }, []);
-  
-  if(!estudios) {
+
+  if (!estudios) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>;
   }
 
@@ -45,19 +46,27 @@ const FormacionEducativa = () => {
           </div>
         </div>
         <div>
-          <ul className='flex flex-col gap-4'>
-            {estudios.map((item, index) => (
-              <li className="flex flex-col sm:flex-row gap-6" key={index}>
-                <AcademicCapIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
-                <div className="text-[#637887]">
-                  <p className="font-semibold text-[#121417]">{item.tipo_estudio}</p>
-                  <p>{item.titulo_estudio}</p>
-                  <p>{item.institucion}</p>
-                  <p>{item.fecha_graduacion}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {estudios.length === 0 ? (
+            <AgregarLink
+              to="/agregar/estudio"
+              texto="Agregar estudio"
+            />
+          ) : (
+            <ul className="flex flex-col gap-4">
+              {estudios.map((item, index) => (
+                <li className="flex flex-col sm:flex-row gap-6" key={index}>
+                  <AcademicCapIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
+                  <div className="text-[#637887]">
+                    <p className="font-semibold text-[#121417]">{item.tipo_estudio}</p>
+                    <p>{item.titulo_estudio}</p>
+                    <p>{item.institucion}</p>
+                    <p>{item.fecha_graduacion}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+
         </div>
       </div>
     </>
