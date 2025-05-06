@@ -25,7 +25,7 @@ type Inputs = {
 };
 
 export const EpsFormulario = () => {
-  const [isEpsRegistered, setIsEpsRegistered] = useState(false); // Estado para saber si ya existe una EPS registrada
+  const [isEpsRegistered, setIsEpsRegistered] = useState(false);
 
   const {
     register,
@@ -51,7 +51,7 @@ export const EpsFormulario = () => {
 
         const data = response.data.eps;
         if (data) {
-          setIsEpsRegistered(true); // Ya existe una EPS registrada
+          setIsEpsRegistered(true);
           setValue("tipo_afiliacion", data.tipo_afiliacion || "");
           setValue("nombre_eps", data.nombre_eps || "");
           setValue("estado_afiliacion", data.estado_afiliacion || "");
@@ -60,7 +60,7 @@ export const EpsFormulario = () => {
           setValue("tipo_afiliado", data.tipo_afiliado || "");
           setValue("numero_afiliado", data.numero_afiliado || "");
         } else {
-          setIsEpsRegistered(false); // No hay EPS registrada
+          setIsEpsRegistered(false);
           console.log("No se encontraron datos de EPS para el usuario.");
         }
       } catch (error) {
@@ -93,8 +93,8 @@ export const EpsFormulario = () => {
 
     const token = Cookies.get("token");
     const url = isEpsRegistered
-      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-eps` // Ruta para actualizar
-      : `${import.meta.env.VITE_API_URL}/aspirante/crear-eps`; // Ruta para crear
+      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-eps`
+      : `${import.meta.env.VITE_API_URL}/aspirante/crear-eps`;
 
     try {
       await toast.promise(
@@ -107,7 +107,13 @@ export const EpsFormulario = () => {
         }),
         {
           pending: "Enviando datos...",
-          success: "Datos guardados correctamente",
+          success: {
+            render() {
+              // Única modificación necesaria (esta línea)
+              setIsEpsRegistered(true); // Actualiza el estado después de guardar
+              return "Datos guardados correctamente";
+            }
+          },
           error: "Error al guardar los datos",
         }
       );

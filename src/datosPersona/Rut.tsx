@@ -23,7 +23,7 @@ type Inputs = {
 };
 
 export const Rut = () => {
-  const [isRutRegistered, setIsRutRegistered] = useState(false); // Estado para verificar si ya existe un RUT
+  const [isRutRegistered, setIsRutRegistered] = useState(false);
 
   const {
     register,
@@ -50,14 +50,14 @@ export const Rut = () => {
 
         const data = response.data.rut;
         if (data) {
-          setIsRutRegistered(true); // Ya existe un RUT registrado
+          setIsRutRegistered(true);
           setValue("numero_rut", data.numero_rut);
           setValue("razon_social", data.razon_social);
           setValue("tipo_persona", data.tipo_persona);
           setValue("codigo_ciiu", data.codigo_ciiu);
           setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
         } else {
-          setIsRutRegistered(false); // No hay RUT registrado
+          setIsRutRegistered(false);
         }
       } catch (error) {
         console.error("Error al cargar los datos del usuario:", error);
@@ -86,8 +86,8 @@ export const Rut = () => {
 
     const token = Cookies.get("token");
     const url = isRutRegistered
-      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-rut` // Ruta para actualizar
-      : `${import.meta.env.VITE_API_URL}/aspirante/crear-rut`; // Ruta para crear
+      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-rut`
+      : `${import.meta.env.VITE_API_URL}/aspirante/crear-rut`;
 
     try {
       await toast.promise(
@@ -100,7 +100,12 @@ export const Rut = () => {
         }),
         {
           pending: "Enviando datos...",
-          success: "Datos guardados correctamente",
+          success: {
+            render() {
+              setIsRutRegistered(true); // Actualiza el estado después de guardar
+              return "Datos guardados correctamente";
+            }
+          },
           error: "Error al guardar los datos",
         }
       );
