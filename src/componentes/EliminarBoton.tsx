@@ -17,7 +17,7 @@ const EliminarBoton = ({ id, onConfirmDelete }: Props) => {
         className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
         onClick={() => setOpen(true)}
       >
-        <TrashIcon className="size-12 p-2 text-[#121417]" />
+        <TrashIcon className="size-12 p-2" />
       </button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
@@ -31,7 +31,7 @@ const EliminarBoton = ({ id, onConfirmDelete }: Props) => {
           </div>
           <div className="flex gap-4">
             <button
-              className=""
+              className="bg-red-500 text-white rounded-lg px-4 py-2 hover:bg-red-600 transition duration-300 ease-in-out w-full"
               onClick={() => {
                 onConfirmDelete(id);
                 setOpen(false);

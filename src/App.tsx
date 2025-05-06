@@ -1,4 +1,3 @@
-import { useState } from 'react'
 
 import './App.css'
 import { ToastContainer } from 'react-toastify'
@@ -8,9 +7,9 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
 
-      <div className="flex flex-col items-center justify-center min-h-screen relative w-screen">
+      <div className="flex flex-col items-center  min-h-screen relative">
+        <ToastContainer />
         <Outlet />
       </div>
     </>

@@ -57,7 +57,7 @@ const Login = () => {
           });
           // Redirige después de un pequeño delay
           setTimeout(() => {
-            navigate("datos-personales");
+            window.location.href = "/index";
           }, 500);
 
           return "¡Bienvenido!";
@@ -97,7 +97,7 @@ const Login = () => {
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada" >
+        <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada " >
           <div className='flex flex-col gap-2 w-full' >
             < h3 className="font-bold text-2xl" > Iniciar sesión </h3>
             <h3>¡Hola! <span className='text-blue-500 font-bold'>Ingresa</span> con tu correo y contraseña</h3>

@@ -26,8 +26,8 @@ const PreEstudio = () => {
     fetchDatos();
   }, []);
 
-  if (!estudios || estudios.length === 0) {
-    return <div className="flex justify-center items-center h-full">Cargando...</div>;
+  if (!estudios) {
+    return <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">Cargando...</div>;
   }
 
   return (
@@ -43,7 +43,7 @@ const PreEstudio = () => {
 
       <div>
         {estudios.length === 0 ? (
-          <p>No hay estudios disponibles.</p>
+          <p>Aun no hay estudios agregados</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {estudios.map((item) => (
@@ -64,7 +64,7 @@ const PreEstudio = () => {
                   to={`/editar/estudio/${item.id_estudio}`}
                   className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
                 >
-                  <PencilSquareIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
+                  <PencilSquareIcon className="size-12 p-2" />
                 </Link>
                 <EliminarBoton
                   id={item.id_estudio}

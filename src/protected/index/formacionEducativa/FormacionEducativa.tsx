@@ -40,7 +40,7 @@ const FormacionEducativa = () => {
               <PlusIcon className="size-10 p-2 stroke-2" />
             </Link>
             <Link to={'/editar/estudios'}>
-              <PencilSquareIcon className="size-10 p-2 stroke-2" />
+              <PencilSquareIcon className="size-10 p-2 stroke-2 " />
             </Link>
           </div>
         </div>

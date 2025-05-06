@@ -13,6 +13,7 @@ import AgregarExperiencia from './protected/agregar/AgregarExperiencia.tsx'
 import AgregarIdioma from './protected/agregar/AgregarIdioma.tsx'
 import PreEstudio from './protected/editar/estudio/pre-estudio.tsx'
 import EditarEstudio from './protected/editar/estudio/EditarEstudio.tsx'
+import Configuracion from './protected/configuracion/configuracion.tsx'
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <Routes>
@@ -26,7 +27,7 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
           <Route path="index" element={<Index />} />
           <Route path="datos-personales" element={<InformacionPersona />} />
-
+          <Route path="configuracion" element={< Configuracion />} />
           <Route path="agregar">
             <Route index element={<span>No found</span>} />
             <Route path="estudio" element={<AgregarEstudio />} />
