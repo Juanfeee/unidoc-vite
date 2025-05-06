@@ -109,7 +109,6 @@ export const EpsFormulario = () => {
           pending: "Enviando datos...",
           success: {
             render() {
-              // Única modificación necesaria (esta línea)
               setIsEpsRegistered(true); // Actualiza el estado después de guardar
               return "Datos guardados correctamente";
             }
