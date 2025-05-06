@@ -12,16 +12,29 @@ const FormacionExperiencia = () => {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const response = await axiosInstance.get('/aspirante/obtener-experiencias')
-        const datos = response.data
-        setExperiencias(datos.experiencias)
+        // 1. Intentar cargar desde localStorage primero
+        const cached = localStorage.getItem('experiencias');
+        if (cached) {
+          setExperiencias(JSON.parse(cached));
+        }
+  
+        // 2. Hacer petición al servidor
+        const response = await axiosInstance.get('/aspirante/obtener-experiencias');
+        
+        // 3. Actualizar estado y localStorage
+        if (response.data?.experiencias) {
+          setExperiencias(response.data.experiencias);
+          localStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
+        }
+  
       } catch (error) {
-        console.error('Error al obtener los datos:', error)
+        console.error('Error al cargar experiencias:', error);
+        // Si hay error, se mantienen los datos de cache (si existían)
       }
-    }
-
-    fetchDatos()
-  }, [])
+    };
+  
+    fetchDatos();
+  }, []);
 
   if (!experiencias) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>

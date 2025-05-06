@@ -1,9 +1,7 @@
 import { AcademicCapIcon } from '@heroicons/react/24/outline'
 import { PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router'
-import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
 
@@ -12,18 +10,32 @@ const FormacionEducativa = () => {
 
   const [estudios, setEstudios] = useState<any[]>([]);
 
-
-  useEffect(() => {
-    const fetchDatos = async () => {
-      try {
-        const response = await axiosInstance.get('/aspirante/obtener-estudios');
-        const datos = response.data;
-        setEstudios(datos.estudios);
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
+  //Función para cargar los datos desde el servidor o localStorage
+  const fetchDatos = async () => {
+    try {
+      // 1. Intentar cargar desde localStorage primero
+      const cached = localStorage.getItem('estudios');
+      if (cached) {
+        setEstudios(JSON.parse(cached));
       }
-    };
-
+  
+      // 2. Hacer petición al servidor
+      const response = await axiosInstance.get('/aspirante/obtener-estudios');
+      
+      // 3. Actualizar estado y localStorage
+      if (response.data?.estudios) {
+        setEstudios(response.data.estudios);
+        localStorage.setItem('estudios', JSON.stringify(response.data.estudios));
+      }
+  
+    } catch (error) {
+      console.error('Error al cargar estudios:', error);
+      // Si hay error, se mantienen los datos de cache (si existían)
+    }
+  };
+  
+  // Llamar la función cuando el componente se monta
+  useEffect(() => {
     fetchDatos();
   }, []);
 

@@ -327,8 +327,7 @@ const EditarEstudio = () => {
             < InputErrors errors={errors} name="fecha_fin" />
           </div>
         </div>
-        <div>
-          <InputLabel htmlFor="archivo" value="Archivo" />
+        <div className="col-span-full">
             <AdjuntarArchivo
               id="archivo"
               register={register('archivo')}

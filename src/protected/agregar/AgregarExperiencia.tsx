@@ -291,7 +291,7 @@ const AgregarExperiencia = () => {
           </div>
         </div>
 
-        <div>
+        <div className='col-span-full'>
           <InputLabel htmlFor="archivo" value="Archivo" />
           <AdjuntarArchivo
             id="archivo"

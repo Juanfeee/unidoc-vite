@@ -17,18 +17,30 @@ const Header = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
+        // 1. Intentar cargar desde localStorage primero
+        const cachedImage = localStorage.getItem('profileImage');
+        if (cachedImage) {
+          setProfileImage(cachedImage);
+        }
+  
+        // 2. Hacer petición al servidor
         const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` }
         });
-
-        // Acceso directo a la URL sin tipo definido
+  
+        // 3. Actualizar estado y localStorage
         const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
-        if (imageUrl) setProfileImage(imageUrl);
-
+        if (imageUrl) {
+          setProfileImage(imageUrl);
+          localStorage.setItem('profileImage', imageUrl);
+        }
+  
       } catch (error) {
         console.error("Error al cargar foto:", error);
+        // Si hay error, se mantiene la imagen de cache (si existía)
       }
     };
+    
     fetchProfileImage();
   }, []);
 
@@ -56,6 +68,9 @@ const Header = () => {
         }
       );
       Cookies.remove("token");
+      //borrar todo el localStorage
+
+      localStorage.clear();
       setTimeout(() => {
         toast.success("Sesión cerrada correctamente");
       }, 100);

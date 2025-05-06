@@ -15,7 +15,6 @@ import TextInput from "../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
 import axiosInstance from "../../utils/axiosConfig";
-import FileUpload from "../../componentes/FileUpload";
 import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
 
 type Inputs = {
@@ -35,6 +34,8 @@ type Inputs = {
 
 
 const AgregarEstudio = () => {
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(studySchema) });
   console.log("Formulario", watch());
@@ -66,70 +67,75 @@ const AgregarEstudio = () => {
   }, [watch('titulo_convalidado'), setValue]);
 
   // Función para manejar el envío del formulario
+
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    const formData = new FormData();
-    formData.append("tipo_estudio", data.tipo_estudio);
-    formData.append("graduado", data.graduado);
-    formData.append("institucion", data.institucion);
-    formData.append("fecha_graduacion", data.fecha_graduacion || '');
-    formData.append("titulo_convalidado", data.titulo_convalidado);
-    formData.append("fecha_convalidacion", data.fecha_convalidacion || '');
-    formData.append("resolucion_convalidacion", data.resolucion_convalidacion || '');
-    formData.append("posible_fecha_convalidacion", data.posible_fecha_convalidacion || '');
-    formData.append("titulo_estudio", data.titulo_estudio);
-    formData.append("fecha_inicio", data.fecha_inicio);
-    formData.append("fecha_fin", data.fecha_fin || '');
-    formData.append("archivo", data.archivo[0]);
-
-    const token = Cookies.get("token");
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-estudio`;
-
-    const postPromise = axiosInstance.post(url, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 10000,
-    });
-
-    toast.promise(postPromise, {
-      pending: "Enviando datos...",
-      success: {
-        render() {
-          // Redirige después de guardar
-          setTimeout(() => {
-            window.location.href = "/index";
-          }, 1500);
-          return "Datos guardados correctamente";
-        },
-        autoClose: 1500,
-      },
-      error: {
-        render({ data }) {
-          const error = data;
-          if (axios.isAxiosError(error)) {
-            if (error.code === "ECONNABORTED") {
-              return "Tiempo de espera agotado. Intenta de nuevo.";
-            } else if (error.response) {
-              const errores = error.response.data?.errors;
-              if (errores && typeof errores === 'object') {
-                const mensajes = Object.values(errores)
-                  .flat()
-                  .join('\n');
-                return `Errores del formulario:\n${mensajes}`;
+    setIsSubmitting(true); // 1. Desactivar el botón al iniciar el envío
+    
+    try {
+      const formData = new FormData();
+      formData.append("tipo_estudio", data.tipo_estudio);
+      formData.append("graduado", data.graduado);
+      formData.append("institucion", data.institucion);
+      formData.append("fecha_graduacion", data.fecha_graduacion || '');
+      formData.append("titulo_convalidado", data.titulo_convalidado);
+      formData.append("fecha_convalidacion", data.fecha_convalidacion || '');
+      formData.append("resolucion_convalidacion", data.resolucion_convalidacion || '');
+      formData.append("posible_fecha_graduacion", data.posible_fecha_graduacion || '');
+      formData.append("titulo_estudio", data.titulo_estudio);
+      formData.append("fecha_inicio", data.fecha_inicio);
+      formData.append("fecha_fin", data.fecha_fin || '');
+      formData.append("archivo", data.archivo[0]);
+  
+      const token = Cookies.get("token");
+      const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-estudio`;
+  
+      await toast.promise(
+        axiosInstance.post(url, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 10000,
+        }),
+        {
+          pending: "Enviando datos...",
+          success: {
+            render() {
+              setTimeout(() => {
+                window.location.href = "/index";
+              }, 1500);
+              return "Datos guardados correctamente";
+            },
+            autoClose: 1500,
+          },
+          error: {
+            render({ data }) {
+              const error = data;
+              if (axios.isAxiosError(error)) {
+                if (error.code === "ECONNABORTED") {
+                  return "Tiempo de espera agotado. Intenta de nuevo.";
+                } else if (error.response) {
+                  const errores = error.response.data?.errors;
+                  if (errores && typeof errores === 'object') {
+                    return `Errores: ${Object.values(errores).flat().join(', ')}`;
+                  }
+                  return error.response.data?.message || "Error al guardar los datos.";
+                } else if (error.request) {
+                  return "No se recibió respuesta del servidor.";
+                }
               }
-              return error.response.data?.message || "Error al guardar los datos.";
-            } else if (error.request) {
-              return "No se recibió respuesta del servidor.";
-            }
-          }
-          return "Error inesperado al guardar los datos.";
-        },
-        autoClose: 3000,
-      },
-    });
+              return "Error inesperado al guardar los datos.";
+            },
+            autoClose: 3000,
+          },
+        }
+      );
+    } catch (error) {
+      console.error("Error en el envío:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
 
 
 
@@ -306,7 +312,11 @@ const AgregarEstudio = () => {
 
           {/* Botón para agregar estudio */}
           <div className="flex justify-center col-span-full">
-            <ButtonPrimary value="Agregar estudio" />
+            <ButtonPrimary 
+              value={isSubmitting ? "Enviando..." : "Agregar estudio"}
+              disabled={isSubmitting}
+            
+            />
           </div>
 
         </form>

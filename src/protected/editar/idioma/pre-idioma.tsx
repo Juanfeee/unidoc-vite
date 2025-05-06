@@ -1,28 +1,64 @@
-import { AcademicCapIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
-import ModalTrash from '../../../componentes/Modal';
-import Modal from '../../../componentes/Modal';
-import EliminarBoton from '../../../componentes/EliminarBoton';
+import EliminarBoton from '../../../componentes/EliminarBoton'
 
 const PreIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
     try {
+      setLoading(true);
+      // 1. Cargar desde caché primero
+      const cached = localStorage.getItem('idiomas');
+      if (cached) {
+        setIdiomas(JSON.parse(cached));
+      }
+
+      // 2. Obtener datos del servidor
       const response = await axiosInstance.get('/aspirante/obtener-idiomas');
-      setIdiomas(response.data.idiomas);
+      
+      // 3. Actualizar estado y caché
+      if (response.data?.idiomas) {
+        setIdiomas(response.data.idiomas);
+        localStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
+      }
     } catch (error) {
-      console.error('Error al obtener los datos:', error);
+      console.error('Error al obtener idiomas:', error);
+      // Fallback a caché si hay error
+      const cached = localStorage.getItem('idiomas');
+      if (cached) {
+        setIdiomas(JSON.parse(cached));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axiosInstance.delete(`/aspirante/eliminar-idioma/${id}`);
+      // Actualizar estado y caché
+      const nuevosIdiomas = idiomas.filter(i => i.id_idioma !== id);
+      setIdiomas(nuevosIdiomas);
+      localStorage.setItem('idiomas', JSON.stringify(nuevosIdiomas));
+    } catch (err) {
+      console.error('Error al eliminar:', err);
     }
   };
 
   useEffect(() => {
+    // Cargar datos iniciales desde caché
+    const cached = localStorage.getItem('idiomas');
+    if (cached) {
+      setIdiomas(JSON.parse(cached));
+    }
     fetchDatos();
   }, []);
 
-  if (!idiomas) {
+  if (loading) {
     return <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">Cargando...</div>;
   }
 
@@ -60,18 +96,11 @@ const PreIdioma = () => {
                   to={`/editar/idioma/${item.id_idioma}`}
                   className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
                 >
-                  <PencilSquareIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
+                  <PencilSquareIcon className="size-6" />
                 </Link>
                 <EliminarBoton
                   id={item.id_idioma}
-                  onConfirmDelete={async (id) => {
-                    try {
-                      await axiosInstance.delete(`/aspirante/eliminar-idioma/${id}`);
-                      setIdiomas(idiomas.filter(i => i.id_idioma !== id));
-                    } catch (err) {
-                      console.error('Error al eliminar:', err);
-                    }
-                  }}
+                  onConfirmDelete={handleDelete}
                 />
               </li>
             ))}

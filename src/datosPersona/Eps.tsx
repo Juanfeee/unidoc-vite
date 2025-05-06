@@ -68,7 +68,6 @@ export const EpsFormulario = () => {
           setValue("fecha_finalizacion_afiliacion", data.fecha_finalizacion_afiliacion || "");
           setValue("tipo_afiliado", data.tipo_afiliado || "");
           setValue("numero_afiliado", data.numero_afiliado || "");
-          setValue("archivo", data.archivo || "");
 
 
           if (data.documentos_eps && data.documentos_eps.length > 0) {
@@ -77,12 +76,10 @@ export const EpsFormulario = () => {
               url: archivo.archivo_url,
               name: archivo.archivo.split("/").pop() || "Archivo existente",
             });
-
-            // Cargar el archivo en el formulario (pero como no podemos establecer un File directamente, solo lo referenciamos)
-            setValue("archivo", archivo.archivo_url); // Aquí solo ponemos la URL del archivo
-          } 
+          }
         } else {
-          console.log("No se encontraron datos de EPS");
+          setIsEpsRegistered(false); // No hay EPS registrada
+          console.log("No se encontraron datos de EPS para el usuario.");
         }
       } catch (error) {
         console.error("Error al cargar los datos del usuario:", error);
@@ -125,7 +122,12 @@ export const EpsFormulario = () => {
         }),
         {
           pending: "Enviando datos...",
-          success: "Datos guardados correctamente",
+          success: {
+            render() {
+              setIsEpsRegistered(true); // Actualiza el estado después de guardar
+              return "Datos guardados correctamente";
+            }
+          },
           error: "Error al guardar los datos",
         }
       );
@@ -133,8 +135,6 @@ export const EpsFormulario = () => {
       console.error("Error al enviar los datos:", error);
     }
   };
-  console.log("Formulario", watch());
-  console.log("Errores", errors); // Verifica los errores del formulario
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">

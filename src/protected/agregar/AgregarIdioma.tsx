@@ -148,8 +148,7 @@ const AgregarIdioma = () => {
             </div>
           </div>
 
-          <div>
-            <InputLabel htmlFor="archivo" value="Archivo" />
+          <div className="col-span-full">
             <AdjuntarArchivo
               id="archivo"
               register={register('archivo')}

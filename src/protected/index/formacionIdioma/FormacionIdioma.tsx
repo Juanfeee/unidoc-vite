@@ -13,16 +13,32 @@ const FormacionIdioma = () => {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const response = await axiosInstance.get('/aspirante/obtener-idiomas')
-        const datos = response.data
-        setIdiomas(datos.idiomas)
+        // 1. Cargar desde caché primero
+        const cached = localStorage.getItem('idiomas');
+        if (cached) {
+          setIdiomas(JSON.parse(cached));
+        }
+  
+        // 2. Obtener datos actualizados del servidor
+        const response = await axiosInstance.get('/aspirante/obtener-idiomas');
+        
+        // 3. Actualizar estado y caché si hay cambios
+        if (response.data?.idiomas) {
+          setIdiomas(response.data.idiomas);
+          localStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
+        }
+  
       } catch (error) {
-        console.error('Error al obtener los datos:', error)
+        console.error('Error al cargar idiomas:', error);
+        // Opcional: Mostrar notificación si falla la conexión
+        if (axios.isAxiosError(error) && !error.response) {
+          toast.warning('Usando datos almacenados localmente');
+        }
       }
-    }
-
-    fetchDatos()
-  }, [])
+    };
+  
+    fetchDatos();
+  }, []);
 
   if (!idiomas) {
     return <div className="flex justify-center items-center h-full">Cargando...</div>

@@ -28,6 +28,7 @@ export const Rut = () => {
 
   const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
 
+  const [isRutRegistered, setIsRutRegistered] = useState(false);
    const {
       register,
       handleSubmit,
@@ -54,23 +55,21 @@ export const Rut = () => {
           });
             const data = response.data.rut;
             if(data){
+              setIsRutRegistered(true);
               setValue("numero_rut", data.numero_rut);
               setValue("razon_social", data.razon_social);
               setValue("tipo_persona", data.tipo_persona);
               setValue("codigo_ciiu", data.codigo_ciiu);
               setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
 
-              if (data.documentos_rut && data.documentos_rut.length > 0) {
-                const archivo = data.documentos_rut[0];
+              if (data.documentos_eps && data.documentos_eps.length > 0) {
+                const archivo = data.documentos_eps[0];
                 setExistingFile({
                   url: archivo.archivo_url,
                   name: archivo.archivo.split("/").pop() || "Archivo existente",
                 });
     
-                // Cargar el archivo en el formulario (pero como no podemos establecer un File directamente, solo lo referenciamos)
-                setValue("archivo", archivo.archivo_url); // Aquí solo ponemos la URL del archivo
               }
-
             }else{
               console.log("No se encontraron datos del RUT")
             }
@@ -91,10 +90,15 @@ export const Rut = () => {
     formData.append("responsabilidades_tributarias", data.responsabilidades_tributarias);
     formData.append("archivo", data.archivo[0]);
 
+    // Agregar `_method` si es actualización
+    if (isRutRegistered) {
+      formData.append("_method", "PUT");
+    }
     const token = Cookies.get("token");
 
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-rut`;
-
+    const url = isRutRegistered
+    ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-rut` // Ruta para actualizar
+    : `${import.meta.env.VITE_API_URL}/aspirante/crear-rut`; // Ruta para crear
     try {
       await toast.promise(
         axios.post(url, formData, {
@@ -105,7 +109,12 @@ export const Rut = () => {
         }),
         {
           pending: "Enviando datos...", 
-          success: "Datos guardados correctamente",
+          success: {
+            render() {
+              setIsRutRegistered(true)
+              return "Datos guardados correctamente";
+            }
+          },
           error: "Error al guardar los datos"
         }
       );

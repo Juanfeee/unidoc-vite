@@ -1,32 +1,54 @@
-import { AcademicCapIcon, PencilSquareIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
-import ModalTrash from '../../../componentes/Modal';
-import Modal from '../../../componentes/Modal';
 import EliminarBoton from '../../../componentes/EliminarBoton';
 
 const PreEstudio = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
-
-
-
-
+  const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get('/aspirante/obtener-estudios');
       setEstudios(response.data.estudios);
+      // Guardar en localStorage
+      localStorage.setItem('estudios', JSON.stringify(response.data.estudios));
     } catch (error) {
       console.error('Error al obtener los datos:', error);
+      // Intentar cargar desde cache si hay error
+      const cached = localStorage.getItem('estudios');
+      if (cached) {
+        setEstudios(JSON.parse(cached));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axiosInstance.delete(`/aspirante/eliminar-estudio/${id}`);
+      // Actualizar estado y localStorage
+      const nuevosEstudios = estudios.filter(e => e.id_estudio !== id);
+      setEstudios(nuevosEstudios);
+      localStorage.setItem('estudios', JSON.stringify(nuevosEstudios));
+    } catch (err) {
+      console.error('Error al eliminar:', err);
     }
   };
 
   useEffect(() => {
+    // Cargar datos iniciales desde cache para mejor UX
+    const cached = localStorage.getItem('estudios');
+    if (cached) {
+      setEstudios(JSON.parse(cached));
+    }
     fetchDatos();
   }, []);
 
-  if (!estudios) {
+  if (loading) {
     return <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">Cargando...</div>;
   }
 
@@ -43,7 +65,7 @@ const PreEstudio = () => {
 
       <div>
         {estudios.length === 0 ? (
-          <p>Aun no hay estudios agregados</p>
+          <p>Aún no hay estudios agregados</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {estudios.map((item) => (
@@ -68,20 +90,12 @@ const PreEstudio = () => {
                 </Link>
                 <EliminarBoton
                   id={item.id_estudio}
-                  onConfirmDelete={async (id) => {
-                    try {
-                      await axiosInstance.delete(`/aspirante/eliminar-estudio/${id}`);
-                      setEstudios(estudios.filter(e => e.id_estudio !== id));
-                    } catch (err) {
-                      console.error('Error al eliminar:', err);
-                    }
-                  }}
+                  onConfirmDelete={handleDelete}
                 />
               </li>
             ))}
           </ul>
         )}
-
       </div>
     </div>
   );

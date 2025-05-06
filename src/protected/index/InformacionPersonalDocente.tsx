@@ -7,24 +7,69 @@ import Cookies from "js-cookie";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
+  const [datos, setDatos] = useState<any>(null);
 
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
+        // 1. Intentar cargar desde localStorage primero
+        const cachedImage = localStorage.getItem('profileImage');
+        if (cachedImage) {
+          setProfileImage(cachedImage);
+        }
+  
+        // 2. Hacer petición al servidor
         const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` }
         });
-
-        // Acceso directo a la URL sin tipo definido
+  
+        // 3. Actualizar estado y localStorage
         const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
-        if (imageUrl) setProfileImage(imageUrl);
-
+        if (imageUrl) {
+          setProfileImage(imageUrl);
+          localStorage.setItem('profileImage', imageUrl);
+        }
+  
       } catch (error) {
         console.error("Error al cargar foto:", error);
+        // Si hay error, se mantiene la imagen de cache (si existía)
       }
     };
+    
     fetchProfileImage();
   }, []);
+
+  // Cargar los datos del docente al cargar el componente
+  useEffect(() => {
+    const fetchDatos = async () => {
+      try {
+        // 1. Intentar cargar desde localStorage primero
+        const cachedData = localStorage.getItem('userData');
+        if (cachedData) {
+          setDatos(JSON.parse(cachedData));
+        }
+  
+        // 2. Hacer petición al servidor
+        const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
+        
+        // 3. Actualizar estado y localStorage
+        if (response.data?.user) {
+          setDatos(response.data.user);
+          localStorage.setItem('userData', JSON.stringify(response.data.user));
+        }
+  
+      } catch (error) {
+        console.error('Error al obtener los datos:', error);
+        // Si hay error, se mantienen los datos de cache (si existían)
+      }
+    };
+  
+    fetchDatos();
+  }, []);
+
+  if (!datos) {
+    return <div className="grid bg-white py-12 px-8 rounded-xl gap-7 items-center justify-center font-black"><span>Cargando...</span></div>;
+  }
   return (
     <>
       <div className="flex flex-col w-full rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative">
@@ -46,7 +91,7 @@ const InformacionPersonalDocente = () => {
                 }}
               />
               <Texto
-                value="Aurora Morales Gómez"
+                value={`${datos.primer_nombre} ${datos?.segundo_nombre} ${datos.primer_apellido} ${datos?.segundo_apellido}`}
               />
             </div>
             <div className="flex sm:justify-end">
@@ -63,7 +108,7 @@ const InformacionPersonalDocente = () => {
               />
               <Texto
                 className="break-words"
-                value="auroramorales@uniautonoma.edu.co"
+                value={datos.email}
               />
             </div>
             <div>
