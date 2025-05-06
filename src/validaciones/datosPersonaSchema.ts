@@ -1,4 +1,6 @@
 import { z } from "zod";
+// Regex sin emojis
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 //definimos los tipos que vamos a usar
 
 //definimos el tipo de los datos
@@ -12,12 +14,36 @@ export const userSchema = z.object({
   tipo_identificacion: z
     .string()
     .min(1, { message: "Seleccione un tipo de identificación" }),
-  numero_identificacion: z.string().min(1, { message: "Campo vacio" }),
-  estado_civil: z.string().min(1, { message: "Seleccione un estado civil" }),
-  primer_nombre: z.string().min(1, { message: "Campo vacio" }),
-  segundo_nombre: z.string().min(1, { message: "Campo vacio" }),
-  primer_apellido: z.string().min(1, { message: "Campo vacio" }),
-  segundo_apellido: z.string().min(1, { message: "Campo vacio" }),
+
+  numero_identificacion: z
+    .string()
+    .min(1, { message: "Campo vacio" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
+  estado_civil: z
+    .string()
+    .min(1, { message: "Seleccione un estado civil" }),
+  
+  primer_nombre: z
+    .string()
+    .min(1, { message: "Campo vacio" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
+  segundo_nombre: z
+    .string()
+    .min(1, { message: "Campo vacio" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
+  primer_apellido: z
+    .string()
+    .min(1, { message: "Campo vacio" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
+  segundo_apellido: z
+    .string()
+    .min(1, { message: "Campo vacio" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
   fecha_nacimiento: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -50,4 +76,6 @@ export const userSchema = z.object({
         message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
       }
     ),
+
+
 });

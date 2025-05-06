@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
+
 //definimos los tipos que vamos a usar
 
 //validacion de los datos
@@ -11,11 +13,17 @@ export const studySchema = z.object({
     errorMap: () => ({ message: "Seleccione una opcion" }),
   }),
 
-  institucion: z.string().min(7, { message: "Campo vacio" }).max(100, {
-    message: "Campo demasiado largo"}),
+  institucion: z
+    .string()
+    .min(7, { message: "Campo vacio" })
+    .max(100, {message: "Campo demasiado largo"})
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
-  titulo_estudio: z.string().min(7, { message: "Campo vacio" }).max(100, {
-    message: "Campo demasiado largo"}),
+  titulo_estudio: z
+    .string()
+    .min(7, { message: "Campo vacio" })
+    .max(100, { message: "Campo demasiado largo"})
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   titulo_convalidado: z.enum(["Si", "No"], {
     errorMap: () => ({ message: "Seleccione una opcion" }),

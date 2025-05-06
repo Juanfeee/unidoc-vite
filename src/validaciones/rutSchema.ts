@@ -1,16 +1,19 @@
 import { z } from "zod";
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
 export const rutSchema = z.object({
 
   numero_rut: z
     .string()
     .min(7, { message: "Mínimo 7 caracteres" })
-    .max(100, { message: "Máximo 100 caracteres" }),
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   razon_social: z
     .string()
     .min(7, { message: "Mínimo 7 caracteres" })
-    .max(100, { message: "Máximo 100 caracteres" }),
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   tipo_persona: z
     .string()
@@ -23,7 +26,8 @@ export const rutSchema = z.object({
   responsabilidades_tributarias: z
     .string()
     .min(7, { message: "Mínimo 7 caracteres" })
-    .max(100, { message: "Máximo 100 caracteres" }),
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
   
     archivo: z
     .custom<FileList>((val) => val instanceof FileList && val.length > 0, {

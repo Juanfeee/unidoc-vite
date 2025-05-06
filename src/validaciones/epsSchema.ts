@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-
+// Regex que no permite emojis
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
 export const epsSchema = z.object({
   nombre_eps: z
     .string()
     .min(7, { message: "Mínimo 7 caracteres" })
-    .max(100, { message: "Máximo 100 caracteres" }),
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   tipo_afiliacion: z
     .string()
@@ -21,8 +23,11 @@ export const epsSchema = z.object({
   numero_afiliado: z
     .string()
     .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" })
     .optional()
     .or(z.literal("")),
+    
+    
 
   fecha_afiliacion_efectiva: z
     .string({ invalid_type_error: "Esa no es una fecha" })

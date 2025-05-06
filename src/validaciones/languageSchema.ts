@@ -1,11 +1,23 @@
 import { z } from "zod";
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
 export const languageSchema = z.object({
-  idioma: z.string().min(1, { message: "Campo vacío" }).max(50, {
-    message: "Máximo 50 caracteres"}),
-  institucion_idioma: z.string().min(1, { message: "Campo vacío" }).max(50, {
-    message: "Máximo 50 caracteres"}),
-  nivel: z.string().min(1, { message: "Seleccione un nivel" }),
+  idioma: z
+    .string()
+    .min(1, { message: "Campo vacío" })
+    .max(50, {message: "Máximo 50 caracteres"})
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+  institucion_idioma: z
+    .string()
+    .min(1, { message: "Campo vacío" })
+    .max(50, {message: "Máximo 50 caracteres"})
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
+  nivel: z
+    .string()
+    .min(1, { message: "Seleccione un nivel" }),
+  
   fecha_certificado: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -13,6 +25,7 @@ export const languageSchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
+
   archivo: z
     .custom<FileList>((val) => val instanceof FileList && val.length > 0, {
       message: "Debes subir un archivo",

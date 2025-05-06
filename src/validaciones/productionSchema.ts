@@ -54,8 +54,8 @@ export const mappeoTipoProduccion: { [key in TipoProduccion]: string } = {
 };
 
 export const productionSchema = z.object({
-  tipo_produccion: z.enum(tipo_produccion, {
-    errorMap: () => ({ message: "Seleccione una opcion" }),
+  tipo_produccion: z
+  .enum(tipo_produccion, {errorMap: () => ({ message: "Seleccione una opcion" }),
   }),
   titulo: z.string().nonempty({ message: "El titulo es requerido" }),
   tipo_ambito_divulgacion: z.string().nonempty({ message: "El ambito de divulgacion es requerido" }),

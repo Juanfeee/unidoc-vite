@@ -1,18 +1,48 @@
 import { z } from "zod";
 
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
+
 
 export const registerSchema = z
   .object({
 
-    numero_identificacion: z.string().min(1, { message: "Campo vacio" }).max(50, { message: "El número de identificación no puede tener más de 50 caracteres" }),
-    primer_nombre: z.string().min(1, { message: "Campo vacio" }).max(100, { message: "El nombre no puede tener más de 100 caracteres" }),
-    primer_apellido: z.string().min(1, { message: "Campo vacio" }),
-    email: z.string().email({ message: "Correo no valido" }).max(100, { message: "El correo no puede tener más de 100 caracteres" }),
+    numero_identificacion: z
+      .string()
+      .min(1, { message: "Campo vacio" })
+      .max(50, { message: "El número de identificación no puede tener más de 50 caracteres" })
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+    primer_nombre: z
+      .string()
+      .min(1, { message: "Campo vacio" })
+      .max(100, { message: "El nombre no puede tener más de 100 caracteres" })
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+    primer_apellido: z
+      .string()
+      .min(1, { message: "Campo vacio" })
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+    segundo_nombre: z
+      .string()
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+    
+    segundo_apellido: z
+      .string()
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+    email: z
+      .string().email({ message: "Correo no valido" })
+      .max(100, { message: "El correo no puede tener más de 100 caracteres" }),
+      
     password: z
       .string()
-      .min(8, { message: "La contraseña debe tener al menos 8 caracteres" }),
+      .min(8, { message: "La contraseña debe tener al menos 8 caracteres" })
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
       password_confirmation: z
       .string()
+      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" })
       .min(1, { message: "La confirmación de contraseña es requerida" }),
 
       fecha_nacimiento: z

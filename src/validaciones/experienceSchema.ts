@@ -1,9 +1,24 @@
 import { z } from 'zod';
 
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
+
 export const experienciaSchema = z.object({
-  tipo_experiencia: z.string().min(1, { message: "Seleccione un tipo de experiencia" }),
-  institucion_experiencia: z.string().min(3, { message: "Campo vacío" }). max(100, { message: "Máximo 100 caracteres" }),
-  cargo: z.string().min(3, { message: "Campo vacío" }).max(100, { message: "Máximo 100 caracteres" }),
+
+  tipo_experiencia: z
+    .string().min(1, { message: "Seleccione un tipo de experiencia"}),
+  
+
+  institucion_experiencia: z
+    .string().min(3, { message: "Campo vacío" })
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+
+  cargo: z
+    .string()
+    .min(3, { message: "Campo vacío" })
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+  
   trabajo_actual: z.enum(["Si", "No"], {
     errorMap: () => ({ message: "Seleccione una opción" })
   }),
