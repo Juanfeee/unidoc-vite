@@ -57,15 +57,18 @@ export const InformacionContacto = () => {
         });
 
           const data = response.data.informacion_contacto;
-          setValue("categoria_libreta_militar", data.categoria_libreta_militar);
-          setValue("numero_libreta_militar", data.numero_libreta_militar);
-          setValue("numero_distrito_militar", data.numero_distrito_militar);
-          setValue("direccion_residencia", data.direccion_residencia);
-          setValue("barrio", data.barrio);
-          setValue("telefono_movil", data.telefono_movil);
-          setValue("celular_alternativo", data.celular_alternativo);
-          setValue("correo_alternativo", data.correo_alternativo);
-
+          if(data) {
+            setValue("categoria_libreta_militar", data.categoria_libreta_militar);
+            setValue("numero_libreta_militar", data.numero_libreta_militar);
+            setValue("numero_distrito_militar", data.numero_distrito_militar);
+            setValue("direccion_residencia", data.direccion_residencia);
+            setValue("barrio", data.barrio);
+            setValue("telefono_movil", data.telefono_movil);
+            setValue("celular_alternativo", data.celular_alternativo);
+            setValue("correo_alternativo", data.correo_alternativo);
+          }else{
+            console.log("No se encontraron datos de contacto para el usuario.");
+          }
       } catch (error) {
         console.error(error)
       }
