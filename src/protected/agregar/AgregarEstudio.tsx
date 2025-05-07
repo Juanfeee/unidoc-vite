@@ -71,7 +71,6 @@ const AgregarEstudio = () => {
     setIsSubmitting(true); // 1. Desactivar el botón al iniciar el envío
     try {
       const formData = new FormData();
-      formData.append("_method", "PUT");
       formData.append("tipo_estudio", data.tipo_estudio);
       formData.append("graduado", data.graduado);
       formData.append("institucion", data.institucion);
