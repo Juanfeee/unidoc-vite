@@ -115,6 +115,14 @@ const Header = () => {
                   Datos personales
                 </Link>
               </li>
+              <li className='h-full flex items-center justify-center'>
+                <Link
+                  className={`flex items-center justify-center hover:border-b-2 ${pathname === "/normativas" ? "border-b-2 border-blue-500" : ""}`}
+                  to="/normativas"
+                >
+                  Normativas
+                </Link>
+              </li>
 
               <li className="relative h-full flex items-center" ref={dropdownRef}>
                 <div
