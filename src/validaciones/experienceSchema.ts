@@ -23,9 +23,6 @@ export const experienciaSchema = z.object({
     errorMap: () => ({ message: "Seleccione una opción" })
   }),
   intensidad_horaria: z.string().min(1, { message: "Campo vacío" }),
-  experiencia_radio: z.enum(["Si", "No"], {
-    errorMap: () => ({ message: "Seleccione una opción" })
-  }),
   fecha_inicio: z
     .string({
       invalid_type_error: "Esa no es una fecha válida",

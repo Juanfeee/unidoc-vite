@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axios from "axios";
@@ -24,6 +24,7 @@ type Inputs = {
 };
 
 const EditarIdioma = () => {
+    const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
     const { id } = useParams();  // Obtener el ID del idioma a través de la URL
     const {
         register,
@@ -39,32 +40,35 @@ const EditarIdioma = () => {
     console.log("Formulario", watch());
 
     useEffect(() => {
-        const fetchIdioma = async () => {
-            try {
-                const token = Cookies.get("token");
-                const { data } = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-idioma/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
 
-                // Verificar los datos que llegan desde la API
-                console.log("Datos del idioma:", data);
+        const URL = `${import.meta.env.VITE_API_URL}`; // URL para obtener el idioma específico
 
-                setValue('idioma', data.idioma.idioma);
-                setValue('institucion_idioma', data.idioma.institucion_idioma);
-                setValue('nivel', data.idioma.nivel);
-                setValue('fecha_certificado', data.idioma.fecha_certificado || '');
+        axiosInstance.get(`${URL}/aspirante/obtener-idioma/${id}`, {
+            headers: {
+                Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+        })
+            .then((response) => {
+                const data = response.data.idioma;
+                console.log("idioma", data);
+                setValue('idioma', data.idioma);
+                setValue('institucion_idioma', data.institucion_idioma);
+                setValue('nivel', data.nivel_idioma);
+                setValue('fecha_certificado', data.fecha_certificado);
 
-                // Verifica si los valores están correctos
-                console.log(watch());
-            } catch (error) {
-                toast.error("Error al cargar los datos del idioma.");
-            }
-        };
-
-        fetchIdioma();
-    }, [id, setValue, watch]);
+                if (data.documentos_idioma
+                    && data.documentos_idioma.length > 0) {
+                    const archivo = data.documentos_idioma[0];
+                    setExistingFile({
+                        url: archivo.archivo_url,
+                        name: archivo.archivo.split("/").pop() || "Archivo existente",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }, [setValue])
 
     const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
         const formData = new FormData();
@@ -187,6 +191,11 @@ const EditarIdioma = () => {
                             register={register('archivo')}
                         />
                         <InputErrors errors={errors} name="archivo" />
+                        {existingFile && (
+                            <div className="text-sm text-gray-700 mt-2">
+                                <p>Archivo cargado: <a href={existingFile.url} target="_blank" className="text-blue-600 underline">{existingFile.name}</a></p>
+                            </div>
+                        )}
                     </div>
                     <div className='flex justify-center col-span-full' >
                         <ButtonPrimary value='Agregar estudio' />

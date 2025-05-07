@@ -67,12 +67,11 @@ const AgregarEstudio = () => {
   }, [watch('titulo_convalidado'), setValue]);
 
   // Función para manejar el envío del formulario
-
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true); // 1. Desactivar el botón al iniciar el envío
-    
     try {
       const formData = new FormData();
+      formData.append("_method", "PUT");
       formData.append("tipo_estudio", data.tipo_estudio);
       formData.append("graduado", data.graduado);
       formData.append("institucion", data.institucion);
@@ -84,7 +83,7 @@ const AgregarEstudio = () => {
       formData.append("titulo_estudio", data.titulo_estudio);
       formData.append("fecha_inicio", data.fecha_inicio);
       formData.append("fecha_fin", data.fecha_fin || '');
-      formData.append("archivo", data.archivo[0]);
+      formData.append("archivo", data.archivo[0] || '');
   
       const token = Cookies.get("token");
       const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-estudio`;
@@ -136,7 +135,7 @@ const AgregarEstudio = () => {
       setIsSubmitting(false);
     }
   };
-
+  //mostrar el formulario en consola
 
 
   return (

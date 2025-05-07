@@ -85,7 +85,9 @@ const Configuracion = () => {
   const handleDeleteProfileImage = async () => {
     if (!currentProfileImage) return;
     setIsDeleting(true);
-
+    
+    //borrar del localStorage
+    localStorage.removeItem("profileImage");
     try {
       await toast.promise(
         axiosInstance.delete(`${import.meta.env.VITE_API_URL}/aspirante/eliminar-foto-perfil`, {

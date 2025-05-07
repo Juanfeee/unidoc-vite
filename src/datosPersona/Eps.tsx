@@ -22,7 +22,7 @@ type Inputs = {
   fecha_finalizacion_afiliacion: string;
   tipo_afiliado: string;
   numero_afiliado: string;
-  archivo: FileList | string;
+  archivo?: FileList | string;
 };
 
 export const EpsFormulario = () => {
@@ -58,7 +58,6 @@ export const EpsFormulario = () => {
         });
 
         const data = response.data.eps;
-        console.log("Datos de EPS:", data); // Verifica los datos que llegan desde la API
         if (data) {
           setIsEpsRegistered(true); // Ya existe una EPS registrada
           setValue("tipo_afiliacion", data.tipo_afiliacion || "");
@@ -99,13 +98,15 @@ export const EpsFormulario = () => {
     formData.append("fecha_finalizacion_afiliacion", data.fecha_finalizacion_afiliacion);
     formData.append("tipo_afiliado", data.tipo_afiliado);
     formData.append("numero_afiliado", data.numero_afiliado);
-    formData.append("archivo", data.archivo instanceof FileList ? data.archivo[0] : data.archivo); // Solo el primer archivo si es un FileList
 
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
     // Agregar `_method` si es actualización
     if (isEpsRegistered) {
       formData.append("_method", "PUT");
     }
-
+    console.log("Datos enviados:", data);
     const token = Cookies.get("token");
     const url = isEpsRegistered
       ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-eps` // Ruta para actualizar

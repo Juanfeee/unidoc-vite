@@ -88,50 +88,60 @@ const Registro = () => {
   
     // Agrega campos adicionales si es necesario
     formData.municipio_id = 1;
-    try {
-      // await es necesario para esperar la respuesta de la API antes de continuar
-      await axios.post(url, formData, {
-        //Cabeceras de la peticion
-        headers: {
-          'Content-Type': 'application/json',
+  
+    const registroPromise = axios.post(url, formData, {
+      // Cabeceras de la petición
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 10000,
+    });
+  
+    // Manejo de la respuesta usando toast.promise
+    toast.promise(
+      registroPromise, {
+        pending: "Registrando... Por favor espera.",
+        success: {
+          render({ data }) {
+            // Si la respuesta es exitosa, redirigimos y mostramos el mensaje
+            return "¡Bienvenido! Redirigiendo...";
+          },
+          autoClose: 1000,
+          onClose: () => navigate("/"), // Redirige a la página principal
         },
-        timeout: 10000,
-      });
-
-      toast.success("¡Bienvenido! Redirigiendo...", {
-        autoClose: 1000,
-        position: "top-center",
-        onClose: () => navigate("/"),
-      });
-    } catch (error) {
-      let errorMessage = "Error al registrar";
-
-      if (axios.isAxiosError(error)) {
-        if (error.code === 'ECONNABORTED') {
-          errorMessage = "Tiempo de espera agotado. Intente nuevamente";
-        } else if (error.response) {
-          switch (error.response.status) {
-            case 422:
-              errorMessage = "Email ya existe";
-              break;
-            case 500:
-              errorMessage = "Error en el servidor";
-              break;
-            default:
-              errorMessage = "Error desconocido";
-          }
-        } else {
-          errorMessage = "Error desconocido";
+        error: {
+          render({ data }) {
+            let errorMessage = "Error al registrar";
+        
+            if (axios.isAxiosError(data)) {
+              if (data.code === 'ECONNABORTED') {
+                errorMessage = "Tiempo de espera agotado. Intente nuevamente";
+              } else if (data.response) {
+                switch (data.response.status) {
+                  case 422:
+                    errorMessage = "Email ya existe";
+                    break;
+                  case 500:
+                    errorMessage = `Error en el servidor: ${data.response.data?.message || "Error desconocido"}`;
+                    break;
+                  default:
+                    errorMessage = "Error desconocido";
+                }
+              } else {
+                errorMessage = "Error desconocido";
+              }
+            }
+        
+            return errorMessage;
+          },
+          autoClose: 5000,
         }
       }
-
-      toast.error(errorMessage, {
-        position: "top-right",
-        autoClose: 5000
-      });
-    }
-    console.log(formData);
+    );
+  
+    console.log(formData); // Esto se puede eliminar si no es necesario
   };
+  
 
 
   return (

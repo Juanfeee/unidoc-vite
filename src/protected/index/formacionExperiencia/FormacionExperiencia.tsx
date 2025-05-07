@@ -69,6 +69,21 @@ const FormacionExperiencia = () => {
                   <p>{item.cargo}</p>
                   <p>{item.institucion_experiencia}</p>
                   <p>{item.fecha_inicio} / {item.fecha_finalizacion || 'Actual'}</p>
+                  {
+                      item.documentos_experiencia?.[0]?.estado === "pendiente" && (
+                        <p className='flex'>Estado:  <span> Pendiente</span></p>
+                      )
+                    }
+                    {
+                      item.documentos_experiencia?.[0]?.estado === "aprobado" && (
+                        <p className="text-green-500">Estado: {item.documentos_experiencia?.[0]?.estado}</p>
+                      )
+                    }
+                    {
+                      item.documentos_experiencia?.[0]?.estado === "rechazado" && (
+                        <p className="text-red-500">Estado: {item.documentos_experiencia?.[0]?.estado}</p>
+                      )
+                    }
                 </div>
               </li>
             ))}

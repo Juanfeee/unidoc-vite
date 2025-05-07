@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
+import { toast } from 'react-toastify'
 
 const FormacionIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([])
@@ -18,25 +19,22 @@ const FormacionIdioma = () => {
         if (cached) {
           setIdiomas(JSON.parse(cached));
         }
-  
+
         // 2. Obtener datos actualizados del servidor
         const response = await axiosInstance.get('/aspirante/obtener-idiomas');
-        
+
         // 3. Actualizar estado y caché si hay cambios
         if (response.data?.idiomas) {
           setIdiomas(response.data.idiomas);
           localStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
         }
-  
+
       } catch (error) {
         console.error('Error al cargar idiomas:', error);
         // Opcional: Mostrar notificación si falla la conexión
-        if (axios.isAxiosError(error) && !error.response) {
-          toast.warning('Usando datos almacenados localmente');
-        }
       }
     };
-  
+
     fetchDatos();
   }, []);
 
@@ -73,6 +71,21 @@ const FormacionIdioma = () => {
                   <p>{item.institucion_idioma}</p>
                   <p>Nivel: {item.nivel}</p>
                   <p>Certificado: {item.fecha_certificado}</p>
+                  {
+                    item.documentos_idioma?.[0]?.estado === "pendiente" && (
+                      <p className='flex'>Estado:  <span> Pendiente</span></p>
+                    )
+                  }
+                  {
+                    item.documentos_idioma?.[0]?.estado === "aprobado" && (
+                      <p className="text-green-500">Estado: {item.documentos_idioma?.[0]?.estado}</p>
+                    )
+                  }
+                  {
+                    item.documentos_idioma?.[0]?.estado === "rechazado" && (
+                      <p className="text-red-500">Estado: {item.documentos_idioma?.[0]?.estado}</p>
+                    )
+                  }
                 </div>
               </li>
             ))}

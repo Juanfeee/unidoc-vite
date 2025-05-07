@@ -30,24 +30,25 @@ export const rutSchema = z.object({
     .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
   
     archivo: z
-    .custom<FileList>((val) => val instanceof FileList && val.length > 0, {
+    .custom<FileList | undefined>((val) => {
+      // Si no hay archivo, es válido (opcional)
+      if (!(val instanceof FileList) || val.length === 0) return true;
+      return true;
+    }, {
       message: "Debes subir un archivo",
     })
-    .refine(
-      (fileList) =>
-        fileList instanceof FileList &&
-        fileList[0].size <= 2 * 1024 * 1024,
-      {
-        message: "Archivo demasiado grande (máx 2MB)",
-      }
-    )
-    .refine(
-      (fileList) =>
-        fileList instanceof FileList &&
-        ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type),
-      {
-        message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
-      }
-    )
-   
+    .refine((fileList) => {
+      if (!(fileList instanceof FileList) || fileList.length === 0) return true;
+      return fileList[0].size <= 2 * 1024 * 1024;
+    }, {
+      message: "Archivo demasiado grande (máx 2MB)",
+    })
+    .refine((fileList) => {
+      if (!(fileList instanceof FileList) || fileList.length === 0) return true;
+      return ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type);
+    }, {
+      message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
+    })
+    .optional(),
+  
 });

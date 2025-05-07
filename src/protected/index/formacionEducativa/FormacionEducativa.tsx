@@ -1,10 +1,9 @@
-import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, ClockIcon  } from '@heroicons/react/24/outline'
 import { PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
-
 
 const FormacionEducativa = () => {
 
@@ -18,22 +17,23 @@ const FormacionEducativa = () => {
       if (cached) {
         setEstudios(JSON.parse(cached));
       }
-  
+
       // 2. Hacer petición al servidor
       const response = await axiosInstance.get('/aspirante/obtener-estudios');
-      
+
+
       // 3. Actualizar estado y localStorage
       if (response.data?.estudios) {
         setEstudios(response.data.estudios);
         localStorage.setItem('estudios', JSON.stringify(response.data.estudios));
       }
-  
+
     } catch (error) {
       console.error('Error al cargar estudios:', error);
       // Si hay error, se mantienen los datos de cache (si existían)
     }
   };
-  
+
   // Llamar la función cuando el componente se monta
   useEffect(() => {
     fetchDatos();
@@ -43,6 +43,10 @@ const FormacionEducativa = () => {
     return <div className="flex justify-center items-center h-full">Cargando...</div>;
   }
 
+  // estado documento
+
+
+  console.log("estudios", estudios)
   return (
     <>
       <div className="flex flex-col gap-4 h-full max-w-[400px]">
@@ -73,6 +77,22 @@ const FormacionEducativa = () => {
                     <p>{item.titulo_estudio}</p>
                     <p>{item.institucion}</p>
                     <p>{item.fecha_graduacion}</p>
+
+                    {
+                      item.documentos_estudio?.[0]?.estado === "pendiente" && (
+                        <p className='flex'>Estado:  <span> Pendiente</span></p>
+                      )
+                    }
+                    {
+                      item.documentos_estudio?.[0]?.estado === "aprobado" && (
+                        <p className="text-green-500">Estado: {item.documentos_estudio?.[0]?.estado}</p>
+                      )
+                    }
+                    {
+                      item.documentos_estudio?.[0]?.estado === "rechazado" && (
+                        <p className="text-red-500">Estado: {item.documentos_estudio?.[0]?.estado}</p>
+                      )
+                    }
                   </div>
                 </li>
               ))}

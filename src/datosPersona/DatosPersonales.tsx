@@ -25,7 +25,7 @@ export type Inputs = {
   fecha_nacimiento: string;
   genero: string;
   estado_civil: string;
-  archivo: FileList;
+  archivo?: FileList;
   tipo_identificacion: string;
   numero_identificacion: string;
 };
@@ -73,19 +73,16 @@ export const DatosPersonales = () => {
       setValue("genero", data.genero || "");
       setValue("estado_civil", data.estado_civil || "");
 
-
+      
       if (data.documentos_user && data.documentos_user.length > 0) {
         const archivo = data.documentos_user[0];
         setExistingFile({
           url: archivo.archivo_url,
           name: archivo.archivo.split("/").pop() || "Archivo existente",
         });
-
-        // Cargar el archivo en el formulario (pero como no podemos establecer un File directamente, solo lo referenciamos)
-        setValue("archivo", archivo.archivo_url); // Aquí solo ponemos la URL del archivo
       }
 
-
+    console.log("Datos del usuario:", data);
     });
   }, [setValue]);
 
@@ -104,7 +101,11 @@ export const DatosPersonales = () => {
     formData.append("fecha_nacimiento", data.fecha_nacimiento);
     formData.append("genero", data.genero);
     formData.append("estado_civil", data.estado_civil);
-    formData.append("archivo", data.archivo[0]);
+
+
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
 
     const token = Cookies.get("token");
 
@@ -259,6 +260,7 @@ export const DatosPersonales = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
+            
           />
           <InputErrors errors={errors} name="archivo" />
         </div>
