@@ -2,7 +2,7 @@ import { Texto } from "../../componentes/formularios/Texto";
 
 const InformacionNormativas = () => {
   return (
-    <div className="flex flex-col w-full rounded-md lg:w-[1200px] xl:w-[1200px] 2xl:w-[1200px] m-auto relative">
+    <div className="flex flex-col w-full rounded-md  m-auto relative">
       <div className="grid grid-cols-1 bg-white py-12 px-8 rounded-xl gap-7 shadow-sm">
         {/* Encabezado con línea divisoria */}
         <div className="flex flex-col md:flex-row gap-y-2 col-span-full justify-between border-b border-gray-200 pb-6">
