@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
+import { toast } from 'react-toastify'
 
 const FormacionIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([])

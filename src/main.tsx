@@ -18,6 +18,7 @@ import PreIdioma from './protected/editar/idioma/pre-idioma.tsx'
 import EditarIdioma from './protected/editar/idioma/EditarIdioma.tsx'
 import EditarExperiencia from './protected/editar/experiencia/EditarExperiencia.tsx'
 import PreExperiencia from './protected/editar/experiencia/pre-experiencia.tsx'
+import Normativas from './protected/normativas/page.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
@@ -32,6 +33,7 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
           <Route path="index" element={<Index />} />
           <Route path="datos-personales" element={<InformacionPersona />} />
+          <Route path="normativas" element={<Normativas />} />
           <Route path="configuracion" element={< Configuracion />} />
           <Route path="agregar">
             <Route index element={<span>No found</span>} />
