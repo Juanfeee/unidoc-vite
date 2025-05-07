@@ -46,7 +46,6 @@ const FormacionEducativa = () => {
   // estado documento
 
 
-  console.log("estudios", estudios)
   return (
     <>
       <div className="flex flex-col gap-4 h-full max-w-[400px]">
