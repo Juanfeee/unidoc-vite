@@ -18,32 +18,44 @@ export const userSchema = z.object({
   numero_identificacion: z
     .string()
     .min(1, { message: "Campo vacio" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
-  estado_civil: z
-    .string()
-    .min(1, { message: "Seleccione un estado civil" }),
-  
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
+  estado_civil: z.string().min(1, { message: "Seleccione un estado civil" }),
+
   primer_nombre: z
     .string()
     .min(1, { message: "Campo vacio" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
   segundo_nombre: z
     .string()
     .min(1, { message: "Campo vacio" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+  municipio_id: z
+    .number({ invalid_type_error: "El municipio es requerido" })
+    .int("El municipio debe ser un entero")
+    .positive("Selecciona un municipio válido"),
+
   primer_apellido: z
     .string()
     .min(1, { message: "Campo vacio" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
   segundo_apellido: z
     .string()
     .min(1, { message: "Campo vacio" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
   fecha_nacimiento: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -56,26 +68,37 @@ export const userSchema = z.object({
     errorMap: () => ({ message: "El genero no es valido" }),
   }),
   archivo: z
-  .custom<FileList | undefined>((val) => {
-    // Si no hay archivo, es válido (opcional)
-    if (!(val instanceof FileList) || val.length === 0) return true;
-    return true;
-  }, {
-    message: "Debes subir un archivo",
-  })
-  .refine((fileList) => {
-    if (!(fileList instanceof FileList) || fileList.length === 0) return true;
-    return fileList[0].size <= 2 * 1024 * 1024;
-  }, {
-    message: "Archivo demasiado grande (máx 2MB)",
-  })
-  .refine((fileList) => {
-    if (!(fileList instanceof FileList) || fileList.length === 0) return true;
-    return ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type);
-  }, {
-    message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
-  })
-  .optional(),
-
-
+    .custom<FileList | undefined>(
+      (val) => {
+        // Si no hay archivo, es válido (opcional)
+        if (!(val instanceof FileList) || val.length === 0) return true;
+        return true;
+      },
+      {
+        message: "Debes subir un archivo",
+      }
+    )
+    .refine(
+      (fileList) => {
+        if (!(fileList instanceof FileList) || fileList.length === 0)
+          return true;
+        return fileList[0].size <= 2 * 1024 * 1024;
+      },
+      {
+        message: "Archivo demasiado grande (máx 2MB)",
+      }
+    )
+    .refine(
+      (fileList) => {
+        if (!(fileList instanceof FileList) || fileList.length === 0)
+          return true;
+        return ["application/pdf", "image/png", "image/jpeg"].includes(
+          fileList[0].type
+        );
+      },
+      {
+        message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
+      }
+    )
+    .optional(),
 });

@@ -45,6 +45,11 @@ export const registerSchema = z
       .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" })
       .min(1, { message: "La confirmación de contraseña es requerida" }),
 
+      municipio_id: z
+      .number({ invalid_type_error: "El municipio es requerido" })
+      .int("El municipio debe ser un entero")
+      .positive("Selecciona un municipio válido"),
+
       fecha_nacimiento: z
       .string({
         invalid_type_error: "Esa no es una fecha",

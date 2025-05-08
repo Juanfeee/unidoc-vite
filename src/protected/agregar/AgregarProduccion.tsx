@@ -6,15 +6,15 @@ import { productionSchema } from "../../validaciones/productionSchema";
 import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
 import { Link } from "react-router";
 import { InputLabel } from "../../componentes/formularios/InputLabel";
-import { SelectForm } from "../../componentes/formularios/SelectForm";
 import InputErrors from "../../componentes/formularios/InputErrors";
 import TextInput from "../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
+import { SelectFormProduccionAcademica } from "../../componentes/formularios/SelectFormProduccion";
 
 type Inputs = {
-  tipo_produccion: string;
+  productos_academicos: number;
   titulo: string;
-  tipo_ambito_divulgacion: string;
+  ambitos_divulgacion: string;
   numero_autores: string;
   medio_divulgacion: string;
   fecha_divulgacion: string;
@@ -28,7 +28,7 @@ const AgregarProduccion = () => {
     formState: { errors },
   } = useForm<Inputs>({ resolver: zodResolver(productionSchema) });
 
-  console.log("AgregarProduccion", watch());
+  const produccionSeleccionado = watch("productos_academicos");
   return (
     <>
       <form
@@ -50,24 +50,23 @@ const AgregarProduccion = () => {
           </div>
           <div className="flex flex-col sm:grid sm:grid-cols-2 sm:col-span-full gap-4">
             <div className="flex flex-col w-full">
-              <InputLabel htmlFor="tipo_produccion" value="Tipo de estudio" />
-              <SelectForm
-                id="tipo_produccion"
-                register={register("tipo_produccion")}
-              />
-              <InputErrors errors={errors} name="tipo_produccion" />
+              <InputLabel htmlFor="productos_academicos" value="Productos academicos" />
+              <SelectFormProduccionAcademica
+                  id="productos_academicos"
+                  register={register("productos_academicos")}
+                  url="productos_academicos"
+                />
+              <InputErrors errors={errors} name="productos_academicos" />
             </div>
-            <div className="flex flex-col w-full">
-              <InputLabel
-                htmlFor="tipo_ambito_divulgacion"
-                value="Ambito divulgación"
+            <div>
+              <InputLabel htmlFor="ambito_divulgacion" value="Ambito de divulgación" />
+              <SelectFormProduccionAcademica
+                id="ambitos_divulgacion"
+                register={register("ambitos_divulgacion")}
+                parentId={produccionSeleccionado}
+                url="ambitos_divulgacion"
               />
-              <TextInput
-                placeholder="Ambito divulgacion"
-                id="tipo_ambito_divulgacion"
-                {...register("tipo_ambito_divulgacion")}
-              />
-              <InputErrors errors={errors} name="tipo_ambito_divulgacion" />
+              <InputErrors errors={errors} name="ambitos_divulgacion" />
             </div>
           </div>
 

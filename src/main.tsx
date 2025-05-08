@@ -20,6 +20,7 @@ import EditarExperiencia from './protected/editar/experiencia/EditarExperiencia.
 import PreExperiencia from './protected/editar/experiencia/pre-experiencia.tsx'
 import AgregarAptitudes from './protected/agregar/AgregarAptitudes.tsx'
 import Normativas from './protected/normativas/page.tsx'
+import AgregarProduccion from './protected/agregar/AgregarProduccion.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -42,6 +43,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="estudio" element={<AgregarEstudio />} />
             <Route path="experiencia" element={<AgregarExperiencia />} />
             <Route path="idioma" element={<AgregarIdioma />} />
+            <Route path="produccion" element={<AgregarProduccion/>} />
             <Route path="aptitudes" element={<AgregarAptitudes/>} />
           </Route>
 

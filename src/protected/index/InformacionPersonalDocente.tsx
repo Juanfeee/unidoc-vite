@@ -10,95 +10,119 @@ import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
-  const [datos, setDatos] = useState<any>(null);
-  const [aptitudes, setAptitudes] = useState<any>(null);
+  const [datos, setDatos] = useState<any>();
+  const [municipio, setMunicipio] = useState<any[]>([]);
+  const [aptitudes, setAptitudes] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      try {
-        // 1. Intentar cargar desde localStorage primero
-        const cachedImage = localStorage.getItem('profileImage');
-        if (cachedImage) {
-          setProfileImage(cachedImage);
-        }
-
-        // 2. Hacer petición al servidor
-        const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-        });
-
-        // 3. Actualizar estado y localStorage
-        const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
-        if (imageUrl) {
-          setProfileImage(imageUrl);
-          localStorage.setItem('profileImage', imageUrl);
-        }
-
-      } catch (error) {
-        console.error("Error al cargar foto:", error);
-        // Si hay error, se mantiene la imagen de cache (si existía)
+  const URL = import.meta.env.VITE_API_URL;
+  // Cargar la imagen de perfil al cargar el componente
+  const fetchProfileImage = async () => {
+    try {
+      // 1. Intentar cargar desde localStorage primero
+      const cachedImage = localStorage.getItem('profileImage');
+      if (cachedImage) {
+        setProfileImage(cachedImage);
       }
-    };
 
-    fetchProfileImage();
-  }, []);
+      // 2. Hacer petición al servidor
+      const response = await axiosInstance.get('/auth/obtener-imagen-perfil', {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` }
+      });
+
+      // 3. Actualizar estado y localStorage
+      if (response.data?.image) {
+        setProfileImage(response.data.image);
+        localStorage.setItem('profileImage', response.data.image);
+      }
+
+    }
+    catch (error) {
+      console.error('Error al obtener la imagen de perfil:', error);
+      // Si hay error, se mantiene la imagen de cache (si existía)
+    }
+  };
+
 
   // Cargar los datos del docente al cargar el componente
-  useEffect(() => {
-    const fetchDatos = async () => {
-      try {
-        // 1. Intentar cargar desde localStorage primero
-        const cachedData = localStorage.getItem('userData');
-        if (cachedData) {
-          setDatos(JSON.parse(cachedData));
-        }
-
-        // 2. Hacer petición al servidor
-        const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
-
-        // 3. Actualizar estado y localStorage
-        if (response.data?.user) {
-          setDatos(response.data.user);
-          localStorage.setItem('userData', JSON.stringify(response.data.user));
-        }
-
-      } catch (error) {
-        console.error('Error al obtener los datos:', error);
-        // Si hay error, se mantienen los datos de cache (si existían)
+  const fetchDatos = async () => {
+    try {
+      // 1. Intentar cargar desde localStorage primero
+      const cachedData = localStorage.getItem('userData');
+      if (cachedData) {
+        setDatos(JSON.parse(cachedData));
       }
-    };
 
-    fetchDatos();
-  }, []);
+      // 2. Hacer petición al servidor para obtener los datos del usuario
+      const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
+
+      // 3. Si el usuario existe, actualizamos el estado y localStorage
+      if (response.data?.user) {
+        const user = response.data.user;
+        setDatos(user);
+        localStorage.setItem('userData', JSON.stringify(user));
+        console.log("data", user);
+
+        // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
+        const municipio = user.municipio_id;
+        if (municipio) {
+          console.log("municipio_id", municipio); // Verifica que el ID del municipio es el correcto
+          try {
+            const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
+            console.log("municipio", responseMunicipio.data);
+
+            // 5. Almacenamos el municipio en localStorage si se obtiene correctamente
+            localStorage.setItem('municipio', JSON.stringify(responseMunicipio.data));
+            setMunicipio(responseMunicipio.data);
+
+          } catch (municipioError) {
+            console.error("Error al obtener el municipio:");
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error al obtener los datos del docente:', error);
+    }
+  };
+
+
+
 
   // Cargar los datos de aptitudes al cargar el componente
+  const fetchAptitudes = async () => {
+    try {
+      // 1. Intentar cargar desde localStorage primero
+      const cachedAptitudes = localStorage.getItem('aptitudes');
+      if (cachedAptitudes) {
+        setAptitudes(JSON.parse(cachedAptitudes));
+      }
+
+      // 2. Hacer petición al servidor
+      const response = await axiosInstance.get('/aspirante/obtener-aptitudes', {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` }
+      });
+
+      // 3. Actualizar estado y localStorage
+      if (response.data?.aptitudes) {
+        setAptitudes(response.data.aptitudes);
+        localStorage.setItem('aptitudes', JSON.stringify(response.data.aptitudes));
+      }
+
+    } catch (error) {
+      console.error('Error al obtener las aptitudes:', error);
+      // Si hay error, se mantienen los datos de cache (si existían)
+    }
+  };
+
   useEffect(() => {
-    const fetchAptitudes = async () => {
+    const fetchData = async () => {
       try {
-        // 1. Intentar cargar desde localStorage primero
-        const cachedAptitudes = localStorage.getItem('aptitudesData');
-        if (cachedAptitudes) {
-          setAptitudes(JSON.parse(cachedAptitudes));
-        }
-
-        // 2. Hacer petición al servidor
-        const response = await axiosInstance.get('/aspirante/obtener-aptitudes', {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-        });
-
-        // 3. Actualizar estado y localStorage
-        if (response.data?.aptitudes) {
-          setAptitudes(response.data.aptitudes);
-          localStorage.setItem('aptitudesData', JSON.stringify(response.data.aptitudes));
-        }
-
+        await Promise.all([fetchAptitudes(), fetchProfileImage(), fetchDatos()]);
       } catch (error) {
-        console.error('Error al obtener los datos de aptitudes:', error);
-        // Si hay error, se mantienen los datos de cache (si existían)
+        console.error('Error al cargar los datos:', error);
       }
     };
 
-    fetchAptitudes();
+    fetchData();
   }, []);
 
 
@@ -153,7 +177,9 @@ const InformacionPersonalDocente = () => {
                 value="Ubicación"
               />
               <Texto
-                value="Popayán, Cauca"
+                value={`${municipio.municipio_nombre
+                }, ${municipio.departamento_nombre
+                }`}
               />
             </div>
             <div>

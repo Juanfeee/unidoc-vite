@@ -15,6 +15,7 @@ import { userSchema } from "../validaciones/datosPersonaSchema";
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
+import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion";
 
 
 export type Inputs = {
@@ -28,6 +29,9 @@ export type Inputs = {
   archivo?: FileList;
   tipo_identificacion: string;
   numero_identificacion: string;
+  pais_id: number;
+  departamento_id: number;
+  municipio_id: number;
 };
 
 export const DatosPersonales = () => {
@@ -48,43 +52,56 @@ export const DatosPersonales = () => {
 
 
 
-  //Traer los datos del usuario al cargar el componente
+  const [loading, setLoading] = useState(true); // Estado para controlar el render
+
   useEffect(() => {
-    //TRAER LA RUTA DE LA API DEL ARCHIVO .env
-    const URL = `${import.meta.env.VITE_API_URL}`;
-
-    axiosInstance.get(`${URL}/auth/obtener-usuario-autenticado`, {
-      //header especificar el token de la coockie
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      //mostrar los datos en consola
-    }).then((response) => {
-      const data = response.data.user;
-      //mapear los datos del usuario a los campos del formulario
-      setValue("tipo_identificacion", data.tipo_identificacion || "");
-      setValue("numero_identificacion", data.numero_identificacion || "");
-      setValue("primer_nombre", data.primer_nombre || "");
-      setValue("segundo_nombre", data.segundo_nombre || "");
-      setValue("primer_apellido", data.primer_apellido || "");
-      setValue("segundo_apellido", data.segundo_apellido || "");
-      setValue("fecha_nacimiento", data.fecha_nacimiento || "");
-      setValue("genero", data.genero || "");
-      setValue("estado_civil", data.estado_civil || "");
-
-      
-      if (data.documentos_user && data.documentos_user.length > 0) {
-        const archivo = data.documentos_user[0];
-        setExistingFile({
-          url: archivo.archivo_url,
-          name: archivo.archivo.split("/").pop() || "Archivo existente",
+    const fetchUserData = async () => {
+      const URL = `${import.meta.env.VITE_API_URL}`;
+  
+      try {
+        const response = await axiosInstance.get(`${URL}/auth/obtener-usuario-autenticado`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
         });
+  
+        const data = response.data.user;
+  
+        setValue("tipo_identificacion", data.tipo_identificacion || "");
+        setValue("numero_identificacion", data.numero_identificacion || "");
+        setValue("primer_nombre", data.primer_nombre || "");
+        setValue("segundo_nombre", data.segundo_nombre || "");
+        setValue("primer_apellido", data.primer_apellido || "");
+        setValue("segundo_apellido", data.segundo_apellido || "");
+        setValue("fecha_nacimiento", data.fecha_nacimiento || "");
+        setValue("genero", data.genero || "");
+        setValue("estado_civil", data.estado_civil || "");
+  
+        if (data.municipio_id) {
+          const ubicacionRes = await axiosInstance.get(`${URL}/ubicaciones/municipio/${data.municipio_id}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${Cookies.get("token")}`,
+            },
+          });
+  
+          const ubicacion = ubicacionRes.data;
+          console.log("Ubicación:", ubicacion);
+          setValue("pais_id", ubicacion.pais_id);
+          setValue("departamento_id", ubicacion.departamento_id);
+          setValue("municipio_id", ubicacion.municipio_id);
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos del usuario o la ubicación:", error);
+      } finally {
+        setLoading(false); // Marcar que ya cargó todo
       }
-
-    console.log("Datos del usuario:", data);
-    });
-  }, [setValue]);
+    };
+  
+    fetchUserData();
+  }, []);
+  
 
   // Obtener los valores del formulario y enviarlos a la API
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -101,7 +118,7 @@ export const DatosPersonales = () => {
     formData.append("fecha_nacimiento", data.fecha_nacimiento);
     formData.append("genero", data.genero);
     formData.append("estado_civil", data.estado_civil);
-
+    formData.append("municipio_id", data.municipio_id.toString());
 
     if (data.archivo && data.archivo.length > 0) {
       formData.append("archivo", data.archivo[0]);
@@ -132,10 +149,50 @@ export const DatosPersonales = () => {
   }
 
 
+  console.log("Datos del formulario:", watch());
+
+  if (loading) {
+    return <div className="text-center">Cargando...</div>; // Mostrar un mensaje de carga mientras se obtienen los datos
+  }
+
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Datos personales</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+        <div>
+          <InputLabel htmlFor="pais" value="País" />
+          <SelectFormUbicaciones
+            id="pais"
+            register={register("pais_id", { valueAsNumber: true, required: true })}
+            url="paises"
+          />
+          <InputErrors errors={errors} name="pais" />
+        </div>
+
+        <div>
+          <InputLabel htmlFor="departamento" value="Departamento" />
+          <SelectFormUbicaciones
+            id="departamento"
+            register={register("departamento_id", { valueAsNumber: true, required: true })}
+            url="departamentos"
+            parentId={watch("pais_id")} 
+            
+          />
+          <InputErrors errors={errors} name="departamento" />
+        </div>
+
+        <div>
+          <InputLabel htmlFor="municipio_id" value="Municipio" />
+          <SelectFormUbicaciones
+            id="municipio_id"
+            register={register("municipio_id", { valueAsNumber: true, required: true })}
+            url="municipios"
+            parentId={watch("departamento_id")}
+
+          />
+          <InputErrors errors={errors} name="municipio_id" />
+        </div>
         {/* Identificación */}
         <div>
           <InputLabel htmlFor="tipo_identificacion" value="Tipo de identificación" />
@@ -255,12 +312,12 @@ export const DatosPersonales = () => {
           </div>
           <InputErrors errors={errors} name="genero" />
         </div>
-        
+
         <div className="col-span-full">
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
-            
+
           />
           <InputErrors errors={errors} name="archivo" />
         </div>
