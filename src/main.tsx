@@ -21,6 +21,8 @@ import PreExperiencia from './protected/editar/experiencia/pre-experiencia.tsx'
 import AgregarAptitudes from './protected/agregar/AgregarAptitudes.tsx'
 import Normativas from './protected/normativas/page.tsx'
 import AgregarProduccion from './protected/agregar/AgregarProduccion.tsx'
+import MiPerfil from './protected/configuracion/MiPerfil';
+
 
 
 createRoot(document.getElementById('root')!).render(
@@ -38,6 +40,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="datos-personales" element={<InformacionPersona />} />
           <Route path="normativas" element={<Normativas />} />
           <Route path="configuracion" element={< Configuracion />} />
+          <Route path="perfil" element={<MiPerfil />} />
           <Route path="agregar">
             <Route index element={<span>No found</span>} />
             <Route path="estudio" element={<AgregarEstudio />} />
