@@ -24,21 +24,21 @@ export const SelectFormProduccionAcademica = ({
 }: Props) => {
   const [data, setData] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
-  const API_BASE = `${import.meta.env.VITE_API_URL}/tipos_produccion_academica/`;
+  const API_BASE = `${import.meta.env.VITE_API_URL}/tiposProduccionAcademica/`;
 
   useEffect(() => {
     const fetchProduccion = async () => {
       try {
         setLoading(true);
         let endpoint = API_BASE + url;
-
+        console.log("URL:", endpoint);
         if (parentId !== undefined && parentId !== null) {
           endpoint += `/${parentId}`;
         }
 
         const response = await axios.get(endpoint);
         const items = response.data.map((item: any) => ({
-          value: item.producto_academico_id || item.id_ambito_divulgacion  ,
+          value: item.id_producto_academico || item.id_ambito_divulgacion  ,
           label: item.nombre_producto_academico || item.nombre_ambito_divulgacion
         }));
 
