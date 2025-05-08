@@ -6,7 +6,7 @@ const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
 //validacion de los datos
 export const studySchema = z.object({
-  
+
   tipo_estudio: z.string().min(1, { message: "Campo vacio" }),
 
   graduado: z.enum(["Si", "No"], {
@@ -16,13 +16,13 @@ export const studySchema = z.object({
   institucion: z
     .string()
     .min(7, { message: "Campo vacio" })
-    .max(100, {message: "Campo demasiado largo"})
+    .max(100, { message: "Campo demasiado largo" })
     .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   titulo_estudio: z
     .string()
     .min(7, { message: "Campo vacio" })
-    .max(100, { message: "Campo demasiado largo"})
+    .max(100, { message: "Campo demasiado largo" })
     .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
 
   titulo_convalidado: z.enum(["Si", "No"], {
@@ -36,7 +36,7 @@ export const studySchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
-  
+
 
   archivo: z
     .custom<FileList>((val) => val instanceof FileList && val.length > 0, {
@@ -52,11 +52,10 @@ export const studySchema = z.object({
     .refine(
       (fileList) =>
         fileList instanceof FileList &&
-        ["application/pdf", "image/png", "image/jpeg"].includes(
-          fileList[0].type
-        ),
+        fileList.length > 0 &&
+        fileList[0].type === "application/pdf",
       {
-        message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
+        message: "Formato de archivo inválido (solo PDF permitido)",
       }
     ),
 });

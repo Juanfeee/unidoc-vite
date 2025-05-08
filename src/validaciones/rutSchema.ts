@@ -45,9 +45,9 @@ export const rutSchema = z.object({
     })
     .refine((fileList) => {
       if (!(fileList instanceof FileList) || fileList.length === 0) return true;
-      return ["application/pdf", "image/png", "image/jpeg"].includes(fileList[0].type);
+      return fileList[0].type =="application/pdf";
     }, {
-      message: "Formato de archivo inválido (solo PDF, JPG, PNG)",
+      message: "Formato de archivo inválido (solo PDF permitido)",
     })
     .optional(),
   
