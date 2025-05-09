@@ -51,7 +51,7 @@ export const experienciaSchema = z.object({
     .refine(
       (fileList) =>
         fileList instanceof FileList &&
-        ["application/pdf"].includes(fileList[0].type),
+        fileList[0].type=== "application/pdf",
       {
         message: "Formato de archivo inválido (solo PDF permitido)",
       }
