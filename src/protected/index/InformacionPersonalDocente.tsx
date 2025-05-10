@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { LabelText } from "../../componentes/formularios/LabelText";
-import { Puntaje } from "../../componentes/formularios/puntaje";
 import { Texto } from "../../componentes/formularios/Texto";
 import axiosInstance from "../../utils/axiosConfig";
 import Cookies from "js-cookie";
@@ -11,7 +10,7 @@ import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
   const [datos, setDatos] = useState<any>();
-  const [municipio, setMunicipio] = useState<any[]>([]);
+  const [municipio, setMunicipio] = useState<any>([]);
   const [aptitudes, setAptitudes] = useState<any[]>([]);
 
   const URL = import.meta.env.VITE_API_URL;
@@ -54,18 +53,16 @@ const InformacionPersonalDocente = () => {
 
       // 2. Hacer petición al servidor para obtener los datos del usuario
       const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
-
       // 3. Si el usuario existe, actualizamos el estado y localStorage
       if (response.data?.user) {
         const user = response.data.user;
+        console.log("user", user);
         setDatos(user);
         localStorage.setItem('userData', JSON.stringify(user));
-        console.log("data", user);
 
         // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
         const municipio = user.municipio_id;
         if (municipio) {
-          console.log("municipio_id", municipio); // Verifica que el ID del municipio es el correcto
           try {
             const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
             console.log("municipio", responseMunicipio.data);
@@ -137,7 +134,7 @@ const InformacionPersonalDocente = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 bg-white py-12 px-8 rounded-xl gap-7">
           <div className="flex flex-col md:flex-row gap-y-2 col-span-full justify-between">
             <h2 className="font-bold text-3xl">Hoja de vida</h2>
-            <p className="font-medium text-lg">Estado de validación Académica: <span>a</span> </p>
+            {/* <p className="font-medium text-lg">Estado de validación Académica: <span>a</span> </p> */}
           </div>
           <div className="grid items-center sm:grid-cols-2 col-span-full gap-y-4">
             <h3 className="col-span-full font-semibold text-lg">Datos personales</h3>
@@ -155,11 +152,11 @@ const InformacionPersonalDocente = () => {
                 value={`${datos.primer_nombre} ${datos?.segundo_nombre} ${datos.primer_apellido} ${datos?.segundo_apellido}`}
               />
             </div>
-            <div className="flex sm:justify-end">
+            {/* <div className="flex sm:justify-end">
               <Puntaje
                 value="0.0"
               />
-            </div>
+            </div> */}
 
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 col-span-full gap-x-8 gap-y-6 border-t-1 py-4 border-gray-200">
@@ -182,14 +179,14 @@ const InformacionPersonalDocente = () => {
                 }`}
               />
             </div>
-            <div>
+            {/* <div>
               <LabelText
                 value="Facultades"
               />
               <Texto
                 value="Facultad de Ingenieria, Facultad de Ciencias ambientales"
               />
-            </div>
+            </div> */}
           </div>
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">
             <div className="flex items-center justify-between w-full">

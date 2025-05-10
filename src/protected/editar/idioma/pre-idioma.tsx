@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import EliminarBoton from '../../../componentes/EliminarBoton'
 
-const PreIdioma = () => {
+const PreProduccion = () => {
   const [idiomas, setIdiomas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -111,4 +111,4 @@ const PreIdioma = () => {
   );
 };
 
-export default PreIdioma;
+export default PreProduccion;

@@ -16,6 +16,8 @@ import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
 import axiosInstance from "../../utils/axiosConfig";
 import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
+import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
+import { useArchivoPreview } from "../../hooks/ArchivoPreview";
 
 type Inputs = {
   tipo_estudio: string;
@@ -24,8 +26,8 @@ type Inputs = {
   fecha_graduacion: string;
   titulo_convalidado: string;
   fecha_convalidacion: string;
-  resolucion_convalidacion?: string;
-  posible_fecha_graduacion?: string;
+  resolucion_convalidacion: string;
+  posible_fecha_graduacion: string;
   titulo_estudio: string;
   fecha_inicio: string;
   fecha_fin: string;
@@ -37,8 +39,11 @@ const AgregarEstudio = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(studySchema) });
-  console.log("Formulario", watch());
+
+  const archivoValue = watch('archivo')
+  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
   // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
   const convalido = watch('titulo_convalidado');
@@ -83,10 +88,10 @@ const AgregarEstudio = () => {
       formData.append("fecha_inicio", data.fecha_inicio);
       formData.append("fecha_fin", data.fecha_fin || '');
       formData.append("archivo", data.archivo[0] || '');
-  
+
       const token = Cookies.get("token");
       const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-estudio`;
-  
+
       await toast.promise(
         axiosInstance.post(url, formData, {
           headers: {
@@ -99,6 +104,7 @@ const AgregarEstudio = () => {
           pending: "Enviando datos...",
           success: {
             render() {
+
               setTimeout(() => {
                 window.location.href = "/index";
               }, 1500);
@@ -139,7 +145,7 @@ const AgregarEstudio = () => {
 
   return (
     <>
-      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
+      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
         <div className="flex gap-x-4 col-span-full items-center">
           <Link to={"/index"}>
             <ButtonRegresar />
@@ -270,6 +276,7 @@ const AgregarEstudio = () => {
                   placeholder="Resolución de convalidación"
                   {...register('resolucion_convalidacion')}
                 />
+                <InputErrors errors={errors} name="resolucion_convalidacion" />
               </div>
             </>
           )}
@@ -298,22 +305,23 @@ const AgregarEstudio = () => {
           </div>
 
 
+
           {/* Archivo */}
           <div className="col-span-full">
             <AdjuntarArchivo
               id="archivo"
               register={register('archivo')}
-              />
-
+            />
             <InputErrors errors={errors} name="archivo" />
+            <MostrarArchivo file={existingFile} />
           </div>
 
           {/* Botón para agregar estudio */}
           <div className="flex justify-center col-span-full">
-            <ButtonPrimary 
+            <ButtonPrimary
               value={isSubmitting ? "Enviando..." : "Agregar estudio"}
               disabled={isSubmitting}
-            
+
             />
           </div>
 

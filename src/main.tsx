@@ -22,7 +22,8 @@ import AgregarAptitudes from './protected/agregar/AgregarAptitudes.tsx'
 import Normativas from './protected/normativas/page.tsx'
 import AgregarProduccion from './protected/agregar/AgregarProduccion.tsx'
 import MiPerfil from './protected/configuracion/MiPerfil';
-
+import PreProduccion from './protected/editar/produccion/pre-produccion.tsx'
+import EditarProduccion from './protected/editar/produccion/EditarProduccion.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -57,6 +58,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="idioma/:id" element={<EditarIdioma />} />
             <Route path="experiencias" element={<PreExperiencia />} />
             <Route path="experiencia/:id" element={<EditarExperiencia />} />
+            <Route path="producciones" element={<PreProduccion />} />
+            <Route path="produccion/:id" element={<EditarProduccion />} />
           </Route>
         </Route>
 

@@ -13,17 +13,20 @@ const InformacionTrayectoriaDocente = () => {
         <div className="w-full flex flex-col bg-white md:py-12 px-8 rounded-xl gap-8" >
 
           <h2 className="font-bold text-2xl text-center" > Formacion</h2>
-          < div className="grid md:grid-cols-2 flex-col gap-x-8 lg:gap-x-24 gap-y-8 items-center justify-center" >
+          < div className="grid md:grid-cols-2 flex-col gap-x-8 lg:gap-x-24 gap-y-8 items-start justify-center" >
+            <div className="flex  flex-col gap-8 ">
               <FormacionEducativa />
-              < FormacionExperiencia />
-            < FormacionProduccion />
-            <div className="" > </div>
+              <FormacionProduccion />
+              <FormacionExperiencia />
+            </div>
+            <div className="flex flex-col gap-8">
+              < FormacionIdioma />
+            </div>
 
-            < FormacionIdioma />
-          </div>
           </div>
         </div>
-      </>
-      )
+      </div>
+    </>
+  )
 }
-      export default InformacionTrayectoriaDocente
+export default InformacionTrayectoriaDocente

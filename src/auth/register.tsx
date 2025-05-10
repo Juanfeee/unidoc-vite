@@ -91,26 +91,14 @@ const Registro = () => {
 
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    // const {
-    //   password_confirmation, // lo excluimos
-    //   ...formData
-    // } = data;
+    const {
+      password_confirmation,
+      pais,
+      departamento,
+      ...formData
+    } = data;
 
-    // formData.municipio_id = 1;
-    const formData = {
-      primer_nombre: data.primer_nombre,
-      segundo_nombre: data.segundo_nombre,
-      primer_apellido: data.primer_apellido,
-      segundo_apellido: data.segundo_apellido,
-      fecha_nacimiento: data.fecha_nacimiento,
-      genero: data.genero,
-      estado_civil: data.estado_civil,
-      tipo_identificacion: data.tipo_identificacion,
-      numero_identificacion: data.numero_identificacion,
-      email: data.email,
-      password: data.password,
-      municipio_id: data.municipio_id,
-    }
+
 
     const registroPromise = axios.post(url, formData, {
       // Cabeceras de la petición
@@ -143,7 +131,8 @@ const Registro = () => {
               switch (data.response.status) {
                 case 422:
                   errorMessage = "Email ya existe";
-
+                  console.log("data", formData)
+                  console.log("Error 422", data.response.data.errors);
 
                   break;
                 case 500:
@@ -169,9 +158,9 @@ const Registro = () => {
   };
   console.log("Input", watch());
 
+
   const paisSeleccionado = watch("pais");
   const departamentoSeleccionado = watch("departamento");
-
  
 
 
@@ -308,7 +297,7 @@ const Registro = () => {
                   < div className="" >
                     <InputLabel htmlFor="genero" value="Género" />
 
-                    <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-4">
+                    <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 min-h-[44px] px-4">
                       <LabelRadio
                         htmlFor="genero-masculino"
                         value="Masculino"
@@ -338,10 +327,10 @@ const Registro = () => {
                 < div className="flex flex-col gap-4" >
                   <div className='font-semibold text-xl' >
                     <h3>
-                      ¡Genial!
+                      ¡Sigamos!
                       Ahora tu
-                      <span className='text-blue-500 font-bold'> correo</span> y
-                      <span className='text-yellow-500 font-bold'> contraseña</span>
+                      <span className='text-blue-500 font-bold'> lugar </span> de 
+                      <span className='text-yellow-500 font-bold'> nacimiento</span>
                     </h3>
 
                   </div>
@@ -360,8 +349,9 @@ const Registro = () => {
                     <SelectFormUbicaciones
                       id="departamento"
                       register={register("departamento", { valueAsNumber: true, required: true })}
-                      url="departamentos"
                       parentId={paisSeleccionado}
+                      disabled={!paisSeleccionado}
+                      url="departamentos"
                     />
                     <InputErrors errors={errors} name="departamento" />
                   </div>
@@ -371,8 +361,9 @@ const Registro = () => {
                     <SelectFormUbicaciones
                       id="municipio_id"
                       register={register("municipio_id", { valueAsNumber: true, required: true })}
-                      url="municipios"
                       parentId={departamentoSeleccionado}
+                      disabled={!departamentoSeleccionado}
+                      url="municipios"
                     />
                     <InputErrors errors={errors} name="municipio_id" />
                   </div>

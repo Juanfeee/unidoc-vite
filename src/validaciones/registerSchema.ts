@@ -52,6 +52,8 @@ export const registerSchema = z
         message: "No se permiten emojis ni caracteres especiales.",
       }),
 
+    municipio_id: z
+      .number({ invalid_type_error: "El municipio es requerido" }),  
     email: z
       .string().email({ message: "Correo no valido" })
       .max(100, { message: "El correo no puede tener más de 100 caracteres" }),

@@ -15,6 +15,8 @@ import TextInput from '../../componentes/formularios/TextInput';
 import { ButtonPrimary } from '../../componentes/formularios/ButtonPrimary';
 import { AdjuntarArchivo } from '../../componentes/formularios/AdjuntarArchivo';
 import { LabelRadio } from '../../componentes/formularios/LabelRadio';
+import { useArchivoPreview } from '../../hooks/ArchivoPreview';
+import { MostrarArchivo } from '../../componentes/formularios/MostrarArchivo';
 
 type Inputs = {
   tipo_experiencia: string;
@@ -30,8 +32,8 @@ type Inputs = {
 };
 
 const AgregarExperiencia = () => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     setValue,
     register,
@@ -45,22 +47,23 @@ const AgregarExperiencia = () => {
     },
   });
 
+
+  const archivoValue = watch('archivo')
+  const { existingFile } = useArchivoPreview(archivoValue);
+
   const experiencia_universidad = watch("experiencia_universidad");
- 
-
-
   useEffect(() => {
     if (experiencia_universidad === "Si") {
       setValue("institucion_experiencia", "Corporación Universidad del Cauca");
     } else {
-      setValue("institucion_experiencia", ""); 
+      setValue("institucion_experiencia", "");
     }
   }, [experiencia_universidad, setValue]);
 
-  
+
   console.log(watch())
   const onSubmit: SubmitHandler<Inputs> = async () => {
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
     const formValues = {
       tipo_experiencia: watch('tipo_experiencia'),
       institucion_experiencia: watch('institucion_experiencia'),
@@ -69,6 +72,7 @@ const AgregarExperiencia = () => {
       intensidad_horaria: watch('intensidad_horaria'),
       fecha_inicio: watch('fecha_inicio'),
       fecha_finalizacion: watch('fecha_finalizacion'),
+      fecha_expedicion_certificado: watch('fecha_expedicion_certificado'),
       archivo: watch('archivo')
     };
 
@@ -80,6 +84,7 @@ const AgregarExperiencia = () => {
     formData.append('intensidad_horaria', formValues.intensidad_horaria);
     formData.append('fecha_inicio', formValues.fecha_inicio);
     formData.append('fecha_finalizacion', formValues.fecha_finalizacion);
+    formData.append('fecha_expedicion_certificado', formValues.fecha_expedicion_certificado);
 
     if (formValues.archivo && formValues.archivo[0]) {
       formData.append('archivo', formValues.archivo[0]);
@@ -138,9 +143,8 @@ const AgregarExperiencia = () => {
       },
     });
 
-    console.log("Datos enviados:", formValues);
+
   };
-  console.log("errores",errors);
 
 
   return (
@@ -243,25 +247,35 @@ const AgregarExperiencia = () => {
         </div>
 
         {/* Fechas */}
-          <div className="">
-            <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio" />
-            <TextInput
-              type="date"
-              id="fecha_inicio"
-              {...register('fecha_inicio')}
-            />
-            <InputErrors errors={errors} name="fecha_inicio" />
-          </div>
-          <div className="">
-            <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
-            <TextInput
-              type="date"
-              id="fecha_finalizacion"
-              {...register('fecha_finalizacion')}
-            />
-            <InputErrors errors={errors} name="fecha_finalizacion" />
-          </div>
+        <div className="">
+          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio" />
+          <TextInput
+            type="date"
+            id="fecha_inicio"
+            {...register('fecha_inicio')}
+          />
+          <InputErrors errors={errors} name="fecha_inicio" />
+        </div>
+        <div className="">
+          <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
+          <TextInput
+            type="date"
+            id="fecha_finalizacion"
+            {...register('fecha_finalizacion')}
+          />
+          <InputErrors errors={errors} name="fecha_finalizacion" />
+        </div>
 
+        <div>
+          <InputLabel htmlFor="fecha_expedicion_certificado" value="Fecha expedicion de certificado" />
+          <TextInput
+            type="date"
+            id="fecha_expedicion_certificado"
+            placeholder="Fecha expedicion de certificado"
+            {...register('fecha_expedicion_certificado')}
+          />
+          <InputErrors errors={errors} name="fecha_expedicion_certificado" />
+        </div>
 
         {/* Archivo */}
         <div className="col-span-full">
@@ -271,6 +285,7 @@ const AgregarExperiencia = () => {
             register={register('archivo')}
           />
           <InputErrors errors={errors} name="archivo" />
+          <MostrarArchivo file={existingFile} />
         </div>
 
         {/* Botón */}

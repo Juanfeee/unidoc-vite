@@ -4,6 +4,8 @@ import { Link } from 'react-router'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
+import EstadoDocumento from '../../../componentes/Estado'
+import { AcademicIcono } from '../../../assets/icons/Iconos'
 
 const FormacionEducativa = () => {
 
@@ -43,7 +45,6 @@ const FormacionEducativa = () => {
     return <div className="flex justify-center items-center h-full">Cargando...</div>;
   }
 
-  // estado documento
 
 
   return (
@@ -67,31 +68,16 @@ const FormacionEducativa = () => {
               texto="Agregar estudio"
             />
           ) : (
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col gap-6">
               {estudios.map((item, index) => (
-                <li className="flex flex-col sm:flex-row gap-6" key={index}>
-                  <AcademicCapIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
-                  <div className="text-[#637887]">
+                <li className="flex flex-col sm:flex-row gap-6 " key={index}>
+                  <AcademicIcono />
+                  <div className="text-[#637887] ">
                     <p className="font-semibold text-[#121417]">{item.tipo_estudio}</p>
                     <p>{item.titulo_estudio}</p>
                     <p>{item.institucion}</p>
                     <p>{item.fecha_graduacion}</p>
-
-                    {
-                      item.documentos_estudio?.[0]?.estado === "pendiente" && (
-                        <p className='flex'>Estado:  <span> Pendiente</span></p>
-                      )
-                    }
-                    {
-                      item.documentos_estudio?.[0]?.estado === "aprobado" && (
-                        <p className="text-green-500">Estado: {item.documentos_estudio?.[0]?.estado}</p>
-                      )
-                    }
-                    {
-                      item.documentos_estudio?.[0]?.estado === "rechazado" && (
-                        <p className="text-red-500">Estado: {item.documentos_estudio?.[0]?.estado}</p>
-                      )
-                    }
+                    <EstadoDocumento documentos={item.documentos_estudio}  />
                   </div>
                 </li>
               ))}

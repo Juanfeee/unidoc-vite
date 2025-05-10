@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { InputLabel } from "../componentes/formularios/InputLabel";
@@ -11,11 +10,13 @@ import TextInput from "../componentes/formularios/TextInput";
 import { LabelRadio } from "../componentes/formularios/LabelRadio";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
-import { userSchema } from "../validaciones/datosPersonaSchema";
+import { userSchema, userSchemaUpdate } from "../validaciones/datosPersonaSchema";
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion";
+import { MostrarArchivo } from "../componentes/formularios/MostrarArchivo";
+import { useArchivoPreview } from "../hooks/ArchivoPreview";
 
 
 export type Inputs = {
@@ -26,17 +27,15 @@ export type Inputs = {
   fecha_nacimiento: string;
   genero: string;
   estado_civil: string;
-  archivo?: FileList;
+  archivo: FileList;
   tipo_identificacion: string;
   numero_identificacion: string;
-  pais_id: number;
-  departamento_id: number;
+  pais: number;
+  departamento: number;
   municipio_id: number;
 };
 
 export const DatosPersonales = () => {
-  const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
-
 
   const {
     register,
@@ -45,63 +44,64 @@ export const DatosPersonales = () => {
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(userSchema),
-    defaultValues: {
-    },
+    resolver: zodResolver(userSchemaUpdate),
+
   });
 
 
 
-  const [loading, setLoading] = useState(true); // Estado para controlar el render
+  const fetchDatosPersonales = async () => {
+    const API = import.meta.env.VITE_API_URL;
+    try {
+      const respUser = await axiosInstance.get(`${API}/auth/obtener-usuario-autenticado`)
+
+      const user = respUser.data.user;
+
+      const respUbic = await axiosInstance.get(`${API}/ubicaciones/municipio/${user.municipio_id}`, {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` }
+      });
+      
+      const ubic = respUbic.data;
+
+      if (user) {
+        setValue("tipo_identificacion", user.tipo_identificacion);
+        setValue("numero_identificacion", user.numero_identificacion);
+        setValue("primer_nombre", user.primer_nombre);
+        setValue("segundo_nombre", user.segundo_nombre);
+        setValue("primer_apellido", user.primer_apellido);
+        setValue("segundo_apellido", user.segundo_apellido);
+        setValue("fecha_nacimiento", user.fecha_nacimiento);
+        setValue("genero", user.genero);
+        setValue("estado_civil", user.estado_civil);
+
+        if (user.documentos_user && user.documentos_user.length > 0) {
+          const archivo = user.documentos_user[0];
+          setExistingFile({
+            url: archivo.archivo_url,
+            name: archivo.archivo.split("/").pop() || "Archivo existente",
+          });
+        }
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setValue("pais", ubic.pais_id);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setValue("departamento", ubic.departamento_id);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setValue("municipio_id", ubic.municipio_id);
+      }
+    } catch (error) {
+    }
+  };
+
+  const archivoValue = watch("archivo");
+
+  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const URL = `${import.meta.env.VITE_API_URL}`;
-  
-      try {
-        const response = await axiosInstance.get(`${URL}/auth/obtener-usuario-autenticado`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        });
-  
-        const data = response.data.user;
-  
-        setValue("tipo_identificacion", data.tipo_identificacion || "");
-        setValue("numero_identificacion", data.numero_identificacion || "");
-        setValue("primer_nombre", data.primer_nombre || "");
-        setValue("segundo_nombre", data.segundo_nombre || "");
-        setValue("primer_apellido", data.primer_apellido || "");
-        setValue("segundo_apellido", data.segundo_apellido || "");
-        setValue("fecha_nacimiento", data.fecha_nacimiento || "");
-        setValue("genero", data.genero || "");
-        setValue("estado_civil", data.estado_civil || "");
-  
-        if (data.municipio_id) {
-          const ubicacionRes = await axiosInstance.get(`${URL}/ubicaciones/municipio/${data.municipio_id}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-          });
-  
-          const ubicacion = ubicacionRes.data;
-          console.log("Ubicación:", ubicacion);
-          setValue("pais_id", ubicacion.pais_id);
-          setValue("departamento_id", ubicacion.departamento_id);
-          setValue("municipio_id", ubicacion.municipio_id);
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos del usuario o la ubicación:", error);
-      } finally {
-        setLoading(false); // Marcar que ya cargó todo
-      }
-    };
-  
-    fetchUserData();
+    fetchDatosPersonales();
   }, []);
-  
+
+
+
 
   // Obtener los valores del formulario y enviarlos a la API
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -149,11 +149,10 @@ export const DatosPersonales = () => {
   }
 
 
-  console.log("Datos del formulario:", watch());
 
-  if (loading) {
-    return <div className="text-center">Cargando...</div>; // Mostrar un mensaje de carga mientras se obtienen los datos
-  }
+
+  const departamentoSeleccionado = watch("departamento");
+
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
@@ -164,7 +163,7 @@ export const DatosPersonales = () => {
           <InputLabel htmlFor="pais" value="País" />
           <SelectFormUbicaciones
             id="pais"
-            register={register("pais_id", { valueAsNumber: true, required: true })}
+            register={register("pais", { valueAsNumber: true, required: true })}
             url="paises"
           />
           <InputErrors errors={errors} name="pais" />
@@ -174,10 +173,9 @@ export const DatosPersonales = () => {
           <InputLabel htmlFor="departamento" value="Departamento" />
           <SelectFormUbicaciones
             id="departamento"
-            register={register("departamento_id", { valueAsNumber: true, required: true })}
+            register={register("departamento", { valueAsNumber: true, required: true })}
             url="departamentos"
-            parentId={watch("pais_id")} 
-            
+
           />
           <InputErrors errors={errors} name="departamento" />
         </div>
@@ -188,7 +186,7 @@ export const DatosPersonales = () => {
             id="municipio_id"
             register={register("municipio_id", { valueAsNumber: true, required: true })}
             url="municipios"
-            parentId={watch("departamento_id")}
+            parentId={departamentoSeleccionado}
 
           />
           <InputErrors errors={errors} name="municipio_id" />
@@ -290,7 +288,7 @@ export const DatosPersonales = () => {
         {/* Género */}
         <div className="">
           <InputLabel htmlFor="genero" value="Género" />
-          <div className="flex flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 p-4">
+          <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 min-h-[44px] px-4 ">
             <LabelRadio
               htmlFor="masculino"
               value="Masculino"
@@ -317,15 +315,12 @@ export const DatosPersonales = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
+            nombre="identificación"
 
           />
           <InputErrors errors={errors} name="archivo" />
+          <MostrarArchivo file={existingFile} />
         </div>
-        {existingFile && (
-          <div className="text-sm text-gray-700 mt-2">
-            <p>Archivo cargado: <a href={existingFile.url} target="_blank" className="text-blue-600 underline">{existingFile.name}</a></p>
-          </div>
-        )}
         <div className="col-span-full text-center">
           <ButtonPrimary type="submit" value="Guardar" />
         </div>

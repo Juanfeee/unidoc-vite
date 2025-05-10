@@ -8,6 +8,7 @@ type Props = {
   className?: string;
   url: string;
   parentId?: number | null;
+  disabled?: boolean;
 };
 
 type Option = {
@@ -21,6 +22,7 @@ export const SelectFormProduccionAcademica = ({
   className,
   url,
   parentId,
+  disabled = false,
 }: Props) => {
   const [data, setData] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
@@ -31,15 +33,14 @@ export const SelectFormProduccionAcademica = ({
       try {
         setLoading(true);
         let endpoint = API_BASE + url;
-        console.log("URL:", endpoint);
+
         if (parentId !== undefined && parentId !== null) {
           endpoint += `/${parentId}`;
         }
-
         const response = await axios.get(endpoint);
         const items = response.data.map((item: any) => ({
-          value: item.id_producto_academico || item.id_ambito_divulgacion  ,
-          label: item.nombre_producto_academico || item.nombre_ambito_divulgacion
+          value: item.id || item.id_producto_academico || item.id_ambito_divulgacion || item.producto_academico_id,
+          label: item.nombre || item.nombre_producto_academico || item.nombre_ambito_divulgacion || item.nombre_producto_academico,
         }));
 
         setData(items);
@@ -62,6 +63,7 @@ export const SelectFormProduccionAcademica = ({
         defaultValue=""
         {...register}
         id={id}
+        disabled={disabled}
         className={`${className}
           h-11 w-full rounded-lg border-[1.8px] border-blue-600
           bg-slate-100/40 p-3 text-sm text-slate-950/90

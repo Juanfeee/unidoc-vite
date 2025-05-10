@@ -8,26 +8,22 @@ export const epsSchema = z.object({
     .string()
     .min(7, { message: "Mínimo 7 caracteres" })
     .max(100, { message: "Máximo 100 caracteres" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
-  tipo_afiliacion: z
-    .string()
-    .min(1, { message: "Selecciona una opción" }),
-  estado_afiliacion: z
-    .string()
-    .min(1, { message: "Selecciona una opción" }),
-  tipo_afiliado: z
-    .string()
-    .min(1, { message: "Selecciona una opción" }),
+  tipo_afiliacion: z.string().min(1, { message: "Selecciona una opción" }),
+  estado_afiliacion: z.string().min(1, { message: "Selecciona una opción" }),
+  tipo_afiliado: z.string().min(1, { message: "Selecciona una opción" }),
 
   numero_afiliado: z
     .string()
     .max(100, { message: "Máximo 100 caracteres" })
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    })
     .optional()
     .or(z.literal("")),
-    
-    
 
   fecha_afiliacion_efectiva: z
     .string({ invalid_type_error: "Esa no es una fecha" })
@@ -42,27 +38,83 @@ export const epsSchema = z.object({
       message: "Formato de fecha incorrecto",
     }),
 
-    archivo: z
-    .custom<FileList | undefined>((val) => {
-      // Si no hay archivo, es válido (opcional)
-      if (!(val instanceof FileList) || val.length === 0) return true;
-      return true;
-    }, {
+  archivo: z
+    // 1) forzamos que venga un FileList
+    .instanceof(FileList, { message: "Debes subir un archivo" })
+
+    // 2) al menos un fichero
+    .refine((files) => files.length > 0, {
       message: "Debes subir un archivo",
     })
-    .refine((fileList) => {
-      if (!(fileList instanceof FileList) || fileList.length === 0) return true;
-      return fileList[0].size <= 2 * 1024 * 1024;
-    }, {
-      message: "Archivo demasiado grande (máx 2MB)",
+
+    // 3) tamaño máximo 2MB, pero sólo si hay fichero
+    .refine(
+      (files) => (files.length === 0 ? true : files[0].size <= 2 * 1024 * 1024),
+      {
+        message: "Archivo demasiado grande (máx 2MB)",
+      }
+    )
+
+    // 4) solo PDF, pero sólo si hay fichero
+    .refine(
+      (files) =>
+        files.length === 0 ? true : files[0].type === "application/pdf",
+      {
+        message: "Formato de archivo inválido (solo PDF permitido)",
+      }
+    ),
+});
+
+export const epsSchemaUpdate = z.object({
+  nombre_eps: z
+    .string()
+    .min(7, { message: "Mínimo 7 caracteres" })
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
+  tipo_afiliacion: z.string().min(1, { message: "Selecciona una opción" }),
+  estado_afiliacion: z.string().min(1, { message: "Selecciona una opción" }),
+  tipo_afiliado: z.string().min(1, { message: "Selecciona una opción" }),
+
+  numero_afiliado: z
+    .string()
+    .max(100, { message: "Máximo 100 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
     })
-    .refine((fileList) => {
-      if (!(fileList instanceof FileList) || fileList.length === 0) return true;
-      return fileList[0].type =="application/pdf";
-    }, {
-      message: "Formato de archivo inválido (solo PDF permitido)",
+    .optional()
+    .or(z.literal("")),
+
+  fecha_afiliacion_efectiva: z
+    .string({ invalid_type_error: "Esa no es una fecha" })
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Formato de fecha incorrecto",
+    }),
+
+  fecha_finalizacion_afiliacion: z
+    .string()
+    .optional()
+    .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+      message: "Formato de fecha incorrecto",
+    }),
+    
+  archivo: z
+    .instanceof(FileList, {
+      message: "Debes subir un archivo si quieres reemplazar el existente",
     })
-    .optional(),
-  
-  
+    .optional()
+    // 1) tamaño máximo 2MB, solo si hay fichero
+    .refine(
+      (files) =>
+        (files?.length ?? 0) === 0 || files![0].size <= 2 * 1024 * 1024,
+      { message: "Archivo demasiado grande (máx 2MB)" }
+    )
+    // 2) solo PDF, solo si hay fichero
+    .refine(
+      (files) =>
+        (files?.length ?? 0) === 0 || files![0].type === "application/pdf",
+      { message: "Formato de archivo inválido (solo PDF permitido)" }
+    ),
 });

@@ -8,6 +8,7 @@ type Props = {
   className?: string;
   url: string;
   parentId?: number | null;
+  disabled?: boolean;    
 };
 
 type Option = {
@@ -21,6 +22,7 @@ export const SelectFormUbicaciones = ({
   className,
   url,
   parentId,
+  disabled = false,
 }: Props) => {
   const [data, setData] = useState<Option[]>([]);
   const [loading, setLoading] = useState(false);
@@ -62,6 +64,7 @@ export const SelectFormUbicaciones = ({
         defaultValue=""
         {...register}
         id={id}
+        disabled={disabled} 
         className={`${className}
           h-11 w-full rounded-lg border-[1.8px] border-blue-600
           bg-slate-100/40 p-3 text-sm text-slate-950/90

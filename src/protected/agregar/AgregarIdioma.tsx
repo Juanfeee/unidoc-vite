@@ -14,6 +14,8 @@ import InputErrors from "../../componentes/formularios/InputErrors";
 import { SelectForm } from "../../componentes/formularios/SelectForm";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
+import { useArchivoPreview } from "../../hooks/ArchivoPreview";
+import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
 
 type Inputs = {
   idioma: string;
@@ -29,7 +31,9 @@ const AgregarIdioma = () => {
     resolver: zodResolver(languageSchema)
   });
 
-  console.log("Formulario", watch());
+
+  const archivoValue = watch('archivo')
+  const { existingFile } = useArchivoPreview(archivoValue);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     const formData = new FormData();
@@ -154,6 +158,7 @@ const AgregarIdioma = () => {
               register={register('archivo')}
               />
             <InputErrors errors={errors} name="archivo" />
+            <MostrarArchivo file={existingFile} />
           </div>
           <div className='flex justify-center col-span-full' >
             <ButtonPrimary value='Agregar estudio' />

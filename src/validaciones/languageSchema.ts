@@ -5,19 +5,21 @@ export const languageSchema = z.object({
   idioma: z
     .string()
     .min(1, { message: "Campo vacío" })
-    .max(50, {message: "Máximo 50 caracteres"})
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+    .max(50, { message: "Máximo 50 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
   institucion_idioma: z
     .string()
     .min(1, { message: "Campo vacío" })
-    .max(50, {message: "Máximo 50 caracteres"})
-    .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
-  
-  nivel: z
-    .string()
-    .min(1, { message: "Seleccione un nivel" }),
-  
+    .max(50, { message: "Máximo 50 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
+  nivel: z.string().min(1, { message: "Seleccione un nivel" }),
+
   fecha_certificado: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -27,22 +29,74 @@ export const languageSchema = z.object({
     }),
 
   archivo: z
-    .custom<FileList>((val) => val instanceof FileList && val.length > 0, {
+    // 1) forzamos que venga un FileList
+    .instanceof(FileList, { message: "Debes subir un archivo" })
+
+    // 2) al menos un fichero
+    .refine((files) => files.length > 0, {
       message: "Debes subir un archivo",
     })
+
+    // 3) tamaño máximo 2MB, pero sólo si hay fichero
     .refine(
-      (fileList) =>
-        fileList instanceof FileList && fileList[0].size <= 2 * 1024 * 1024,
+      (files) => (files.length === 0 ? true : files[0].size <= 2 * 1024 * 1024),
       {
         message: "Archivo demasiado grande (máx 2MB)",
       }
     )
+
+    // 4) solo PDF, pero sólo si hay fichero
     .refine(
-      (fileList) =>
-        fileList instanceof FileList &&
-        fileList[0].type=== "application/pdf",
+      (files) =>
+        files.length === 0 ? true : files[0].type === "application/pdf",
       {
         message: "Formato de archivo inválido (solo PDF permitido)",
       }
+    ),
+});
+
+export const languageSchemaUpdate = z.object({
+  idioma: z
+    .string()
+    .min(1, { message: "Campo vacío" })
+    .max(50, { message: "Máximo 50 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
+  institucion_idioma: z
+    .string()
+    .min(1, { message: "Campo vacío" })
+    .max(50, { message: "Máximo 50 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
+
+  nivel: z.string().min(1, { message: "Seleccione un nivel" }),
+
+  fecha_certificado: z
+    .string({
+      invalid_type_error: "Esa no es una fecha",
+    })
+    .refine((val) => !isNaN(Date.parse(val)), {
+      message: "Formato de fecha incorrecto",
+    }),
+
+  archivo: z
+    .instanceof(FileList, {
+      message: "Debes subir un archivo si quieres reemplazar el existente",
+    })
+    .optional()
+    // 1) tamaño máximo 2MB, solo si hay fichero
+    .refine(
+      (files) =>
+        (files?.length ?? 0) === 0 || files![0].size <= 2 * 1024 * 1024,
+      { message: "Archivo demasiado grande (máx 2MB)" }
+    )
+    // 2) solo PDF, solo si hay fichero
+    .refine(
+      (files) =>
+        (files?.length ?? 0) === 0 || files![0].type === "application/pdf",
+      { message: "Formato de archivo inválido (solo PDF permitido)" }
     ),
 });

@@ -5,9 +5,13 @@ import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import { toast } from 'react-toastify'
 import AgregarLink from '../../../componentes/ButtonAgregar'
+import EstadoDocumento from '../../../componentes/Estado'
+import { useObtenerAno } from '../../../hooks/TomarAno';
+import { BriefIcon } from '../../../assets/icons/Iconos'
 
 const FormacionExperiencia = () => {
   const [experiencias, setExperiencias] = useState<any[]>([])
+  const { obtenerAno} = useObtenerAno();
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -17,22 +21,22 @@ const FormacionExperiencia = () => {
         if (cached) {
           setExperiencias(JSON.parse(cached));
         }
-  
+
         // 2. Hacer petición al servidor
         const response = await axiosInstance.get('/aspirante/obtener-experiencias');
-        
+
         // 3. Actualizar estado y localStorage
         if (response.data?.experiencias) {
           setExperiencias(response.data.experiencias);
           localStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
         }
-  
+
       } catch (error) {
         console.error('Error al cargar experiencias:', error);
         // Si hay error, se mantienen los datos de cache (si existían)
       }
     };
-  
+
     fetchDatos();
   }, []);
 
@@ -60,30 +64,16 @@ const FormacionExperiencia = () => {
             texto="Agregar experiencia profesional"
           />
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-6">
             {experiencias.map((item, index) => (
-              <li className="flex flex-col sm:flex-row gap-6" key={index}>
-                <BriefcaseIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
+              <li className="flex flex-col sm:flex-row gap-6 " key={index}>
+                <BriefIcon />
                 <div className="text-[#637887]">
                   <p className="font-semibold text-[#121417]">{item.tipo_experiencia}</p>
                   <p>{item.cargo}</p>
                   <p>{item.institucion_experiencia}</p>
-                  <p>{item.fecha_inicio} / {item.fecha_finalizacion || 'Actual'}</p>
-                  {
-                      item.documentos_experiencia?.[0]?.estado === "pendiente" && (
-                        <p className='flex'>Estado:  <span> Pendiente</span></p>
-                      )
-                    }
-                    {
-                      item.documentos_experiencia?.[0]?.estado === "aprobado" && (
-                        <p className="text-green-500">Estado: {item.documentos_experiencia?.[0]?.estado}</p>
-                      )
-                    }
-                    {
-                      item.documentos_experiencia?.[0]?.estado === "rechazado" && (
-                        <p className="text-red-500">Estado: {item.documentos_experiencia?.[0]?.estado}</p>
-                      )
-                    }
+                  <p>{obtenerAno(item.fecha_inicio)} / {item.fecha_finalizacion ? obtenerAno(item.fecha_finalizacion) : 'Actual'}</p>
+                  <EstadoDocumento documentos={item.documentos_experiencia} />
                 </div>
               </li>
             ))}

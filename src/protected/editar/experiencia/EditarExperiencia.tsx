@@ -12,9 +12,11 @@ import { SelectForm } from "../../../componentes/formularios/SelectForm";
 import InputErrors from "../../../componentes/formularios/InputErrors";
 import TextInput from "../../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
-import { experienciaSchema } from "../../../validaciones/experienceSchema";
+import { experienciaSchemaUpdate } from "../../../validaciones/experienceSchema";
 import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
 import { LabelRadio } from "../../../componentes/formularios/LabelRadio";
+import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
+import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
 
 type Inputs = {
   tipo_experiencia: string;
@@ -31,7 +33,7 @@ type Inputs = {
 
 const EditarExperiencia = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
+
   const { id } = useParams();
   const {
     register,
@@ -40,19 +42,21 @@ const EditarExperiencia = () => {
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(experienciaSchema),
+    resolver: zodResolver(experienciaSchemaUpdate),
     defaultValues: {
-      experiencia_universidad: "No",
+      
     },
   });
 
+  const archivoValue = watch('archivo')
+  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
   const experiencia_universidad = watch("experiencia_universidad");
- 
+
   useEffect(() => {
     if (experiencia_universidad === "Si") {
       setValue("institucion_experiencia", "Corporación Universidad del Cauca");
     } else {
-      setValue("institucion_experiencia", ""); 
+      setValue("institucion_experiencia", "");
     }
   }, [experiencia_universidad, setValue]);
   useEffect(() => {
@@ -76,8 +80,7 @@ const EditarExperiencia = () => {
         setValue("fecha_inicio", data.fecha_inicio);
         setValue("fecha_finalizacion", data.fecha_finalizacion);
 
-        if (data.documentos_experiencia
-          && data.documentos_experiencia.length > 0) {
+        if (data.documentos_experiencia && data.documentos_experiencia.length > 0) {
           const archivo = data.documentos_experiencia[0];
           setExistingFile({
             url: archivo.archivo_url,
@@ -91,7 +94,7 @@ const EditarExperiencia = () => {
 
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append("_method", "PUT");
     formData.append("tipo_experiencia", data.tipo_experiencia);
@@ -101,7 +104,8 @@ const EditarExperiencia = () => {
     formData.append("intensidad_horaria", data.intensidad_horaria);
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_finalizacion", data.fecha_finalizacion || "");
-    formData.append("archivo", data.archivo[0]);
+    formData.append("archivo", data.archivo[0] || '');
+
 
     const token = Cookies.get("token");
     const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-experiencia/${id}`;
@@ -281,19 +285,13 @@ const EditarExperiencia = () => {
             register={register('archivo')}
           />
           <InputErrors errors={errors} name="archivo" />
-          {existingFile && (
-            <div className="mt-2">
-              <a href={existingFile.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                {existingFile.name}
-              </a>
-            </div>
-          )}
+          <MostrarArchivo file={existingFile} />
         </div>
 
         {/* Botón */}
         <div className="flex justify-center col-span-full">
           <ButtonPrimary
-            value={isSubmitting ? "Enviando..." : "Agregar experiencia"}
+            value={isSubmitting ? "Enviando..." : "Editar experiencia"}
             disabled={isSubmitting}
           />
         </div>

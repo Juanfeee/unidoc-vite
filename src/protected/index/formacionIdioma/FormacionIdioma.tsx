@@ -1,12 +1,11 @@
 import { GlobeAmericasIcon } from '@heroicons/react/24/outline'
 import { PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'
-import { toast } from 'react-toastify'
+import EstadoDocumento from '../../../componentes/Estado'
+import { GlobeIcon } from '../../../assets/icons/Iconos'
 
 const FormacionIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([])
@@ -62,30 +61,16 @@ const FormacionIdioma = () => {
             texto="Agregar idioma"
           />
         ) : (
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-6">
             {idiomas.map((item, index) => (
               <li className="flex flex-col sm:flex-row gap-6" key={index}>
-                <GlobeAmericasIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
+                <GlobeIcon/>
                 <div className="text-[#637887]">
                   <p className="font-semibold text-[#121417]">{item.idioma}</p>
                   <p>{item.institucion_idioma}</p>
-                  <p>Nivel: {item.nivel}</p>
-                  <p>Certificado: {item.fecha_certificado}</p>
-                  {
-                    item.documentos_idioma?.[0]?.estado === "pendiente" && (
-                      <p className='flex'>Estado:  <span> Pendiente</span></p>
-                    )
-                  }
-                  {
-                    item.documentos_idioma?.[0]?.estado === "aprobado" && (
-                      <p className="text-green-500">Estado: {item.documentos_idioma?.[0]?.estado}</p>
-                    )
-                  }
-                  {
-                    item.documentos_idioma?.[0]?.estado === "rechazado" && (
-                      <p className="text-red-500">Estado: {item.documentos_idioma?.[0]?.estado}</p>
-                    )
-                  }
+                  <p>{item.nivel}</p>
+                  <p>{item.fecha_certificado}</p>
+                  <EstadoDocumento documentos={item.documentos_idioma} />
                 </div>
               </li>
             ))}

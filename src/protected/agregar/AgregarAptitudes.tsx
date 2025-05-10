@@ -87,6 +87,8 @@ const AgregarAptitudes = () => {
       setIsSubmitting(false);
     }
   };
+
+  
   return (
     <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8">
       <div className="flex gap-4 items-center">

@@ -12,8 +12,10 @@ import { SelectForm } from "../../../componentes/formularios/SelectForm";
 import InputErrors from "../../../componentes/formularios/InputErrors";
 import TextInput from "../../../componentes/formularios/TextInput";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
-import { languageSchema } from "../../../validaciones/languageSchema";
+import { languageSchemaUpdate } from "../../../validaciones/languageSchema";
 import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
+import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
+import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
 
 type Inputs = {
     idioma: string;
@@ -24,8 +26,8 @@ type Inputs = {
 };
 
 const EditarIdioma = () => {
-    const [existingFile, setExistingFile] = useState<{ url: string, name: string } | null>(null);
-    const { id } = useParams();  // Obtener el ID del idioma a través de la URL
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { id } = useParams();
     const {
         register,
         handleSubmit,
@@ -33,11 +35,12 @@ const EditarIdioma = () => {
         setValue,
         formState: { errors },
     } = useForm<Inputs>({
-        resolver: zodResolver(languageSchema),
+        resolver: zodResolver(languageSchemaUpdate),
     });
 
 
-    console.log("Formulario", watch());
+    const archivoValue = watch('archivo')
+    const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
     useEffect(() => {
 
@@ -53,17 +56,18 @@ const EditarIdioma = () => {
                 console.log("idioma", data);
                 setValue('idioma', data.idioma);
                 setValue('institucion_idioma', data.institucion_idioma);
-                setValue('nivel', data.nivel_idioma);
+                setValue('nivel', data.nivel);
                 setValue('fecha_certificado', data.fecha_certificado);
 
-                if (data.documentos_idioma
-                    && data.documentos_idioma.length > 0) {
+                if (data.documentos_idioma && data.documentos_idioma.length > 0) {
                     const archivo = data.documentos_idioma[0];
                     setExistingFile({
                         url: archivo.archivo_url,
                         name: archivo.archivo.split("/").pop() || "Archivo existente",
                     });
                 }
+
+
             })
             .catch((error) => {
                 console.error(error);
@@ -71,13 +75,14 @@ const EditarIdioma = () => {
     }, [setValue])
 
     const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
+        setIsSubmitting(true);
         const formData = new FormData();
         formData.append('_method', 'PUT');
         formData.append("idioma", data.idioma);
         formData.append("institucion_idioma", data.institucion_idioma);
         formData.append("nivel", data.nivel);
         formData.append("fecha_certificado", data.fecha_certificado || '');
-        formData.append("archivo", data.archivo[0]);
+        formData.append("archivo", data.archivo[0] || '');
 
         const token = Cookies.get("token");
         const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-idioma/${id}`;
@@ -191,14 +196,14 @@ const EditarIdioma = () => {
                             register={register('archivo')}
                         />
                         <InputErrors errors={errors} name="archivo" />
-                        {existingFile && (
-                            <div className="text-sm text-gray-700 mt-2">
-                                <p>Archivo cargado: <a href={existingFile.url} target="_blank" className="text-blue-600 underline">{existingFile.name}</a></p>
-                            </div>
-                        )}
+                        <MostrarArchivo file={existingFile} />
                     </div>
                     <div className='flex justify-center col-span-full' >
-                        <ButtonPrimary value='Agregar estudio' />
+                        <ButtonPrimary
+                            value={isSubmitting ? "Enviando..." : "Editar idioma"}
+                            disabled={isSubmitting}
+
+                        />
                     </div>
                 </div>
             </form>
