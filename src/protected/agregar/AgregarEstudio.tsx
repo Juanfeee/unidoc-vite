@@ -48,8 +48,10 @@ const AgregarEstudio = () => {
   // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
   const convalido = watch('titulo_convalidado');
   useEffect(() => {
-    if (convalido === 'no') {
+    if (convalido === 'No') {
       setValue('fecha_convalidacion', '');
+      setValue('resolucion_convalidacion', 'no tiene resolucion de convalidacion');
+    } else if (convalido === 'Si') {
       setValue('resolucion_convalidacion', '');
     }
   }, [convalido, setValue]);
@@ -62,14 +64,8 @@ const AgregarEstudio = () => {
     }
   }, [watch('graduado'), setValue]);
 
-  // Efecto para limpiar los campos de fecha de convalidación y resolución de convalidación si el título no está convalidado
-  useEffect(() => {
-    if (watch('titulo_convalidado') === 'Si') {
-      setValue('resolucion_convalidacion', '');
-    } else if (watch('titulo_convalidado') === 'No') {
-      setValue('fecha_convalidacion', '');
-    }
-  }, [watch('titulo_convalidado'), setValue]);
+
+
 
   // Función para manejar el envío del formulario
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -141,8 +137,8 @@ const AgregarEstudio = () => {
     }
   };
   //mostrar el formulario en consola
-
-
+  console.log("errors", errors);
+  console.log("data", watch());
   return (
     <>
       <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">

@@ -25,13 +25,14 @@ type Inputs = {
   fecha_graduacion: string;
   titulo_convalidado: string;
   fecha_convalidacion: string;
-  resolucion_convalidacion?: string;
+  resolucion_convalidacion: string;
   posible_fecha_graduacion?: string;
   titulo_estudio: string;
   fecha_inicio: string;
   fecha_fin: string;
   archivo: FileList;
 };
+
 
 const EditarEstudio = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,14 +55,12 @@ const EditarEstudio = () => {
 
 
   // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
-  const convalido = watch('titulo_convalidado');
   const graduado = watch('graduado');
-  const titulo_convalidado = watch('titulo_convalidado');
-
+  const convalido = watch('titulo_convalidado');
   useEffect(() => {
-    if (convalido === 'no') {
+    if (convalido === 'No') {
       setValue('fecha_convalidacion', '');
-      setValue('resolucion_convalidacion', '');
+      setValue('resolucion_convalidacion', 'no tiene resolucion de convalidacion');
     }
   }, [convalido, setValue]);
   // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
@@ -73,13 +72,6 @@ const EditarEstudio = () => {
     }
   }, [graduado, setValue]);
 
-  // Efecto para limpiar los campos de fecha de convalidación y resolución de convalidación si el título no está convalidado
-  useEffect(() => {
-    if (titulo_convalidado === 'No') {
-      setValue('resolucion_convalidacion', '');
-      setValue('fecha_convalidacion', '');
-    } 
-  }, [titulo_convalidado, setValue]);
 
 
   useEffect(() => {
