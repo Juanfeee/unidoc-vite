@@ -12,7 +12,7 @@ const PreExperiencia = () => {
     try {
       setLoading(true);
       // 1. Cargar desde caché primero
-      const cached = localStorage.getItem('experiencias');
+      const cached = sessionStorage.getItem('experiencias');
       if (cached) {
         setExperiencias(JSON.parse(cached));
       }
@@ -23,12 +23,12 @@ const PreExperiencia = () => {
       // 3. Actualizar estado y caché
       if (response.data?.experiencias) {
         setExperiencias(response.data.experiencias);
-        localStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
+        sessionStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
       }
     } catch (error) {
       console.error('Error al obtener experiencias:', error);
       // Fallback a caché si hay error
-      const cached = localStorage.getItem('experiencias');
+      const cached = sessionStorage.getItem('experiencias');
       if (cached) {
         setExperiencias(JSON.parse(cached));
       }
@@ -43,7 +43,7 @@ const PreExperiencia = () => {
       // Actualizar estado y caché
       const nuevasExperiencias = experiencias.filter(e => e.id_experiencia !== id);
       setExperiencias(nuevasExperiencias);
-      localStorage.setItem('experiencias', JSON.stringify(nuevasExperiencias));
+      sessionStorage.setItem('experiencias', JSON.stringify(nuevasExperiencias));
     } catch (err) {
       console.error('Error al eliminar:', err);
     }
@@ -51,7 +51,7 @@ const PreExperiencia = () => {
 
   useEffect(() => {
     // Cargar datos iniciales desde caché
-    const cached = localStorage.getItem('experiencias');
+    const cached = sessionStorage.getItem('experiencias');
     if (cached) {
       setExperiencias(JSON.parse(cached));
     }

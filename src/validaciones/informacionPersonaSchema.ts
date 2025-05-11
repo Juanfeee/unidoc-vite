@@ -1,16 +1,17 @@
 import { z } from "zod";
 
 export const informacionContacto = z.object({
+
   categoria_libreta_militar: z.string().min(1, { message: "Es requerido" }),
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
   numero_libreta_militar: z.string().optional(),
   numero_distrito_militar: z.string().optional(),
   direccion_residencia: z.string().max(100).optional(),
+  barrio: z.string().max(100).optional(),
   correo_alterno: z
     .string()
     .email({ message: "Correo no valido" })
     .max(100, { message: "El correo no puede tener más de 100 caracteres" }),
-  barrio: z.string().max(100).optional(),
   telefono_movil: z
     .string()
     .min(7)

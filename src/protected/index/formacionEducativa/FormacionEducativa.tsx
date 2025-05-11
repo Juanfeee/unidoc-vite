@@ -11,11 +11,11 @@ const FormacionEducativa = () => {
 
   const [estudios, setEstudios] = useState<any[]>([]);
 
-  //Función para cargar los datos desde el servidor o localStorage
+  //Función para cargar los datos desde el servidor o sesionStorage
   const fetchDatos = async () => {
     try {
-      // 1. Intentar cargar desde localStorage primero
-      const cached = localStorage.getItem('estudios');
+      // 1. Intentar cargar desde sesionStorage primero
+      const cached = sessionStorage.getItem('estudios');
       if (cached) {
         setEstudios(JSON.parse(cached));
       }
@@ -24,10 +24,10 @@ const FormacionEducativa = () => {
       const response = await axiosInstance.get('/aspirante/obtener-estudios');
 
 
-      // 3. Actualizar estado y localStorage
+      // 3. Actualizar estado y sesionStorage
       if (response.data?.estudios) {
         setEstudios(response.data.estudios);
-        localStorage.setItem('estudios', JSON.stringify(response.data.estudios));
+        sessionStorage.setItem('estudios', JSON.stringify(response.data.estudios));
       }
 
     } catch (error) {

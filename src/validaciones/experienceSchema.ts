@@ -10,7 +10,7 @@ export const experienciaSchema = z
 
     institucion_experiencia: z
       .string()
-      .min(3, { message: "Campo vacío" })
+      .min(7, { message: "Minimo 7 caracteres" })
       .max(100, { message: "Máximo 100 caracteres" })
       .regex(regexSinEmojis, {
         message: "No se permiten emojis ni caracteres especiales",
@@ -18,7 +18,7 @@ export const experienciaSchema = z
 
     cargo: z
       .string()
-      .min(3, { message: "Campo vacío" })
+      .min(7, { message: "Minimo 7 caracteres" })
       .max(100, { message: "Máximo 100 caracteres" })
       .regex(regexSinEmojis, {
         message: "No se permiten emojis ni caracteres especiales",
@@ -39,9 +39,14 @@ export const experienciaSchema = z
       .string({
         invalid_type_error: "Esa no es una fecha válida",
       })
-      .refine((val) => !isNaN(Date.parse(val)), {
-        message: "Formato de fecha incorrecto",
-      }),
+      .optional()
+      .refine(
+        (val) => val === undefined || val === "" || !isNaN(Date.parse(val)),
+        {
+          message: "Formato de fecha incorrecto",
+        }
+      ),
+
     fecha_expedicion_certificado: z
       .string({
         invalid_type_error: "Esa no es una fecha válida",
@@ -80,7 +85,7 @@ export const experienciaSchema = z
   .refine(
     (data) => {
       const fechaInicio = new Date(data.fecha_inicio);
-      const fechaFinalizacion = new Date(data.fecha_finalizacion);
+      const fechaFinalizacion = new Date(data.fecha_finalizacion ?? "");
       if (fechaFinalizacion < fechaInicio) {
         return false;
       }
@@ -101,7 +106,7 @@ export const experienciaSchemaUpdate = z
 
     institucion_experiencia: z
       .string()
-      .min(3, { message: "Campo vacío" })
+      .min(7, { message: "Minimo 7 caracteres" })
       .max(100, { message: "Máximo 100 caracteres" })
       .regex(regexSinEmojis, {
         message: "No se permiten emojis ni caracteres especiales",
@@ -109,7 +114,7 @@ export const experienciaSchemaUpdate = z
 
     cargo: z
       .string()
-      .min(3, { message: "Campo vacío" })
+      .min(7, { message: "Minimo 7 caracteres" })
       .max(100, { message: "Máximo 100 caracteres" })
       .regex(regexSinEmojis, {
         message: "No se permiten emojis ni caracteres especiales",
@@ -129,12 +134,16 @@ export const experienciaSchemaUpdate = z
         message: "Formato de fecha incorrecto",
       }),
     fecha_finalizacion: z
-      .string({
-        invalid_type_error: "Esa no es una fecha válida",
-      })
-      .refine((val) => !isNaN(Date.parse(val)), {
-        message: "Formato de fecha incorrecto",
-      }),
+      .union([
+        z.string().refine((val) => !isNaN(Date.parse(val)), {
+          message: "Formato de fecha incorrecto",
+        }),
+        z.literal(""),
+        z.null(),
+        z.undefined(),
+      ])
+      .optional(),
+
     fecha_expedicion_certificado: z
       .string({
         invalid_type_error: "Esa no es una fecha válida",
@@ -161,18 +170,21 @@ export const experienciaSchemaUpdate = z
         { message: "Formato de archivo inválido (solo PDF permitido)" }
       ),
   })
-  .refine(
-    (data) => {
-      const fechaInicio = new Date(data.fecha_inicio);
-      const fechaFinalizacion = new Date(data.fecha_finalizacion);
-      if (fechaFinalizacion < fechaInicio) {
-        return false;
-      }
+ .refine(
+  (data) => {
+    const fechaInicio = new Date(data.fecha_inicio);
+    if (
+      data.fecha_finalizacion === undefined ||
+      data.fecha_finalizacion === null ||
+      data.fecha_finalizacion === ""
+    ) {
       return true;
-    },
-    {
-      message:
-        "La fecha de finalización no puede ser menor que la fecha de inicio",
-      path: ["fecha_finalizacion"], // Esto asegura que el error se asocie con fecha_finalizacion
     }
-  );
+    const fechaFinalizacion = new Date(data.fecha_finalizacion);
+    return fechaFinalizacion >= fechaInicio;
+  },
+  {
+    message: "La fecha de finalización no puede ser menor que la fecha de inicio",
+    path: ["fecha_finalizacion"],
+  }
+);

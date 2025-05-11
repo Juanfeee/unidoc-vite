@@ -11,9 +11,9 @@ const ProtectedRoute = ({ children }: Props) => {
   const token = Cookies.get("token");
 
   if (!token) {
-    // Borrar el localStorage y Cookies
+    // Borrar el sessionStorage y Cookies
     Cookies.remove("token");
-    localStorage.clear();
+    sessionStorage.clear();
     return <Navigate to="/" replace />;
   }
 

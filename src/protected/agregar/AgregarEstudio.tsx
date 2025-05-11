@@ -136,9 +136,7 @@ const AgregarEstudio = () => {
       setIsSubmitting(false);
     }
   };
-  //mostrar el formulario en consola
-  console.log("errors", errors);
-  console.log("data", watch());
+
   return (
     <>
       <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">

@@ -29,7 +29,7 @@ const Configuracion = () => {
         const { data } = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` }
         });
-        
+
         const imageUrl = data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
         if (imageUrl) {
           setCurrentProfileImage(imageUrl);
@@ -85,9 +85,10 @@ const Configuracion = () => {
   const handleDeleteProfileImage = async () => {
     if (!currentProfileImage) return;
     setIsDeleting(true);
-    
+
     //borrar del localStorage
-    localStorage.removeItem("profileImage");
+    sessionStorage.removeItem("profileImage");
+
     try {
       await toast.promise(
         axiosInstance.delete(`${import.meta.env.VITE_API_URL}/aspirante/eliminar-foto-perfil`, {
@@ -118,7 +119,7 @@ const Configuracion = () => {
         if (error.code === "ECONNABORTED") return "Tiempo de espera agotado";
         if (error.response) {
           const errors = error.response.data?.errors;
-          return typeof errors === "object" 
+          return typeof errors === "object"
             ? Object.values(errors).flat().join("\n")
             : error.response.data?.message || `Error al ${action}`;
         }
@@ -174,7 +175,7 @@ const Configuracion = () => {
             value={isSubmitting ? "Guardando..." : "Guardar cambios"}
             disabled={isSubmitting || !profileImage || profileImage === currentProfileImage}
           />
-          
+
           {currentProfileImage && (
             <button
               type="button"

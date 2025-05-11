@@ -4,7 +4,7 @@ import axios from 'axios';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { experienciaSchema } from '../../validaciones/experienceSchema';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router';
 import { ButtonRegresar } from '../../componentes/formularios/ButtonRegresar';
@@ -52,16 +52,24 @@ const AgregarExperiencia = () => {
   const { existingFile } = useArchivoPreview(archivoValue);
 
   const experiencia_universidad = watch("experiencia_universidad");
+
+
   useEffect(() => {
     if (experiencia_universidad === "Si") {
-      setValue("institucion_experiencia", "Corporación Universidad del Cauca");
+      setValue("institucion_experiencia", "Corporación Universitaria Autónoma del Cauca");
     } else {
       setValue("institucion_experiencia", "");
     }
   }, [experiencia_universidad, setValue]);
 
 
-  console.log(watch())
+  const trabajo_actual = watch("trabajo_actual");
+  useEffect(() => {
+    if (trabajo_actual === "Si") {
+      setValue("fecha_finalizacion", "");
+    }
+  }, [trabajo_actual, setValue]);
+
   const onSubmit: SubmitHandler<Inputs> = async () => {
     setIsSubmitting(true);
     const formValues = {
@@ -145,8 +153,6 @@ const AgregarExperiencia = () => {
 
 
   };
-
-
   return (
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
       <div className="flex gap-x-4 col-span-full items-center">
@@ -256,15 +262,17 @@ const AgregarExperiencia = () => {
           />
           <InputErrors errors={errors} name="fecha_inicio" />
         </div>
-        <div className="">
-          <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
-          <TextInput
-            type="date"
-            id="fecha_finalizacion"
-            {...register('fecha_finalizacion')}
-          />
-          <InputErrors errors={errors} name="fecha_finalizacion" />
-        </div>
+        {watch("trabajo_actual") === "No" && (
+          <div className="">
+            <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
+            <TextInput
+              type="date"
+              id="fecha_finalizacion"
+              {...register('fecha_finalizacion')}
+            />
+            <InputErrors errors={errors} name="fecha_finalizacion" />
+          </div>
+        )}
 
         <div>
           <InputLabel htmlFor="fecha_expedicion_certificado" value="Fecha expedicion de certificado" />

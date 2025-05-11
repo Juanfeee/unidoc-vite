@@ -17,21 +17,21 @@ const InformacionPersonalDocente = () => {
   // Cargar la imagen de perfil al cargar el componente
   const fetchProfileImage = async () => {
     try {
-      // 1. Intentar cargar desde localStorage primero
-      const cachedImage = localStorage.getItem('profileImage');
+      // 1. Intentar cargar desde sessionStorage primero
+      const cachedImage = sessionStorage.getItem('profileImage');
       if (cachedImage) {
         setProfileImage(cachedImage);
       }
 
       // 2. Hacer petición al servidor
-      const response = await axiosInstance.get('/auth/obtener-imagen-perfil', {
+      const response = await axiosInstance.get('/aspirante/obtener-foto-perfil', {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` }
       });
 
-      // 3. Actualizar estado y localStorage
+      // 3. Actualizar estado y sessionStorage
       if (response.data?.image) {
         setProfileImage(response.data.image);
-        localStorage.setItem('profileImage', response.data.image);
+        sessionStorage.setItem('profileImage', response.data.image);
       }
 
     }
@@ -45,30 +45,28 @@ const InformacionPersonalDocente = () => {
   // Cargar los datos del docente al cargar el componente
   const fetchDatos = async () => {
     try {
-      // 1. Intentar cargar desde localStorage primero
-      const cachedData = localStorage.getItem('userData');
+      // 1. Intentar cargar desde sessionStorage primero
+      const cachedData = sessionStorage.getItem('userData');
       if (cachedData) {
         setDatos(JSON.parse(cachedData));
       }
 
       // 2. Hacer petición al servidor para obtener los datos del usuario
       const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
-      // 3. Si el usuario existe, actualizamos el estado y localStorage
+      // 3. Si el usuario existe, actualizamos el estado y sessionStorage
       if (response.data?.user) {
         const user = response.data.user;
-        console.log("user", user);
         setDatos(user);
-        localStorage.setItem('userData', JSON.stringify(user));
+        sessionStorage.setItem('userData', JSON.stringify(user));
 
         // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
         const municipio = user.municipio_id;
         if (municipio) {
           try {
             const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
-            console.log("municipio", responseMunicipio.data);
 
-            // 5. Almacenamos el municipio en localStorage si se obtiene correctamente
-            localStorage.setItem('municipio', JSON.stringify(responseMunicipio.data));
+            // 5. Almacenamos el municipio en sessionStorage si se obtiene correctamente
+            sessionStorage.setItem('municipio', JSON.stringify(responseMunicipio.data));
             setMunicipio(responseMunicipio.data);
 
           } catch (municipioError) {
@@ -87,8 +85,8 @@ const InformacionPersonalDocente = () => {
   // Cargar los datos de aptitudes al cargar el componente
   const fetchAptitudes = async () => {
     try {
-      // 1. Intentar cargar desde localStorage primero
-      const cachedAptitudes = localStorage.getItem('aptitudes');
+      // 1. Intentar cargar desde sessionStorage primero
+      const cachedAptitudes = sessionStorage.getItem('aptitudes');
       if (cachedAptitudes) {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
@@ -98,10 +96,10 @@ const InformacionPersonalDocente = () => {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` }
       });
 
-      // 3. Actualizar estado y localStorage
+      // 3. Actualizar estado y sessionStorage
       if (response.data?.aptitudes) {
         setAptitudes(response.data.aptitudes);
-        localStorage.setItem('aptitudes', JSON.stringify(response.data.aptitudes));
+        sessionStorage.setItem('aptitudes', JSON.stringify(response.data.aptitudes));
       }
 
     } catch (error) {
@@ -127,7 +125,6 @@ const InformacionPersonalDocente = () => {
     return <div className="grid bg-white py-12 px-8 rounded-xl gap-7 items-center justify-center font-black"><span>Cargando...</span></div>;
   }
 
-  console.log(aptitudes);
   return (
     <>
       <div className="flex flex-col w-full rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative">

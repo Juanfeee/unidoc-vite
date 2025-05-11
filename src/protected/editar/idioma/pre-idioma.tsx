@@ -12,7 +12,7 @@ const PreProduccion = () => {
     try {
       setLoading(true);
       // 1. Cargar desde caché primero
-      const cached = localStorage.getItem('idiomas');
+      const cached = sessionStorage.getItem('idiomas');
       if (cached) {
         setIdiomas(JSON.parse(cached));
       }
@@ -23,12 +23,12 @@ const PreProduccion = () => {
       // 3. Actualizar estado y caché
       if (response.data?.idiomas) {
         setIdiomas(response.data.idiomas);
-        localStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
+        sessionStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
       }
     } catch (error) {
       console.error('Error al obtener idiomas:', error);
       // Fallback a caché si hay error
-      const cached = localStorage.getItem('idiomas');
+      const cached = sessionStorage.getItem('idiomas');
       if (cached) {
         setIdiomas(JSON.parse(cached));
       }
@@ -43,7 +43,7 @@ const PreProduccion = () => {
       // Actualizar estado y caché
       const nuevosIdiomas = idiomas.filter(i => i.id_idioma !== id);
       setIdiomas(nuevosIdiomas);
-      localStorage.setItem('idiomas', JSON.stringify(nuevosIdiomas));
+      sessionStorage.setItem('idiomas', JSON.stringify(nuevosIdiomas));
     } catch (err) {
       console.error('Error al eliminar:', err);
     }
@@ -51,7 +51,7 @@ const PreProduccion = () => {
 
   useEffect(() => {
     // Cargar datos iniciales desde caché
-    const cached = localStorage.getItem('idiomas');
+    const cached = sessionStorage.getItem('idiomas');
     if (cached) {
       setIdiomas(JSON.parse(cached));
     }

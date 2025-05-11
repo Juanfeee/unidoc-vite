@@ -44,7 +44,7 @@ const EditarExperiencia = () => {
   } = useForm<Inputs>({
     resolver: zodResolver(experienciaSchemaUpdate),
     defaultValues: {
-      
+
     },
   });
 
@@ -71,14 +71,13 @@ const EditarExperiencia = () => {
       })
       .then((response) => {
         const data = response.data.experiencia;
-        console.log(data);
         setValue("tipo_experiencia", data.tipo_experiencia);
         setValue("institucion_experiencia", data.institucion_experiencia);
         setValue("trabajo_actual", data.trabajo_actual);
         setValue("cargo", data.cargo);
         setValue("intensidad_horaria", data.intensidad_horaria);
         setValue("fecha_inicio", data.fecha_inicio);
-        setValue("fecha_finalizacion", data.fecha_finalizacion);
+        setValue("fecha_finalizacion", data.fecha_finalizacion ?? "");
 
         if (data.documentos_experiencia && data.documentos_experiencia.length > 0) {
           const archivo = data.documentos_experiencia[0];
@@ -103,7 +102,7 @@ const EditarExperiencia = () => {
     formData.append("cargo", data.cargo);
     formData.append("intensidad_horaria", data.intensidad_horaria);
     formData.append("fecha_inicio", data.fecha_inicio);
-    formData.append("fecha_finalizacion", data.fecha_finalizacion || "");
+    formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
     formData.append("archivo", data.archivo[0] || '');
 
 
@@ -155,8 +154,12 @@ const EditarExperiencia = () => {
     });
   };
 
-  console.log(errors);
-
+  const trabajo_actual = watch("trabajo_actual");
+  useEffect(() => {
+    if (trabajo_actual === "Si") {
+      setValue("fecha_finalizacion", "");
+    }
+  }, [trabajo_actual, setValue]);
   return (
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
       <div className="flex gap-x-4 col-span-full items-center">
@@ -266,15 +269,17 @@ const EditarExperiencia = () => {
           />
           <InputErrors errors={errors} name="fecha_inicio" />
         </div>
-        <div className="">
-          <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
-          <TextInput
-            type="date"
-            id="fecha_finalizacion"
-            {...register('fecha_finalizacion')}
-          />
-          <InputErrors errors={errors} name="fecha_finalizacion" />
-        </div>
+        {watch("trabajo_actual") === "No" && (
+          <div className="">
+            <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
+            <TextInput
+              type="date"
+              id="fecha_finalizacion"
+              {...register('fecha_finalizacion')}
+            />
+            <InputErrors errors={errors} name="fecha_finalizacion" />
+          </div>
+        )}
 
 
         {/* Archivo */}

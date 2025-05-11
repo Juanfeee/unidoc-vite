@@ -1,34 +1,29 @@
-"use client";
+import { SubmitHandler, useForm } from "react-hook-form"
+import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary"
+import InputErrors from "../componentes/formularios/InputErrors"
+import { InputLabel } from "../componentes/formularios/InputLabel"
+import TextInput from "../componentes/formularios/TextInput"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { restablecerContrasenaSchema } from "../validaciones/restablecerContrasenaSchema"
+import axios from "axios"
+import { toast } from "react-toastify"
+import Cookies from "js-cookie"
+import { Link } from "react-router"
 
-import axios from "axios";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import Cookies from "js-cookie";
-import { loginSchema } from "../validaciones/loginSchema";
-import { Link, useNavigate } from "react-router";
-import { InputLabel } from "../componentes/formularios/InputLabel";
-import TextInput from "../componentes/formularios/TextInput";
-import InputErrors from "../componentes/formularios/InputErrors";
-import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
-import { zodResolver } from "@hookform/resolvers/zod";
 type Inputs = {
   email: string
-  password: string
 }
 
 
-
-const Login = () => {
-  const navigate = useNavigate();
-
-  const url = import.meta.env.VITE_API_URL + "/auth/iniciar-sesion";
+const RestablecerContrasena = () => {
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<Inputs>({ resolver: zodResolver(loginSchema) });
+  } = useForm<Inputs>({ resolver: zodResolver(restablecerContrasenaSchema) });
+
+  const url = import.meta.env.VITE_API_URL + "/auth/restablecer-contrasena";
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
 
@@ -45,12 +40,13 @@ const Login = () => {
     // Manejo de la respuesta
     toast.promise(
       loginPromise, {
-      pending: "Iniciando sesión...",
+      pending: "Enviando correo...",
       success: {
         render({ data }) {
           const { token } = data.data;
 
           Cookies.set('token', token, {
+            expires: 1, // 1 día de expiración
             sameSite: 'Strict',
             path: '/',
           });
@@ -59,7 +55,7 @@ const Login = () => {
             window.location.href = "/index";
           }, 500);
 
-          return "¡Bienvenido!";
+          return "¡Te hemos enviado un correo, revísalo";
         },
         autoClose: 500,
       },
@@ -97,8 +93,9 @@ const Login = () => {
       onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada " >
         <div className='flex flex-col gap-2 w-full' >
-          < h3 className="font-bold text-2xl" > Iniciar sesión </h3>
-          <h3>¡Hola! <span className='text-blue-500 font-bold'>Ingresa</span> con tu correo y contraseña</h3>
+          < h3 className="font-bold text-2xl" > Restablecer contraseña </h3>
+          <h3>¡Ouh! <span className='text-yellow-500 font-bold'>¿Olvidaste</span> tu contraseña? No te preocupes, <span className='text-green-600 font-bold'>¡restaurémosla!</span></h3>
+
         </div>
         <div className="">
           <InputLabel htmlFor="email" value="Email" />
@@ -110,31 +107,15 @@ const Login = () => {
           <InputErrors errors={errors} name="email" />
         </div>
         <div className="">
-          <InputLabel htmlFor="password" value="Contraseña" />
-          <TextInput
-            id="password"
-            type="password"
-            placeholder="Contraseña..."
-            {...register('password')} />
-          <p className="text-sm pt-2 text-gray-500 text-start">
-            <Link to="/restablecer-contrasena" className="text-blue-500 hover:text-blue-600">
-              ¿Olvidates tu contraseña?
-            </Link>
-          </p>
-          <InputErrors errors={errors} name="password" />
-
-        </div>
-        <div className="">
           <ButtonPrimary
             className="w-full"
-            value="Iniciar Sesión"
+            value="Restablecer contraseña"
             type="submit"
           />
         </div>
         <p className="text-base text-gray-500 text-center">
-          ¿No tienes una cuenta?{" "}
-          <Link to="/registro" className="text-blue-500 hover:text-blue-600">
-            Regístrate aquí
+          <Link to="/" className="text-blue-500 hover:text-blue-600">
+            Volver a iniciar sesión
           </Link>
         </p>
         <div className='absolute size-full right-0 rotate-5 rounded-3xl -z-10  bg-blue-500'></div>
@@ -143,5 +124,4 @@ const Login = () => {
 
   )
 }
-
-export default Login
+export default RestablecerContrasena

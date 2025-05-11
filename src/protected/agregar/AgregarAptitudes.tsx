@@ -25,7 +25,6 @@ const AgregarAptitudes = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(aptitudSchema) });
-  console.log("Formulario aptitudes", watch());
 
 
 

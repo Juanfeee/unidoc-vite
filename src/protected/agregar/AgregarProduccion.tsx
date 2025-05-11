@@ -173,7 +173,7 @@ const onSubmit: SubmitHandler<Inputs> = async (data) => {
             />
             <TextInput
               id="medio_divulgacion"
-              placeholder="medio_divulgacion"
+              placeholder="medio divulgacion"
               {...register("medio_divulgacion")}
             />
             <InputErrors errors={errors} name="medio_divulgacion" />

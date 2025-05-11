@@ -140,15 +140,15 @@ export const Rut = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         <div>
-          <InputLabel htmlFor="numero_rut" value="Nombre RUT" />
+          <InputLabel htmlFor="numero_rut" value="Numero RUT" />
           <TextInput
             className="w-full"
             id="numero_rut"
             type="text"
-            placeholder="Nombre RUT..."
+            placeholder="Numero RUT..."
             {...register("numero_rut")}
           />
-          <InputErrors errors={errors} name="nombre_rut" />
+          <InputErrors errors={errors} name="numero_rut" />
         </div>
 
         {/* Razón social */}

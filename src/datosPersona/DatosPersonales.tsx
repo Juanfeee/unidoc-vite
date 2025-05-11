@@ -160,7 +160,7 @@ export const DatosPersonales = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         <div>
-          <InputLabel htmlFor="pais" value="País" />
+          <InputLabel htmlFor="pais" value="País de nacimiento" />
           <SelectFormUbicaciones
             id="pais"
             register={register("pais", { valueAsNumber: true, required: true })}
@@ -170,7 +170,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="departamento" value="Departamento" />
+          <InputLabel htmlFor="departamento" value="Departamento de nacimiento" />
           <SelectFormUbicaciones
             id="departamento"
             register={register("departamento", { valueAsNumber: true, required: true })}
@@ -181,7 +181,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="municipio_id" value="Municipio" />
+          <InputLabel htmlFor="municipio_id" value="Municipio de nacimiento" />
           <SelectFormUbicaciones
             id="municipio_id"
             register={register("municipio_id", { valueAsNumber: true, required: true })}

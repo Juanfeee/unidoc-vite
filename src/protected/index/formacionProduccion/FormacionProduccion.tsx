@@ -12,22 +12,22 @@ import { BeakerIcons } from '../../../assets/icons/Iconos';
 const FormacionProduccion = () => {
 
   const [produccion, setProduccion] = useState<any[]>([]);
-  //Función para cargar los datos desde el servidor o localStorage
+  //Función para cargar los datos desde el servidor o sessionStorage
   const fetchDatos = async () => {
     try {
-      // 1. Intentar cargar desde localStorage primero
-      const cachedData = localStorage.getItem('producciones');
+      // 1. Intentar cargar desde sessionStorage primero
+      const cachedData = sessionStorage.getItem('producciones');
       if (cachedData) {
         setProduccion(JSON.parse(cachedData));
       }
 
       // 2. Hacer petición al servidor
       const response = await axiosInstance.get('/aspirante/obtener-producciones');
-      // 3. Actualizar estado y localStorage
+      // 3. Actualizar estado y sessionStorage
       if (response.data?.producciones) {
         const producciones = response.data.producciones;
         setProduccion(producciones);
-        localStorage.setItem('producciones', JSON.stringify(producciones));
+        sessionStorage.setItem('producciones', JSON.stringify(producciones));
       }
 
     } catch (error) {

@@ -13,23 +13,21 @@ const PreProduccion = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
-    console.log('Ejecutando fetchDatos...')
     try {
       setLoading(true);
-      const cached = localStorage.getItem('producciones');
+      const cached = sessionStorage.getItem('producciones');
       if (cached) {
         setProducciones(JSON.parse(cached));
       }
 
       const response = await axiosInstance.get('/aspirante/obtener-producciones');
-      console.log('Producciones:', response.data.producciones);
       if (response.data?.producciones) {
         setProducciones(response.data.producciones);
-        localStorage.setItem('producciones', JSON.stringify(response.data.producciones));
+        sessionStorage.setItem('producciones', JSON.stringify(response.data.producciones));
       }
     } catch (error) {
       console.error('Error al obtener producciones:', error);
-      const cached = localStorage.getItem('producciones');
+      const cached = sessionStorage.getItem('producciones');
       if (cached) {
         setProducciones(JSON.parse(cached));
       }
@@ -48,8 +46,8 @@ const handleDelete = async (id: number) => {
     // Actualizar el estado
     setProducciones(nuevas);
 
-    // Actualizar el localStorage
-    localStorage.setItem('producciones', JSON.stringify(nuevas));
+    // Actualizar el sessionStorage
+    sessionStorage.setItem('producciones', JSON.stringify(nuevas));
   } catch (err) {
     console.error('Error al eliminar:', err);
   }
@@ -57,7 +55,7 @@ const handleDelete = async (id: number) => {
 
 
   useEffect(() => {
-    const cached = localStorage.getItem('producciones');
+    const cached = sessionStorage.getItem('producciones');
     if (cached) {
       setProducciones(JSON.parse(cached));
     }

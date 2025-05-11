@@ -17,8 +17,8 @@ const Header = () => {
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
-        // 1. Intentar cargar desde localStorage primero
-        const cachedImage = localStorage.getItem('profileImage');
+        // 1. Intentar cargar desde sessionStorage primero
+        const cachedImage = sessionStorage.getItem('profileImage');
         if (cachedImage) {
           setProfileImage(cachedImage);
         }
@@ -28,11 +28,11 @@ const Header = () => {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` }
         });
   
-        // 3. Actualizar estado y localStorage
+        // 3. Actualizar estado y sessionStorage
         const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
         if (imageUrl) {
           setProfileImage(imageUrl);
-          localStorage.setItem('profileImage', imageUrl);
+          sessionStorage.setItem('profileImage', imageUrl);
         }
   
       } catch (error) {
@@ -73,9 +73,9 @@ const Header = () => {
         }
       );
       Cookies.remove("token");
-      //borrar todo el localStorage
+      //borrar todo el sessionStorage
 
-      localStorage.clear();
+      sessionStorage.clear();
       setTimeout(() => {
         toast.success("Sesión cerrada correctamente");
       }, 100);
@@ -142,13 +142,13 @@ const Header = () => {
                 {/* Menú desplegable */}
                 {isDropdownOpen && (
                   <div className="absolute right-0 top-full w-48 bg-white rounded-md shadow-lg z-50 text-sm border border-gray-200">
-                    <Link
+                    {/* <Link
                       to="/perfil"
                       className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200 rounded-t-md"
                       onClick={() => setIsDropdownOpen(false)}
                     >
                       Mi perfil
-                    </Link>
+                    </Link> */}
                     <Link
                       to="/configuracion"
                       className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200"

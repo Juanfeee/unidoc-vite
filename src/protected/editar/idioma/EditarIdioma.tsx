@@ -53,7 +53,6 @@ const EditarIdioma = () => {
         })
             .then((response) => {
                 const data = response.data.idioma;
-                console.log("idioma", data);
                 setValue('idioma', data.idioma);
                 setValue('institucion_idioma', data.institucion_idioma);
                 setValue('nivel', data.nivel);

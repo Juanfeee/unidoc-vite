@@ -85,7 +85,6 @@ const EditarEstudio = () => {
       },
     }).then((response) => {
       const data = response.data.estudio;
-      console.log(data);
       setValue("tipo_estudio", data.tipo_estudio || "");
       setValue("graduado", data.graduado || "");
       setValue("institucion", data.institucion || "");

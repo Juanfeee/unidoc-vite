@@ -14,7 +14,7 @@ const FormacionIdioma = () => {
     const fetchDatos = async () => {
       try {
         // 1. Cargar desde caché primero
-        const cached = localStorage.getItem('idiomas');
+        const cached = sessionStorage.getItem('idiomas');
         if (cached) {
           setIdiomas(JSON.parse(cached));
         }
@@ -25,7 +25,7 @@ const FormacionIdioma = () => {
         // 3. Actualizar estado y caché si hay cambios
         if (response.data?.idiomas) {
           setIdiomas(response.data.idiomas);
-          localStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
+          sessionStorage.setItem('idiomas', JSON.stringify(response.data.idiomas));
         }
 
       } catch (error) {

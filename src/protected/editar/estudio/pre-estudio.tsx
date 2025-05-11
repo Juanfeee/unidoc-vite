@@ -13,12 +13,12 @@ const PreEstudio = () => {
       setLoading(true);
       const response = await axiosInstance.get('/aspirante/obtener-estudios');
       setEstudios(response.data.estudios);
-      // Guardar en localStorage
-      localStorage.setItem('estudios', JSON.stringify(response.data.estudios));
+      // Guardar en sessionStorage
+      sessionStorage.setItem('estudios', JSON.stringify(response.data.estudios));
     } catch (error) {
       console.error('Error al obtener los datos:', error);
       // Intentar cargar desde cache si hay error
-      const cached = localStorage.getItem('estudios');
+      const cached = sessionStorage.getItem('estudios');
       if (cached) {
         setEstudios(JSON.parse(cached));
       }
@@ -30,10 +30,10 @@ const PreEstudio = () => {
   const handleDelete = async (id: number) => {
     try {
       await axiosInstance.delete(`/aspirante/eliminar-estudio/${id}`);
-      // Actualizar estado y localStorage
+      // Actualizar estado y sessionStorage
       const nuevosEstudios = estudios.filter(e => e.id_estudio !== id);
       setEstudios(nuevosEstudios);
-      localStorage.setItem('estudios', JSON.stringify(nuevosEstudios));
+      sessionStorage.setItem('estudios', JSON.stringify(nuevosEstudios));
     } catch (err) {
       console.error('Error al eliminar:', err);
     }
@@ -41,7 +41,7 @@ const PreEstudio = () => {
 
   useEffect(() => {
     // Cargar datos iniciales desde cache para mejor UX
-    const cached = localStorage.getItem('estudios');
+    const cached = sessionStorage.getItem('estudios');
     if (cached) {
       setEstudios(JSON.parse(cached));
     }

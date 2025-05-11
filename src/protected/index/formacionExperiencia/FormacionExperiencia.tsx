@@ -16,8 +16,8 @@ const FormacionExperiencia = () => {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        // 1. Intentar cargar desde localStorage primero
-        const cached = localStorage.getItem('experiencias');
+        // 1. Intentar cargar desde sesionStorage primero
+        const cached = sessionStorage.getItem('experiencias');
         if (cached) {
           setExperiencias(JSON.parse(cached));
         }
@@ -25,10 +25,10 @@ const FormacionExperiencia = () => {
         // 2. Hacer petición al servidor
         const response = await axiosInstance.get('/aspirante/obtener-experiencias');
 
-        // 3. Actualizar estado y localStorage
+        // 3. Actualizar estado y sessionStorage
         if (response.data?.experiencias) {
           setExperiencias(response.data.experiencias);
-          localStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
+          sessionStorage.setItem('experiencias', JSON.stringify(response.data.experiencias));
         }
 
       } catch (error) {
