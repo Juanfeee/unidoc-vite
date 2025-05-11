@@ -37,6 +37,8 @@ axiosInstance.interceptors.response.use(
       if (error.response.status === 401) {
         //Borrar la cookie del token
         Cookies.remove("token");
+        sessionStorage.clear()
+        
 
         // Si el código de estado es 401, redirigir al login
         toast.error("Sesión expirada, por favor inicia sesión.");

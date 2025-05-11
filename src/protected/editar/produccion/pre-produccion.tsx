@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import axiosInstance from '../../../utils/axiosConfig';
 import EliminarBoton from '../../../componentes/EliminarBoton';
 import { SubmitHandler } from 'react-hook-form';
+import { BeakerIcons, PencilIcon } from '../../../assets/icons/Iconos';
+import { ButtonRegresar } from '../../../componentes/formularios/ButtonRegresar';
 
 
 
@@ -35,23 +37,23 @@ const PreProduccion = () => {
       setLoading(false);
     }
   };
-const handleDelete = async (id: number) => {
-  try {
-    // Realizar la solicitud para eliminar el item en el backend
-    await axiosInstance.delete(`/aspirante/eliminar-produccion/${id}`);
+  const handleDelete = async (id: number) => {
+    try {
+      // Realizar la solicitud para eliminar el item en el backend
+      await axiosInstance.delete(`/aspirante/eliminar-produccion/${id}`);
 
-    // Filtrar la producción eliminada
-    const nuevas = producciones.filter(p => p.id_produccion_academica !== id);
+      // Filtrar la producción eliminada
+      const nuevas = producciones.filter(p => p.id_produccion_academica !== id);
 
-    // Actualizar el estado
-    setProducciones(nuevas);
+      // Actualizar el estado
+      setProducciones(nuevas);
 
-    // Actualizar el sessionStorage
-    sessionStorage.setItem('producciones', JSON.stringify(nuevas));
-  } catch (err) {
-    console.error('Error al eliminar:', err);
-  }
-};
+      // Actualizar el sessionStorage
+      sessionStorage.setItem('producciones', JSON.stringify(nuevas));
+    } catch (err) {
+      console.error('Error al eliminar:', err);
+    }
+  };
 
 
   useEffect(() => {
@@ -69,10 +71,14 @@ const handleDelete = async (id: number) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h4 className="font-bold text-xl">Producciones Académicas</h4>
-        <div className="flex gap-1">
+    <div className="flex flex-col gap-4 h-full sm:w-[600px] bg-white rounded-3xl p-8">
+      <div className="flex flex-col gap-4">
+        <Link to={'/index'}>
+          <ButtonRegresar
+          />
+        </Link>
+        <div className='flex gap-4 items-center justify-between'>
+          <h4 className="font-bold text-xl">Producciones Académicas</h4>
           <Link to={'/agregar/produccion'}>
             <PlusIcon className="size-10 p-2 stroke-2" />
           </Link>
@@ -87,30 +93,29 @@ const handleDelete = async (id: number) => {
             {producciones.map((item) => (
               <li
                 key={item.id_produccion_academica}
-                className="flex flex-col sm:flex-row gap-6 justify-around w-full border-b-2 border-gray-200 p-2"
+                className="flex flex-col sm:flex-row gap-6  w-full border-b-2 border-gray-200 p-2 "
               >
-                <div className="flex flex-row gap-4 w-full">
-                  <BeakerIcon className="size-12 p-2 rounded-lg bg-[#F0F2F5] text-[#121417]" />
-                  <div className="text-[#637887]">
-                    <p className="font-semibold text-[#121417]">{item.titulo}</p>
-                    <p className="font-semibold text-[#121417]">{item.nombre_producto_academico}</p>
-                    <p className="font-semibold text-[#121417]">{item.nombre_ambito_divulgacion}</p>
-                    <p>{item.rol}</p>
-                    <p>{item.medio_divulgacion}</p>
-                    <p>{item.numero_autores} autores</p>
-                    <p>{item.fecha_divulgacion}</p>
-                  </div>
+                <div className="flex flex-col w-full text-[#637887]">
+                  <p className="font-semibold text-[#121417]">{item.titulo}</p>
+                  <p className="font-semibold text-[#121417]">{item.nombre_producto_academico}</p>
+                  <p className="font-semibold text-[#121417]">{item.nombre_ambito_divulgacion}</p>
+                  <p>{item.rol}</p>
+                  <p>{item.medio_divulgacion}</p>
+                  <p>{item.numero_autores} autores</p>
+                  <p>{item.fecha_divulgacion}</p>
                 </div>
-                <Link
-                  to={`/editar/produccion/${item.id_produccion_academica}`}
-                  className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
-                >
-                  <PencilSquareIcon className="size-6" />
-                </Link>
-                <EliminarBoton
-                  id={item.id_produccion_academica}
-                  onConfirmDelete={handleDelete}
-                />
+                <div className='flex gap-4 items-end'>
+                  <Link
+                    to={`/editar/produccion/${item.id_produccion_academica}`}
+                    className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
+                  >
+                    <PencilIcon />
+                  </Link>
+                  <EliminarBoton
+                    id={item.id_produccion_academica}
+                    onConfirmDelete={handleDelete}
+                  />
+                </div>
               </li>
             ))}
           </ul>

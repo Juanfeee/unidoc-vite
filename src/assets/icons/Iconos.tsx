@@ -1,5 +1,5 @@
-import { AcademicCapIcon, BeakerIcon, BriefcaseIcon, GlobeAmericasIcon } from '@heroicons/react/24/outline'
-type Props = {}
+import { AcademicCapIcon, BeakerIcon, BriefcaseIcon, GlobeAmericasIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+
 
 export const AcademicIcono = () => {
   return (
@@ -19,5 +19,12 @@ export const GlobeIcon = () => {
 export const BeakerIcons = () => {
   return (
     <BeakerIcon className="size-10 p-2 rounded-lg bg-[#266AAE] text-white" />
+  )
+}
+
+export const PencilIcon = () => {
+  return (
+    <PencilSquareIcon className="size-10 p-2 rounded-lg bg-orange-400 text-white" />
+
   )
 }

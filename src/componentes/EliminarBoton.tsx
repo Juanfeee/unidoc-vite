@@ -17,7 +17,7 @@ const EliminarBoton = ({ id, onConfirmDelete }: Props) => {
         className="flex items-center justify-center w-10 h-10 bg-[#F0F2F5] rounded-lg text-[#121417] hover:bg-[#E0E4E8] transition duration-300 ease-in-out"
         onClick={() => setOpen(true)}
       >
-        <TrashIcon className="size-12 p-2" />
+        <TrashIcon className="size-10 p-2 rounded-lg bg-red-500 text-white" />
       </button>
 
       <Modal open={open} onClose={() => setOpen(false)}>
