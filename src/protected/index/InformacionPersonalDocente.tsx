@@ -3,108 +3,91 @@ import { LabelText } from "../../componentes/formularios/LabelText";
 import { Texto } from "../../componentes/formularios/Texto";
 import axiosInstance from "../../utils/axiosConfig";
 import Cookies from "js-cookie";
-import { Link } from "react-router";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Link, useNavigate } from "react-router";
+import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
+import { Popover } from "@headlessui/react";
+import { toast } from "react-toastify";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
   const [datos, setDatos] = useState<any>();
   const [municipio, setMunicipio] = useState<any>([]);
   const [aptitudes, setAptitudes] = useState<any[]>([]);
-
+  const navigate = useNavigate();
   const URL = import.meta.env.VITE_API_URL;
-  // Cargar la imagen de perfil al cargar el componente
+
+  // Obtener imagen de perfil
   const fetchProfileImage = async () => {
     try {
-      // 1. Intentar cargar desde sessionStorage primero
-      const cachedImage = sessionStorage.getItem('profileImage');
+      const cachedImage = sessionStorage.getItem("profileImage");
       if (cachedImage) {
         setProfileImage(cachedImage);
       }
 
-      // 2. Hacer petición al servidor
-      const response = await axiosInstance.get('/aspirante/obtener-foto-perfil', {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` }
+      const response = await axiosInstance.get("/aspirante/obtener-foto-perfil", {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
       });
 
-      // 3. Actualizar estado y sessionStorage
       if (response.data?.image) {
         setProfileImage(response.data.image);
-        sessionStorage.setItem('profileImage', response.data.image);
+        sessionStorage.setItem("profileImage", response.data.image);
       }
-
-    }
-    catch (error) {
-      console.error('Error al obtener la imagen de perfil:', error);
-      // Si hay error, se mantiene la imagen de cache (si existía)
+    } catch (error) {
+      console.error("Error al obtener la imagen de perfil:", error);
     }
   };
 
-
-  // Cargar los datos del docente al cargar el componente
+  // Obtener datos del usuario
   const fetchDatos = async () => {
     try {
-      // 1. Intentar cargar desde sessionStorage primero
-      const cachedData = sessionStorage.getItem('userData');
+      const cachedData = sessionStorage.getItem("userData");
       if (cachedData) {
         setDatos(JSON.parse(cachedData));
       }
 
-      // 2. Hacer petición al servidor para obtener los datos del usuario
-      const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
-      // 3. Si el usuario existe, actualizamos el estado y sessionStorage
+      const response = await axiosInstance.get("/auth/obtener-usuario-autenticado");
+
       if (response.data?.user) {
         const user = response.data.user;
         setDatos(user);
-        sessionStorage.setItem('userData', JSON.stringify(user));
+        sessionStorage.setItem("userData", JSON.stringify(user));
 
-        // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
         const municipio = user.municipio_id;
         if (municipio) {
           try {
             const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
-
-            // 5. Almacenamos el municipio en sessionStorage si se obtiene correctamente
-            sessionStorage.setItem('municipio', JSON.stringify(responseMunicipio.data));
+            sessionStorage.setItem("municipio", JSON.stringify(responseMunicipio.data));
             setMunicipio(responseMunicipio.data);
-
           } catch (municipioError) {
             console.error("Error al obtener el municipio:");
           }
         }
       }
     } catch (error) {
-      console.error('Error al obtener los datos del docente:', error);
+      console.error("Error al obtener los datos del docente:", error);
     }
   };
 
 
-
-
-  // Cargar los datos de aptitudes al cargar el componente
+  // Obtener aptitudes
   const fetchAptitudes = async () => {
     try {
-      // 1. Intentar cargar desde sessionStorage primero
-      const cachedAptitudes = sessionStorage.getItem('aptitudes');
+      const cachedAptitudes = sessionStorage.getItem("aptitudes");
       if (cachedAptitudes) {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
 
-      // 2. Hacer petición al servidor
-      const response = await axiosInstance.get('/aspirante/obtener-aptitudes', {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` }
+      const response = await axiosInstance.get("/aspirante/obtener-aptitudes", {
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
       });
 
-      // 3. Actualizar estado y sessionStorage
       if (response.data?.aptitudes) {
         setAptitudes(response.data.aptitudes);
-        sessionStorage.setItem('aptitudes', JSON.stringify(response.data.aptitudes));
+        sessionStorage.setItem("aptitudes", JSON.stringify(response.data.aptitudes));
       }
-
     } catch (error) {
-      console.error('Error al obtener las aptitudes:', error);
-      // Si hay error, se mantienen los datos de cache (si existían)
+      console.error("Error al obtener las aptitudes:", error);
     }
   };
 
@@ -113,16 +96,19 @@ const InformacionPersonalDocente = () => {
       try {
         await Promise.all([fetchAptitudes(), fetchProfileImage(), fetchDatos()]);
       } catch (error) {
-        console.error('Error al cargar los datos:', error);
+        console.error("Error al cargar los datos:", error);
       }
     };
 
     fetchData();
   }, []);
 
-
   if (!datos) {
-    return <div className="grid bg-white py-12 px-8 rounded-xl gap-7 items-center justify-center font-black"><span>Cargando...</span></div>;
+    return (
+      <div className="grid bg-white py-12 px-8 rounded-xl gap-7 items-center justify-center font-black">
+        <span>Cargando...</span>
+      </div>
+    );
   }
 
   return (
@@ -131,8 +117,8 @@ const InformacionPersonalDocente = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 bg-white py-12 px-8 rounded-xl gap-7">
           <div className="flex flex-col md:flex-row gap-y-2 col-span-full justify-between">
             <h2 className="font-bold text-3xl">Hoja de vida</h2>
-            {/* <p className="font-medium text-lg">Estado de validación Académica: <span>a</span> </p> */}
           </div>
+
           <div className="grid items-center sm:grid-cols-2 col-span-full gap-y-4">
             <h3 className="col-span-full font-semibold text-lg">Datos personales</h3>
             <div className="flex gap-x-4 items-center">
@@ -141,81 +127,71 @@ const InformacionPersonalDocente = () => {
                 alt="Foto de perfil del docente"
                 className="size-14 object-cover rounded-full"
                 onError={(e) => {
-                  // Fallback si la imagen no carga
-                  (e.target as HTMLImageElement).src = "https://img.freepik.com/fotos-premium/retrato-hombre-negocios-expresion-cara-seria-fondo-estudio-espacio-copia-bengala-persona-corporativa-enfoque-pensamiento-duda-mirada-facial-dilema-o-concentracion_590464-84924.jpg";
+                  (e.target as HTMLImageElement).src =
+                    "https://img.freepik.com/fotos-premium/retrato-hombre-negocios-expresion-cara-seria-fondo-estudio-espacio-copia-bengala-persona-corporativa-enfoque-pensamiento-duda-mirada-facial-dilema-o-concentracion_590464-84924.jpg";
                 }}
               />
               <Texto
                 value={`${datos.primer_nombre} ${datos?.segundo_nombre} ${datos.primer_apellido} ${datos?.segundo_apellido}`}
               />
             </div>
-            {/* <div className="flex sm:justify-end">
-              <Puntaje
-                value="0.0"
-              />
-            </div> */}
-
           </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 col-span-full gap-x-8 gap-y-6 border-t-1 py-4 border-gray-200">
             <div>
-              <LabelText
-                value="Correo electrónico"
-              />
-              <Texto
-                className="break-words"
-                value={datos.email}
-              />
+              <LabelText value="Correo electrónico" />
+              <Texto className="break-words" value={datos.email} />
             </div>
             <div>
-              <LabelText
-                value="Ubicación"
-              />
-              <Texto
-                value={`${municipio.municipio_nombre
-                }, ${municipio.departamento_nombre
-                }`}
-              />
+              <LabelText value="Ubicación" />
+              <Texto value={`${municipio.municipio_nombre}, ${municipio.departamento_nombre}`} />
             </div>
-            {/* <div>
-              <LabelText
-                value="Facultades"
-              />
-              <Texto
-                value="Facultad de Ingenieria, Facultad de Ciencias ambientales"
-              />
-            </div> */}
           </div>
+
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">
             <div className="flex items-center justify-between w-full">
               <Link to={"/agregar/aptitudes"}>
-                <p className="flex items-center font-semibold gap-2 bg-[#266AAE] border-2 border-[#266AAE] rounded-md px-2 py-1  text-white  transition-all duration-300 ease-in-out">
+                <p className="flex items-center font-semibold gap-2 bg-[#266AAE] border-2 border-[#266AAE] rounded-md px-2 py-1 text-white transition-all duration-300 ease-in-out">
                   Agregar aptitudes
                   <span>
                     <PlusIcon className="w-5 h-5 stroke-3" />
                   </span>
                 </p>
-
               </Link>
             </div>
+
             <div className="col-span-full">
               <ul className="flex flex-wrap gap-2">
                 {aptitudes.map((item, index) => (
+                  <li key={index} className="relative group">
+                    <Popover className="relative">
+                      <div className="flex items-center gap-2">
+                        <AptitudesCarga value={item.nombre_aptitud} />
+                        <Popover.Button className="focus:outline-none">
+                          <EllipsisVerticalIcon className="w-5 h-5 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </Popover.Button>
+                      </div>
 
-                  <li key={index} className="flex items-center gap-2">
-                    <AptitudesCarga
-                      value={item.nombre_aptitud
-                      }
-                    />
+                      <Popover.Panel className="absolute z-10 w-40 py-1 mt-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
+                        <div className="flex flex-col">
+                          <button
+                            onClick={() => navigate(`/editar/aptitud/${item.id}`)}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                          >
+                            Editar
+                          </button>
+                        </div>
+                      </Popover.Panel>
+                    </Popover>
                   </li>
                 ))}
-
               </ul>
             </div>
-
           </div>
         </div>
       </div>
     </>
-  )
-}
-export default InformacionPersonalDocente
+  );
+};
+
+export default InformacionPersonalDocente;

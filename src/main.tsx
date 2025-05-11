@@ -25,6 +25,8 @@ import MiPerfil from './protected/configuracion/MiPerfil';
 import PreProduccion from './protected/editar/produccion/pre-produccion.tsx'
 import EditarProduccion from './protected/editar/produccion/EditarProduccion.tsx'
 import RestablecerContrasena from './auth/restablecerContrasena.tsx'
+import EditarAptitud from './protected/editar/aptitud/EditarAptitud.tsx'
+import PreAptitud from './protected/editar/aptitud/pre-aptitud.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -62,8 +64,10 @@ createRoot(document.getElementById('root')!).render(
             <Route path="experiencia/:id" element={<EditarExperiencia />} />
             <Route path="producciones" element={<PreProduccion />} />
             <Route path="produccion/:id" element={<EditarProduccion />} />
+            <Route path="aptitud/editar/:id" element={<EditarAptitud/>} />
+            <Route path="aptitud/:id" element={<PreAptitud/>}/>
           </Route>
-        </Route>
+        </Route>  
 
         {/* Ruta catch-all para 404 */}
         <Route path="*" element={<h1 className="text-white text-6xl font-bold">No found</h1>} />
