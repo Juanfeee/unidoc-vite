@@ -6,6 +6,8 @@ import Cookies from "js-cookie";
 import { Link } from "react-router";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
+import logoOscuro from "../../assets/images/logoOscuro.png";
+import logoClaro from "../../assets/images/logoClaro.png";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
@@ -129,13 +131,17 @@ const InformacionPersonalDocente = () => {
     <>
       <div className="flex flex-col w-full rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative">
         <div className="grid grid-cols-1 sm:grid-cols-2 bg-white py-12 px-8 rounded-xl gap-7">
-          <div className="flex flex-col md:flex-row gap-y-2 col-span-full justify-between">
+          <div className="flex  col-span-full md:flex-row gap-y-2 justify-between">
             <h2 className="font-bold text-3xl">Hoja de vida</h2>
+            <div className="hidden sm:flex h-[20px] justify-end items-start">
+              <img className="size-24 rounded-full" src={logoOscuro} alt="logo" />
+            </div>
             {/* <p className="font-medium text-lg">Estado de validación Académica: <span>a</span> </p> */}
           </div>
           <div className="grid items-center sm:grid-cols-2 col-span-full gap-y-4">
             <h3 className="col-span-full font-semibold text-lg">Datos personales</h3>
-            <div className="flex gap-x-4 items-center">
+
+            <div className="flex gap-x-4 items-center ">
               <img
                 src={profileImage}
                 alt="Foto de perfil del docente"
@@ -148,7 +154,9 @@ const InformacionPersonalDocente = () => {
               <Texto
                 value={`${datos.primer_nombre} ${datos?.segundo_nombre} ${datos.primer_apellido} ${datos?.segundo_apellido}`}
               />
+
             </div>
+
             {/* <div className="flex sm:justify-end">
               <Puntaje
                 value="0.0"
@@ -172,8 +180,8 @@ const InformacionPersonalDocente = () => {
               />
               <Texto
                 value={`${municipio.municipio_nombre
-                }, ${municipio.departamento_nombre
-                }`}
+                  }, ${municipio.departamento_nombre
+                  }`}
               />
             </div>
             {/* <div>

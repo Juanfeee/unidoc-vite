@@ -8,6 +8,7 @@ import { ButtonRegresar } from '../../../componentes/formularios/ButtonRegresar'
 
 const PreProduccion = () => {
   const [idiomas, setIdiomas] = useState<any[]>([]);
+  
   const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {

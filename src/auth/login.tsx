@@ -11,6 +11,7 @@ import TextInput from "../componentes/formularios/TextInput";
 import InputErrors from "../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
+import logoClaro from "../assets/images/logoClaro.png";
 type Inputs = {
   email: string
   password: string
@@ -93,10 +94,14 @@ const Login = () => {
   }
 
   return (
-    <form
+    <form className="flex flex-col items-center justify-center h-screen"
       onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada " >
+
         <div className='flex flex-col gap-2 w-full' >
+          <div className="flex  justify-center items-center">
+            <img className="size-30" src={logoClaro} alt="" />
+          </div>
           < h3 className="font-bold text-2xl" > Iniciar sesión </h3>
           <h3>¡Hola! <span className='text-blue-500 font-bold'>Ingresa</span> con tu correo y contraseña</h3>
         </div>
@@ -116,12 +121,12 @@ const Login = () => {
             type="password"
             placeholder="Contraseña..."
             {...register('password')} />
-          <p className="text-sm pt-2 text-gray-500 text-start">
+          <InputErrors errors={errors} name="password" />
+          {/* <p className="text-sm pt-2 text-gray-500 text-start">
             <Link to="/restablecer-contrasena" className="text-blue-500 hover:text-blue-600">
               ¿Olvidates tu contraseña?
             </Link>
-          </p>
-          <InputErrors errors={errors} name="password" />
+          </p> */}
 
         </div>
         <div className="">

@@ -1,4 +1,4 @@
-  "use client"
+"use client"
 
 import axios from 'axios'
 import { toast, ToastContainer } from 'react-toastify'
@@ -8,9 +8,7 @@ import { useState, useRef, useEffect } from 'react'
 import axiosInstance from '../utils/axiosConfig'
 
 const Header = () => {
-  const { pathname } = useLocation();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+
 
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
 
@@ -22,25 +20,25 @@ const Header = () => {
         if (cachedImage) {
           setProfileImage(cachedImage);
         }
-  
+
         // 2. Hacer petición al servidor
         const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
           headers: { Authorization: `Bearer ${Cookies.get("token")}` }
         });
-  
+
         // 3. Actualizar estado y sessionStorage
         const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
         if (imageUrl) {
           setProfileImage(imageUrl);
           sessionStorage.setItem('profileImage', imageUrl);
         }
-  
+
       } catch (error) {
         console.error("Error al cargar foto:", error);
         // Si hay error, se mantiene la imagen de cache (si existía)
       }
     };
-    
+
     fetchProfileImage();
   }, []);
 
@@ -85,84 +83,64 @@ const Header = () => {
     }
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+const { pathname } = useLocation();
+const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+const dropdownRef = useRef(null);
+
+const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
 
   return (
     <>
       <ToastContainer />
       <header className='flex bg-white text-xl font-medium sticky top-0 z-50 shadow-md h-16 w-full'>
-        <div className='flex w-[500px] md:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative items-center justify-between size-full px-8'>
+        <div className='flex w-full max-w-[1200px] m-auto relative items-center justify-between px-4 md:px-8'>
           <div className='flex items-center gap-4'>
             <h1 className='font-bold text-2xl'>UniDoc</h1>
           </div>
-          <nav className="flex h-full">
-            <ul className='flex items-center justify-center gap-8 text-base'>
-              <li className='h-full flex items-center justify-center'>
-                <Link
-                  className={`flex items-center justify-center hover:border-b-2 ${pathname === "/" ? "border-b-2 border-blue-500" : ""}`}
-                  to="/index"
-                >
+
+          {/* Botón de hamburguesa solo en móviles */}
+          <button className="md:hidden" onClick={toggleMobileMenu}>
+            <span className="text-3xl">☰</span>
+          </button>
+
+          {/* Menú normal en desktop */}
+          <nav className="hidden md:flex h-full">
+            <ul className='flex items-center gap-8 text-base'>
+              <li>
+                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/index">
                   Inicio
                 </Link>
               </li>
-              <li className='h-full flex items-center justify-center'>
-                <Link
-                  className={`flex items-center justify-center hover:border-b-2 ${pathname === "/datos-personales" ? "border-b-2 border-blue-500" : ""}`}
-                  to="/datos-personales"
-                >
+              <li>
+                <Link className={`hover:border-b-2 ${pathname === "/datos-personales" ? "border-b-2 border-blue-500" : ""}`} to="/datos-personales">
                   Datos personales
                 </Link>
               </li>
-              <li className='h-full flex items-center justify-center'>
-                <Link
-                  className={`flex items-center justify-center hover:border-b-2 ${pathname === "/normativas" ? "border-b-2 border-blue-500" : ""}`}
-                  to="/normativas"
-                >
+              <li>
+                <Link className={`hover:border-b-2 ${pathname === "/normativas" ? "border-b-2 border-blue-500" : ""}`} to="/normativas">
                   Normativas
                 </Link>
               </li>
-
-              <li className="relative h-full flex items-center" ref={dropdownRef}>
-                <div
-                  className="cursor-pointer flex items-center"
-                  onClick={toggleDropdown}
-                >
+              <li className="relative" ref={dropdownRef}>
+                <div onClick={toggleDropdown} className="cursor-pointer flex items-center">
                   <img
                     src={profileImage}
-                    alt="Foto de perfil del docente"
+                    alt="Perfil"
                     className="size-10 object-cover rounded-full"
                     onError={(e) => {
-                      // Fallback si la imagen no carga
                       (e.target as HTMLImageElement).src = "https://img.freepik.com/fotos-premium/retrato-hombre-negocios-expresion-cara-seria-fondo-estudio-espacio-copia-bengala-persona-corporativa-enfoque-pensamiento-duda-mirada-facial-dilema-o-concentracion_590464-84924.jpg";
                     }}
                   />
                 </div>
-                {/* Menú desplegable */}
                 {isDropdownOpen && (
                   <div className="absolute right-0 top-full w-48 bg-white rounded-md shadow-lg z-50 text-sm border border-gray-200">
-                    {/* <Link
-                      to="/perfil"
-                      className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200 rounded-t-md"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Mi perfil
-                    </Link> */}
-                    <Link
-                      to="/configuracion"
-                      className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
+                    <Link to="/configuracion" className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200" onClick={() => setIsDropdownOpen(false)}>
                       Configuración
                     </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsDropdownOpen(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-b-md text-red-600"
-                    >
+                    <button onClick={() => { logout(); setIsDropdownOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
                       Cerrar sesión
                     </button>
                   </div>
@@ -171,6 +149,39 @@ const Header = () => {
             </ul>
           </nav>
         </div>
+
+        {/* Menú móvil desplegable */}
+        {isMobileMenuOpen && (
+          <div className="absolute top-16 left-0 w-full bg-white border-t z-40 shadow-md md:hidden">
+            <ul className="flex flex-col p-4 gap-4 text-base">
+              <li>
+                <Link to="/index" className={`${pathname === "/index" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
+                  Inicio
+                </Link>
+              </li>
+              <li>
+                <Link to="/datos-personales" className={`${pathname === "/datos-personales" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
+                  Datos personales
+                </Link>
+              </li>
+              <li>
+                <Link to="/normativas" className={`${pathname === "/normativas" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
+                  Normativas
+                </Link>
+              </li>
+              <li>
+                <Link to="/configuracion" onClick={toggleMobileMenu}>
+                  Configuración
+                </Link>
+              </li>
+              <li>
+                <button onClick={() => { logout(); toggleMobileMenu(); }} className="text-left text-red-600">
+                  Cerrar sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+        )}
       </header>
     </>
   )

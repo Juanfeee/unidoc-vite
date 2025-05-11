@@ -37,17 +37,17 @@ const AgregarIdioma = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     const formData = new FormData();
-  
+
     // Agregar los datos al FormData
     formData.append("idioma", data.idioma);
     formData.append("institucion_idioma", data.institucion_idioma);
     formData.append("nivel", data.nivel);
     formData.append("fecha_certificado", data.fecha_certificado || '');
     formData.append("archivo", data.archivo[0]);
-  
+
     const token = Cookies.get("token");
     const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-idioma`;
-  
+
     const postPromise = axios.post(url, formData, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -55,7 +55,7 @@ const AgregarIdioma = () => {
       },
       timeout: 10000,
     });
-  
+
     toast.promise(postPromise, {
       pending: "Enviando datos...",
       success: {
@@ -93,19 +93,19 @@ const AgregarIdioma = () => {
       },
     });
   };
-  
+
 
   return (
     <>
-      <form className='flex flex-col gap-y-4 rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative'
-        onSubmit={handleSubmit(onSubmit)}>
-        <div className='flex flex-col sm:grid grid-cols-3 gap-x-8 bg-white gap-y-6 py-12 px-8 rounded-xl'>
-          <div className='flex gap-x-4 col-span-full'>
-            <Link to={"/index"}>
-              <ButtonRegresar />
-            </Link>
-            <h3 className="font-bold text-3xl col-span-full">Agregar idioma</h3>
-          </div>
+      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
+        <div className='flex gap-x-4 col-span-full'>
+          <Link to={"/index"}>
+            <ButtonRegresar />
+          </Link>
+          <h3 className="font-bold text-3xl col-span-full">Agregar idioma</h3>
+        </div>
+        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          onSubmit={handleSubmit(onSubmit)}>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4'>
             <div className='flex flex-col w-full'>
@@ -156,15 +156,15 @@ const AgregarIdioma = () => {
             <AdjuntarArchivo
               id="archivo"
               register={register('archivo')}
-              />
+            />
             <InputErrors errors={errors} name="archivo" />
             <MostrarArchivo file={existingFile} />
           </div>
           <div className='flex justify-center col-span-full' >
             <ButtonPrimary value='Agregar estudio' />
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 };

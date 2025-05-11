@@ -130,9 +130,7 @@ const Registro = () => {
             } else if (data.response) {
               switch (data.response.status) {
                 case 422:
-                  errorMessage = "Email ya existe";
-                  console.log("data", formData)
-                  console.log("Error 422", data.response.data.errors);
+                  errorMessage = "Email ya existe o numero de identificación ya existe";
 
                   break;
                 case 500:
@@ -156,17 +154,16 @@ const Registro = () => {
 
 
   };
-  console.log("Input", watch());
 
 
   const paisSeleccionado = watch("pais");
   const departamentoSeleccionado = watch("departamento");
- 
+  const municipioSeleccionado = watch("municipio_id");
 
 
   return (
-    <>
       <form
+        className="flex flex-col items-center justify-center h-screen"
         onSubmit={handleSubmit(onSubmit)} >
 
         <div className="flex bg-white flex-col gap-4 px-8 py-8 w-[500px] min-h-[550px] shadow-lg justify-around relative rounded-3xl" >
@@ -438,7 +435,7 @@ const Registro = () => {
           <div className='absolute size-full right-0 rotate-5 rounded-3xl -z-10  bg-blue-500'></div>
         </div>
       </form>
-    </>
+
   )
 }
 export default Registro

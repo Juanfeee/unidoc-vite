@@ -1,6 +1,5 @@
-import { AcademicCapIcon, ClockIcon  } from '@heroicons/react/24/outline'
 import { PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axiosInstance from '../../../utils/axiosConfig'
 import AgregarLink from '../../../componentes/ButtonAgregar'

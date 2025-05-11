@@ -5,21 +5,34 @@ import axiosInstance from '../../../utils/axiosConfig'
 import EliminarBoton from '../../../componentes/EliminarBoton';
 import { AcademicIcono, PencilIcon } from '../../../assets/icons/Iconos';
 import { ButtonRegresar } from '../../../componentes/formularios/ButtonRegresar';
+import { set } from 'react-hook-form';
 
 const PreEstudio = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
     try {
       setLoading(true);
+
+      // Cargar desde sessionStorage si existe
+      const cached = sessionStorage.getItem('estudios');
+      if (cached) {
+        setEstudios(JSON.parse(cached));
+      }
+
+      // Obtener datos del servidor
       const response = await axiosInstance.get('/aspirante/obtener-estudios');
-      setEstudios(response.data.estudios);
-      // Guardar en sessionStorage
-      sessionStorage.setItem('estudios', JSON.stringify(response.data.estudios));
+
+      // Actualizar estado y sessionStorage
+      if (response.data?.estudios) {
+        setEstudios(response.data.estudios);
+        sessionStorage.setItem('estudios', JSON.stringify(response.data.estudios));
+      }
     } catch (error) {
-      console.error('Error al obtener los datos:', error);
-      // Intentar cargar desde cache si hay error
+      console.error('Error al obtener estudios:', error);
+      // Fallback a sessionStorage si hay error
       const cached = sessionStorage.getItem('estudios');
       if (cached) {
         setEstudios(JSON.parse(cached));
