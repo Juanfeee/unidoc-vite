@@ -15,20 +15,20 @@ import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { MostrarArchivo } from "../componentes/formularios/MostrarArchivo";
 import { useArchivoPreview } from "../hooks/ArchivoPreview";
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion";
-import { informacionContacto } from "../validaciones/informacionPersonaSchema";
+import { informacionContacto, informacionContactoUpdate } from "../validaciones/informacionPersonaSchema";
 import axiosInstance from "../utils/axiosConfig";
 
 
 
 export type Inputs = {
-  correo_alterno: string,
+  correo_alterno?: string,
   categoria_libreta_militar: string,
   numero_libreta_militar: string,
   numero_distrito_militar: string,
   direccion_residencia: string,
   barrio: string,
   telefono_movil: string,
-  celular_alternativo: string,
+  celular_alternativo?: string,
   pais: number;
   departamento: number;
   municipio_id: number;
@@ -38,7 +38,7 @@ export type Inputs = {
 export const InformacionContacto = () => {
 
   const [isInformacion, setInformacion] = useState(false);
-
+  const schema = isInformacion ? informacionContactoUpdate : informacionContacto;
   const {
     register,
     handleSubmit,
@@ -46,14 +46,13 @@ export const InformacionContacto = () => {
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
-    resolver: zodResolver(informacionContacto),
+    resolver: zodResolver(schema),
     defaultValues: {
 
     },
   });
 
   const archivoValue = watch("archivo");
-
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
 
@@ -70,18 +69,19 @@ export const InformacionContacto = () => {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` }
       });
       const ubic = respUbic.data;
-
+      console.log("informacion", informacion);
       if (informacion) {
         setInformacion(true);
-        setValue("categoria_libreta_militar", informacion.categoria_libreta_militar);
-        setValue("numero_libreta_militar", informacion.numero_libreta_militar || "");
-        setValue("numero_distrito_militar", informacion.numero_distrito_militar || "");
+        setValue("categoria_libreta_militar", informacion.categoria_libreta_militar || "");
+        setValue("numero_libreta_militar", informacion.numero_libreta_militar || ""); 
+        setValue("numero_distrito_militar", informacion.numero_distrito_militar || ""); ;
         setValue("direccion_residencia", informacion.direccion_residencia || "");
         setValue("barrio", informacion.barrio || "");
         setValue("telefono_movil", informacion.telefono_movil || "");
         setValue("celular_alternativo", informacion.celular_alternativo || "");
         setValue("correo_alterno", informacion.correo_alterno || "");
         setValue("archivo", new DataTransfer().files);
+
         if (informacion.documentos_informacion_contacto && informacion.documentos_informacion_contacto.length > 0) {
           const archivo = informacion.documentos_informacion_contacto[0];
           setExistingFile({
@@ -95,7 +95,7 @@ export const InformacionContacto = () => {
         setValue("departamento", ubic.departamento_id);
         await new Promise(resolve => setTimeout(resolve, 500));
         setValue("municipio_id", ubic.municipio_id);
-      }else {
+      } else {
         setInformacion(false);
         console.log("No hay información de contacto disponible.");
       }
@@ -116,15 +116,14 @@ export const InformacionContacto = () => {
     const formData = new FormData();
 
     formData.append("municipio_id", data.municipio_id.toString());
-    formData.append("categoria_libreta_militar", data.categoria_libreta_militar);
+    formData.append("categoria_libreta_militar", data.categoria_libreta_militar || "");
     formData.append("numero_libreta_militar", data.numero_libreta_militar || "");
     formData.append("numero_distrito_militar", data.numero_distrito_militar || "");
     formData.append("direccion_residencia", data.direccion_residencia || "");
     formData.append("barrio", data.barrio || "");
-    formData.append("telefono_movil", data.telefono_movil || "");
+    formData.append("telefono_movil", data.telefono_movil);
     formData.append("celular_alternativo", data.celular_alternativo || "");
     formData.append("correo_alterno", data.correo_alterno || "");
-
 
     if (data.archivo && data.archivo.length > 0) {
       formData.append("archivo", data.archivo[0]);
@@ -156,7 +155,14 @@ export const InformacionContacto = () => {
               return "Datos guardados correctamente";
             }
           },
-          error: "Error al guardar los datos",
+          error: {
+            render({ data }) {
+              if (axios.isAxiosError(data)) {
+                return data.response?.data.message || "Error al guardar los datos";
+              }
+              return "Error al guardar los datos";
+            }
+          },
         }
       );
     } catch (error) {
@@ -177,6 +183,8 @@ export const InformacionContacto = () => {
     }
   }, [categoriaLibretaMilitar, setValue]);
 
+  console.log("watch", watch());
+  console.log("errors", errors);
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Informacion de contacto</h2>
