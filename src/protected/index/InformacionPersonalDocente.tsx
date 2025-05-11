@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router";
 import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 import { Popover } from "@headlessui/react";
-import { toast } from "react-toastify";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
@@ -148,46 +147,47 @@ const InformacionPersonalDocente = () => {
             </div>
           </div>
 
+
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">
             <div className="flex items-center justify-between w-full">
-              <Link to={"/agregar/aptitudes"}>
-                <p className="flex items-center font-semibold gap-2 bg-[#266AAE] border-2 border-[#266AAE] rounded-md px-2 py-1 text-white transition-all duration-300 ease-in-out">
-                  Agregar aptitudes
-                  <span>
-                    <PlusIcon className="w-5 h-5 stroke-3" />
-                  </span>
-                </p>
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link to={"/agregar/aptitudes"}>
+                  <p className="flex items-center font-semibold gap-2 bg-[#266AAE] border-2 border-[#266AAE] rounded-md px-2 py-1 text-white transition-all duration-300 ease-in-out">
+                    Agregar aptitudes
+                    <span>
+                      <PlusIcon className="w-5 h-5 stroke-3" />
+                    </span>
+                  </p>
+                </Link>
+                <Popover className="relative">
+                  <Popover.Button className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors focus:outline-none">
+                    <EllipsisVerticalIcon className="w-5 h-5 text-gray-500" />
+                  </Popover.Button>
+                  <Popover.Panel className="absolute z-10 w-48 py-1 mt-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div className="flex flex-col">
+                      <Link
+                        to="/editar/aptitud/${item.id}"
+                        className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Editar aptitudes
+                      </Link>
+                    </div>
+                  </Popover.Panel>
+                </Popover>
+              </div>
             </div>
 
             <div className="col-span-full">
               <ul className="flex flex-wrap gap-2">
                 {aptitudes.map((item, index) => (
-                  <li key={index} className="relative group">
-                    <Popover className="relative">
-                      <div className="flex items-center gap-2">
-                        <AptitudesCarga value={item.nombre_aptitud} />
-                        <Popover.Button className="focus:outline-none">
-                          <EllipsisVerticalIcon className="w-5 h-5 text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </Popover.Button>
-                      </div>
-
-                      <Popover.Panel className="absolute z-10 w-40 py-1 mt-1 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
-                        <div className="flex flex-col">
-                          <button
-                            onClick={() => navigate(`/editar/aptitud/${item.id}`)}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
-                          >
-                            Editar
-                          </button>
-                        </div>
-                      </Popover.Panel>
-                    </Popover>
+                  <li key={index}>
+                    <AptitudesCarga value={item.nombre_aptitud} />
                   </li>
                 ))}
               </ul>
             </div>
           </div>
+
         </div>
       </div>
     </>
