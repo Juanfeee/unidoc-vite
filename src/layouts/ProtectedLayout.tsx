@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Header from '../componentes/header';
 
-export default function ProtectedLayout() {
+export default function AspiranteLayouts() {
   return (
     <>
       <Header />

@@ -71,6 +71,7 @@ const Header = () => {
         }
       );
       Cookies.remove("token");
+      Cookies.remove("rol");
       //borrar todo el sessionStorage
 
       sessionStorage.clear();

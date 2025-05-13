@@ -12,12 +12,12 @@ import InputErrors from "../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logoClaro from "../assets/images/logoClaro.png";
+
+
 type Inputs = {
   email: string
   password: string
 }
-
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,15 +49,27 @@ const Login = () => {
       pending: "Iniciando sesión...",
       success: {
         render({ data }) {
-          const { token } = data.data;
+          const { token, rol } = data.data;
 
           Cookies.set('token', token, {
             sameSite: 'Strict',
             path: '/',
           });
-          // Redirige después de un pequeño delay
+
+          Cookies.set('rol', rol, { // Guardar el rol en cookies
+            sameSite: 'Strict',
+            path: '/',
+          });
+
+          // Redirige después de un pequeño delay dependiendo su rol
           setTimeout(() => {
-            window.location.href = "/index";
+            if (rol === "Aspirante") {
+              navigate("/index");
+            } else if (rol === "Administrador") {
+              navigate("/admin");
+            } else {
+              toast.error("Rol no reconocido");
+            }
           }, 500);
 
           return "¡Bienvenido!";

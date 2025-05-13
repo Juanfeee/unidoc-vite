@@ -5,7 +5,6 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import Registro from './auth/register.tsx'
 import Login from './auth/login.tsx'
 import InformacionPersona from './protected/datos-personales/page.tsx'
-import ProtectedLayout from './layouts/ProtectedLayout.tsx'
 import ProtectedRoute from './componentes/ProtectedRoute.tsx'
 import Index from './protected/index/page.tsx'
 import AgregarEstudio from './protected/agregar/AgregarEstudio.tsx'
@@ -25,6 +24,7 @@ import MiPerfil from './protected/configuracion/MiPerfil';
 import PreProduccion from './protected/editar/produccion/pre-produccion.tsx'
 import EditarProduccion from './protected/editar/produccion/EditarProduccion.tsx'
 import RestablecerContrasena from './auth/restablecerContrasena.tsx'
+import AspiranteLayouts from './layouts/ProtectedLayout.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -35,24 +35,27 @@ createRoot(document.getElementById('root')!).render(
         <Route index element={<Login />} />
         <Route path="inicio-sesion" element={<Login />} />
         <Route path="registro" element={<Registro />} />
-        <Route path="restablecer-contrasena" element={<RestablecerContrasena/>} />
+        <Route path="restablecer-contrasena" element={<RestablecerContrasena />} />
 
-        {/* Rutas protegidas */}
-        <Route element={<ProtectedRoute><ProtectedLayout /></ProtectedRoute>}>
+        {/* Rutas protegidas para aspirante */}
+        <Route element={<ProtectedRoute allowedRoles={["Aspirante"]}><AspiranteLayouts /></ProtectedRoute>}>
           <Route path="index" element={<Index />} />
           <Route path="datos-personales" element={<InformacionPersona />} />
           <Route path="normativas" element={<Normativas />} />
           <Route path="configuracion" element={< Configuracion />} />
           <Route path="perfil" element={<MiPerfil />} />
+
+          {/* Rutas anidadas para agregar */}
           <Route path="agregar">
             <Route index element={<span>No found</span>} />
             <Route path="estudio" element={<AgregarEstudio />} />
             <Route path="experiencia" element={<AgregarExperiencia />} />
             <Route path="idioma" element={<AgregarIdioma />} />
-            <Route path="produccion" element={<AgregarProduccion/>} />
-            <Route path="aptitudes" element={<AgregarAptitudes/>} />
+            <Route path="produccion" element={<AgregarProduccion />} />
+            <Route path="aptitudes" element={<AgregarAptitudes />} />
           </Route>
 
+          {/* Rutas anidadas para editar */}
           <Route path="editar">
             <Route path="estudios" element={<PreEstudio />} />
             <Route path="estudio/:id" element={<EditarEstudio />} />
@@ -64,6 +67,13 @@ createRoot(document.getElementById('root')!).render(
             <Route path="produccion/:id" element={<EditarProduccion />} />
           </Route>
         </Route>
+        {/* Ruta protegidas para administrador */}
+        <Route element={<ProtectedRoute allowedRoles={["Administrador"]}><AspiranteLayouts /></ProtectedRoute>}>
+          {/* Aquí puedes agregar las rutas específicas para el administrador */}
+          <Route path="admin" element={<h1 className="text-white text-6xl font-bold">Admin</h1>} />
+        </Route>
+
+
 
         {/* Ruta catch-all para 404 */}
         <Route path="*" element={<h1 className="text-white text-6xl font-bold">No found</h1>} />
