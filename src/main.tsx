@@ -27,6 +27,9 @@ import RestablecerContrasena from './auth/restablecerContrasena.tsx'
 import AspiranteLayouts from './layouts/AspirantesLayouts.tsx'
 import AdminLayouts from './layouts/AdminLayouts.tsx'
 import Dashboard from './protected/admin/dashboard.tsx'
+import PreAptitud from './protected/editar/aptitud/pre-aptitud.tsx'
+import EditarAptitud from './protected/editar/aptitud/EditarAptitud.tsx'
+
 
 
 createRoot(document.getElementById('root')!).render(
@@ -67,6 +70,8 @@ createRoot(document.getElementById('root')!).render(
             <Route path="experiencia/:id" element={<EditarExperiencia />} />
             <Route path="producciones" element={<PreProduccion />} />
             <Route path="produccion/:id" element={<EditarProduccion />} />
+            <Route path="aptitud/editar/:id" element={<EditarAptitud/>} />
+            <Route path="aptitud/:id" element={<PreAptitud/>}/>
           </Route>
         </Route>
         {/* Ruta protegidas para administrador */}

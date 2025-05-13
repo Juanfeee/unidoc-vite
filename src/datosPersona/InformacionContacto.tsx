@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { InputLabel } from "../componentes/formularios/InputLabel";
 import { SelectForm } from "../componentes/formularios/SelectForm";
 import InputErrors from "../componentes/formularios/InputErrors";
@@ -140,7 +140,7 @@ export const InformacionContacto = () => {
 
     try {
       await toast.promise(
-        axios.post(url, formData, {
+        axiosInstance.post(url, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
