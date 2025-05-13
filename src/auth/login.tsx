@@ -66,7 +66,7 @@ const Login = () => {
             if (rol === "Aspirante") {
               navigate("/index");
             } else if (rol === "Administrador") {
-              navigate("/admin");
+              navigate("/dashboard");
             } else {
               toast.error("Rol no reconocido");
             }

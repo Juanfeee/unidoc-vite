@@ -1,9 +1,12 @@
 import React from 'react'
 
 
-const dashboard = () => {
+const Dashboard = () => {
   return (
-    <div>dashboard</div>
+    <div className='flex flex-col bg-white items-center justify-center min-h-screen w-full'>
+      
+      
+    </div>
   )
 }
-export default dashboard
+export default Dashboard

@@ -24,7 +24,9 @@ import MiPerfil from './protected/configuracion/MiPerfil';
 import PreProduccion from './protected/editar/produccion/pre-produccion.tsx'
 import EditarProduccion from './protected/editar/produccion/EditarProduccion.tsx'
 import RestablecerContrasena from './auth/restablecerContrasena.tsx'
-import AspiranteLayouts from './layouts/ProtectedLayout.tsx'
+import AspiranteLayouts from './layouts/AspirantesLayouts.tsx'
+import AdminLayouts from './layouts/AdminLayouts.tsx'
+import Dashboard from './protected/admin/dashboard.tsx'
 
 
 createRoot(document.getElementById('root')!).render(
@@ -68,9 +70,9 @@ createRoot(document.getElementById('root')!).render(
           </Route>
         </Route>
         {/* Ruta protegidas para administrador */}
-        <Route element={<ProtectedRoute allowedRoles={["Administrador"]}><AspiranteLayouts /></ProtectedRoute>}>
+        <Route element={<ProtectedRoute allowedRoles={["Administrador"]}><AdminLayouts /></ProtectedRoute>}>
           {/* Aquí puedes agregar las rutas específicas para el administrador */}
-          <Route path="admin" element={<h1 className="text-white text-6xl font-bold">Admin</h1>} />
+          <Route path="dashboard" element={<Dashboard/>} />
         </Route>
 
 
