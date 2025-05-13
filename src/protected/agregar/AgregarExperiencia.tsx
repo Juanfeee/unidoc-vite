@@ -4,7 +4,7 @@ import axios from 'axios';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { experienciaSchema } from '../../validaciones/experienceSchema';
-import { use, useEffect, useState } from 'react';
+import {useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router';
 import { ButtonRegresar } from '../../componentes/formularios/ButtonRegresar';
@@ -72,6 +72,8 @@ const AgregarExperiencia = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async () => {
     setIsSubmitting(true);
+
+    try {
     const formValues = {
       tipo_experiencia: watch('tipo_experiencia'),
       institucion_experiencia: watch('institucion_experiencia'),
@@ -114,7 +116,7 @@ const AgregarExperiencia = () => {
       timeout: 20000
     });
 
-    toast.promise(postPromise, {
+    await toast.promise(postPromise, {
       pending: "Enviando datos...",
       success: {
         render() {
@@ -150,8 +152,12 @@ const AgregarExperiencia = () => {
         autoClose: 3000,
       },
     });
-
-
+    }
+    catch (error) {
+      console.error("Error al enviar el formulario:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">

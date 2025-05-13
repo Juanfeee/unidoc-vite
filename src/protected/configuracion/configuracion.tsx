@@ -1,6 +1,6 @@
 
-import FotoPerfil from "./fotoPerfil";
 import CambiarContraseña from "./cambiarContrasena";
+import FotoPerfil from "./fotoPerfil";
 
 
 

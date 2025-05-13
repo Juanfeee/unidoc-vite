@@ -6,8 +6,6 @@ import Cookies from "js-cookie";
 import { Link } from "react-router";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
-import logoOscuro from "../../assets/images/logoOscuro.png";
-import logoClaro from "../../assets/images/logoClaro.png";
 
 const InformacionPersonalDocente = () => {
   const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
@@ -47,35 +45,29 @@ const InformacionPersonalDocente = () => {
   // Cargar los datos del docente al cargar el componente
   const fetchDatos = async () => {
     try {
-      // 1. Intentar cargar desde sessionStorage primero
-      const cachedData = sessionStorage.getItem('userData');
-      if (cachedData) {
-        setDatos(JSON.parse(cachedData));
-      }
+
 
       // 2. Hacer petición al servidor para obtener los datos del usuario
       const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
+      
       // 3. Si el usuario existe, actualizamos el estado y sessionStorage
-      if (response.data?.user) {
         const user = response.data.user;
         setDatos(user);
-        sessionStorage.setItem('userData', JSON.stringify(user));
 
+        
         // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
         const municipio = user.municipio_id;
         if (municipio) {
           try {
             const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
 
-            // 5. Almacenamos el municipio en sessionStorage si se obtiene correctamente
-            sessionStorage.setItem('municipio', JSON.stringify(responseMunicipio.data));
             setMunicipio(responseMunicipio.data);
 
           } catch (municipioError) {
             console.error("Error al obtener el municipio:");
           }
         }
-      }
+
     } catch (error) {
       console.error('Error al obtener los datos del docente:', error);
     }
@@ -133,9 +125,6 @@ const InformacionPersonalDocente = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 bg-white py-12 px-8 rounded-xl gap-7">
           <div className="flex  col-span-full md:flex-row gap-y-2 justify-between">
             <h2 className="font-bold text-3xl">Hoja de vida</h2>
-            <div className="hidden sm:flex h-[20px] justify-end items-start">
-              <img className="size-24 rounded-full" src={logoOscuro} alt="logo" />
-            </div>
             {/* <p className="font-medium text-lg">Estado de validación Académica: <span>a</span> </p> */}
           </div>
           <div className="grid items-center sm:grid-cols-2 col-span-full gap-y-4">
@@ -152,7 +141,7 @@ const InformacionPersonalDocente = () => {
                 }}
               />
               <Texto
-                value={`${datos.primer_nombre} ${datos?.segundo_nombre} ${datos.primer_apellido} ${datos?.segundo_apellido}`}
+                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${datos.primer_apellido} ${datos?.segundo_apellido || ""}`}
               />
 
             </div>
@@ -179,8 +168,8 @@ const InformacionPersonalDocente = () => {
                 value="Ubicación"
               />
               <Texto
-                value={`${municipio.municipio_nombre
-                  }, ${municipio.departamento_nombre
+                value={`${municipio.municipio_nombre || "" 
+                  }, ${municipio.departamento_nombre || ""
                   }`}
               />
             </div>

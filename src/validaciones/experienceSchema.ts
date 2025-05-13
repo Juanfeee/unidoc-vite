@@ -27,7 +27,18 @@ export const experienciaSchema = z
     trabajo_actual: z.enum(["Si", "No"], {
       errorMap: () => ({ message: "Seleccione una opción" }),
     }),
-    intensidad_horaria: z.string().min(1, { message: "Campo vacío" }),
+    intensidad_horaria: z
+      .string()
+      .refine((val) => !isNaN(Number(val)), {
+        message: "Debe ser un número",
+      })
+      .refine((val) => Number(val) >= 1, {
+        message: "El número debe ser al menos 1",
+      })
+      .refine((val) => Number(val) <= 100, {
+        message: "El número no debe ser mayor a 100",
+      }),
+
     fecha_inicio: z
       .string({
         invalid_type_error: "Esa no es una fecha válida",
@@ -170,21 +181,22 @@ export const experienciaSchemaUpdate = z
         { message: "Formato de archivo inválido (solo PDF permitido)" }
       ),
   })
- .refine(
-  (data) => {
-    const fechaInicio = new Date(data.fecha_inicio);
-    if (
-      data.fecha_finalizacion === undefined ||
-      data.fecha_finalizacion === null ||
-      data.fecha_finalizacion === ""
-    ) {
-      return true;
+  .refine(
+    (data) => {
+      const fechaInicio = new Date(data.fecha_inicio);
+      if (
+        data.fecha_finalizacion === undefined ||
+        data.fecha_finalizacion === null ||
+        data.fecha_finalizacion === ""
+      ) {
+        return true;
+      }
+      const fechaFinalizacion = new Date(data.fecha_finalizacion);
+      return fechaFinalizacion >= fechaInicio;
+    },
+    {
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
+      path: ["fecha_finalizacion"],
     }
-    const fechaFinalizacion = new Date(data.fecha_finalizacion);
-    return fechaFinalizacion >= fechaInicio;
-  },
-  {
-    message: "La fecha de finalización no puede ser menor que la fecha de inicio",
-    path: ["fecha_finalizacion"],
-  }
-);
+  );

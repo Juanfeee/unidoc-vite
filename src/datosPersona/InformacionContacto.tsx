@@ -183,8 +183,6 @@ export const InformacionContacto = () => {
     }
   }, [categoriaLibretaMilitar, setValue]);
 
-  console.log("watch", watch());
-  console.log("errors", errors);
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Informacion de contacto</h2>

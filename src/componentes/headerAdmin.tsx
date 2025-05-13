@@ -5,42 +5,12 @@ import { toast, ToastContainer } from 'react-toastify'
 import Cookies from 'js-cookie'
 import { Link, useLocation } from 'react-router-dom'
 import { useState, useRef, useEffect } from 'react'
-import axiosInstance from '../utils/axiosConfig'
+
 
 const HeaderAdmin = () => {
 
 
-  const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
 
-  useEffect(() => {
-    const fetchProfileImage = async () => {
-      try {
-        // 1. Intentar cargar desde sessionStorage primero
-        const cachedImage = sessionStorage.getItem('profileImage');
-        if (cachedImage) {
-          setProfileImage(cachedImage);
-        }
-
-        // 2. Hacer petición al servidor
-        const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-        });
-
-        // 3. Actualizar estado y sessionStorage
-        const imageUrl = response.data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
-        if (imageUrl) {
-          setProfileImage(imageUrl);
-          sessionStorage.setItem('profileImage', imageUrl);
-        }
-
-      } catch (error) {
-        console.error("Error al cargar foto:", error);
-        // Si hay error, se mantiene la imagen de cache (si existía)
-      }
-    };
-
-    fetchProfileImage();
-  }, []);
 
   // Cerrar el dropdown al hacer clic fuera
   useEffect(() => {
@@ -124,28 +94,6 @@ const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
                 <Link className={`hover:border-b-2 ${pathname === "/normativas" ? "border-b-2 border-blue-500" : ""}`} to="/normativas">
                   Normativas
                 </Link>
-              </li>
-              <li className="relative" ref={dropdownRef}>
-                <div onClick={toggleDropdown} className="cursor-pointer flex items-center">
-                  <img
-                    src={profileImage}
-                    alt="Perfil"
-                    className="size-10 object-cover rounded-full"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "https://img.freepik.com/fotos-premium/retrato-hombre-negocios-expresion-cara-seria-fondo-estudio-espacio-copia-bengala-persona-corporativa-enfoque-pensamiento-duda-mirada-facial-dilema-o-concentracion_590464-84924.jpg";
-                    }}
-                  />
-                </div>
-                {isDropdownOpen && (
-                  <div className="absolute right-0 top-full w-48 bg-white rounded-md shadow-lg z-50 text-sm border border-gray-200">
-                    <Link to="/configuracion" className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200" onClick={() => setIsDropdownOpen(false)}>
-                      Configuración
-                    </Link>
-                    <button onClick={() => { logout(); setIsDropdownOpen(false); }} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600">
-                      Cerrar sesión
-                    </button>
-                  </div>
-                )}
               </li>
             </ul>
           </nav>

@@ -18,8 +18,8 @@ const ProtectedRoute = ({ children, allowedRoles  }: Props) => {
 
   if (!token) {
     // Borrar el sessionStorage y Cookies
-    Cookies.remove("token");
     Cookies.remove("rol");
+    Cookies.remove("token");
     sessionStorage.clear();
     return <Navigate to="/" replace />;
   }
