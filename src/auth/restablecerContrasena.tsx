@@ -34,7 +34,7 @@ const RestablecerContrasena = () => {
         'Content-Type': 'application/json', // Tipo de contenido
         'Accept': 'application/json' // Aceptar respuesta en formato JSON
       },
-      timeout: 10000 // 10 segundos timeout
+      timeout: 210000 // 10 segundos timeout
     })
 
     // Manejo de la respuesta
