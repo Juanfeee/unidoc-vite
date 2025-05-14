@@ -19,7 +19,6 @@ const RestablecerContrasena = () => {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<Inputs>({ resolver: zodResolver(restablecerContrasenaSchema) });
 
@@ -43,7 +42,6 @@ const RestablecerContrasena = () => {
       pending: "Enviando correo...",
       success: {
         render() {
-          reset()
           return "¡Te hemos enviado un correo, revísalo";
         },
       },
@@ -55,8 +53,8 @@ const RestablecerContrasena = () => {
               return "Tiempo de espera agotado. Intente nuevamente";
             } else if (error.response) {
               switch (error.response.status) {
-                case 401:
-                  return "Credenciales incorrectas";
+                case 404:
+                  return "Correo no encontrado";
                 case 500:
                   return "Error en el servidor";
                 default:

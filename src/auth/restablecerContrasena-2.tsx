@@ -6,7 +6,7 @@ import TextInput from "../componentes/formularios/TextInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { restablecerContrasenaSchema2 } from "../validaciones/restablecerContrasenaSchema";
 import { useEffect } from "react";
 
@@ -18,6 +18,7 @@ type Inputs = {
 
 const RestablecerContrasena2 = () => {
 
+  const navigate = useNavigate();
   // Obtener los parámetros de búsqueda de la URL
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -71,10 +72,8 @@ const RestablecerContrasena2 = () => {
                   switch (error.response.status) {
                     case 400:
                       return "Datos inválidos";
-                    case 401:
+                    case 410:
                       return "Token inválido o expirado";
-                    case 422:
-                      return error.response.data?.message || "Datos inválidos. Verifica el formulario";
                     case 500:
                       return "Error en el servidor";
                     default:
@@ -92,7 +91,8 @@ const RestablecerContrasena2 = () => {
       );
 
       setTimeout(() => {
-        window.location.href = "/";
+        
+        navigate("/");
       }, 1000);
       
       reset();
