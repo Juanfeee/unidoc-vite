@@ -135,64 +135,59 @@ const EditarIdioma = () => {
 
   return (
     <>
-      <form
-        className="flex flex-col gap-y-4 rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <div className="flex flex-col sm:grid grid-cols-3 gap-x-8 bg-white gap-y-6 py-12 px-8 rounded-xl">
-          <div className="flex gap-x-4 col-span-full">
-            <Link to={"/index"}>
-              <ButtonRegresar />
-            </Link>
-            <h3 className="font-bold text-3xl col-span-full">Editar idioma</h3>
+      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
+        <div className="flex gap-x-4 col-span-full">
+          <Link to={"/index"}>
+            <ButtonRegresar />
+          </Link>
+          <h3 className="font-bold text-3xl col-span-full">Editar idioma</h3>
+        </div>
+        <form
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="">
+            <InputLabel htmlFor="idioma" value="Idioma" />
+            <TextInput
+              id="idioma"
+              placeholder="Ingrese el idioma"
+              {...register("idioma")}
+            />
+            <InputErrors errors={errors} name="idioma" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4">
-            <div className="flex flex-col w-full">
-              <InputLabel htmlFor="idioma" value="Idioma" />
-              <TextInput
-                id="idioma"
-                placeholder="Ingrese el idioma"
-                {...register("idioma")}
-              />
-              <InputErrors errors={errors} name="idioma" />
-            </div>
-
-            <div className="flex flex-col w-full">
-              <InputLabel htmlFor="institucion" value="Institución" />
-              <TextInput
-                id="institucion_idioma"
-                placeholder="Nombre de la institución"
-                {...register("institucion_idioma")}
-              />
-              <InputErrors errors={errors} name="institucion" />
-            </div>
+          <div className="">
+            <InputLabel htmlFor="institucion" value="Institución" />
+            <TextInput
+              id="institucion_idioma"
+              placeholder="Nombre de la institución"
+              {...register("institucion_idioma")}
+            />
+            <InputErrors errors={errors} name="institucion" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4">
-            <div className="flex flex-col w-full">
-              <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma" />
-              <SelectForm
-                id="nivel"
-                register={register("nivel")}
-                url="niveles-idioma"
-                data_url="nivel_idioma"
-              />
-              <InputErrors errors={errors} name="nivel_idioma" />
-            </div>
+          <div className="">
+            <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma" />
+            <SelectForm
+              id="nivel"
+              register={register("nivel")}
+              url="niveles-idioma"
+              data_url="nivel_idioma"
+            />
+            <InputErrors errors={errors} name="nivel_idioma" />
+          </div>
 
-            <div className="flex flex-col w-full">
-              <InputLabel
-                htmlFor="fecha_certificado"
-                value="Fecha de certificado"
-              />
-              <TextInput
-                type="date"
-                id="fecha_certificado"
-                {...register("fecha_certificado")}
-              />
-              <InputErrors errors={errors} name="fecha_certificado" />
-            </div>
+          <div className="">
+            <InputLabel
+              htmlFor="fecha_certificado"
+              value="Fecha de certificado"
+            />
+            <TextInput
+              type="date"
+              id="fecha_certificado"
+              {...register("fecha_certificado")}
+            />
+            <InputErrors errors={errors} name="fecha_certificado" />
           </div>
 
           <div className="col-span-full">
@@ -206,8 +201,8 @@ const EditarIdioma = () => {
               disabled={isSubmitting}
             />
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 };

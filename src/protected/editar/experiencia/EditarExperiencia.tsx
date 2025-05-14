@@ -165,6 +165,7 @@ const EditarExperiencia = () => {
     }
   }, [trabajo_actual, setValue]);
   return (
+    
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
       <div className="flex gap-x-4 col-span-full items-center">
         <Link to={"/index"}>

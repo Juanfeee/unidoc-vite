@@ -26,13 +26,16 @@ type Inputs = {
 };
 
 const AgregarIdioma = () => {
-
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
-    resolver: zodResolver(languageSchema)
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<Inputs>({
+    resolver: zodResolver(languageSchema),
   });
 
-
-  const archivoValue = watch('archivo')
+  const archivoValue = watch("archivo");
   const { existingFile } = useArchivoPreview(archivoValue);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -42,7 +45,7 @@ const AgregarIdioma = () => {
     formData.append("idioma", data.idioma);
     formData.append("institucion_idioma", data.institucion_idioma);
     formData.append("nivel", data.nivel);
-    formData.append("fecha_certificado", data.fecha_certificado || '');
+    formData.append("fecha_certificado", data.fecha_certificado || "");
     formData.append("archivo", data.archivo[0]);
 
     const token = Cookies.get("token");
@@ -50,8 +53,8 @@ const AgregarIdioma = () => {
 
     const postPromise = axios.post(url, formData, {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
       },
       timeout: 10000,
     });
@@ -76,13 +79,13 @@ const AgregarIdioma = () => {
               return "Tiempo de espera agotado. Intenta de nuevo.";
             } else if (error.response) {
               const errores = error.response.data?.errors;
-              if (errores && typeof errores === 'object') {
-                const mensajes = Object.values(errores)
-                  .flat()
-                  .join('\n');
+              if (errores && typeof errores === "object") {
+                const mensajes = Object.values(errores).flat().join("\n");
                 return `Errores del formulario:\n${mensajes}`;
               }
-              return error.response.data?.message || "Error al guardar los datos.";
+              return (
+                error.response.data?.message || "Error al guardar los datos."
+              );
             } else if (error.request) {
               return "No se recibió respuesta del servidor.";
             }
@@ -94,74 +97,71 @@ const AgregarIdioma = () => {
     });
   };
 
-
   return (
     <>
-      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
-        <div className='flex gap-x-4 col-span-full'>
+      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
+        <div className="flex gap-x-4 col-span-full items-center">
           <Link to={"/index"}>
             <ButtonRegresar />
           </Link>
           <h3 className="font-bold text-3xl col-span-full">Agregar idioma</h3>
         </div>
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-          onSubmit={handleSubmit(onSubmit)}>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4'>
-            <div className='flex flex-col w-full'>
-              <InputLabel htmlFor='idioma' value="Idioma" />
-              <TextInput
-                id='idioma'
-                placeholder="Ingrese el idioma"
-                {...register('idioma')}
-              />
-              <InputErrors errors={errors} name="idioma" />
-            </div>
-
-            <div className='flex flex-col w-full'>
-              <InputLabel htmlFor='institucion' value="Institución" />
-              <TextInput
-                id='institucion_idioma'
-                placeholder="Nombre de la institución"
-                {...register('institucion_idioma')}
-              />
-              <InputErrors errors={errors} name="institucion" />
-            </div>
+        <form
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="">
+            <InputLabel htmlFor="idioma" value="Idioma" />
+            <TextInput
+              id="idioma"
+              placeholder="Ingrese el idioma"
+              {...register("idioma")}
+            />
+            <InputErrors errors={errors} name="idioma" />
           </div>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4'>
-            <div className='flex flex-col w-full'>
-              <InputLabel htmlFor='nivel_idioma' value="Nivel de idioma" />
-              <SelectForm
-                id='nivel'
-                register={register('nivel')}
-                url='niveles-idioma'
-                data_url='nivel_idioma'
-              />
-              <InputErrors errors={errors} name="nivel_idioma" />
-            </div>
+          <div className="">
+            <InputLabel htmlFor="institucion" value="Institución" />
+            <TextInput
+              id="institucion_idioma"
+              placeholder="Nombre de la institución"
+              {...register("institucion_idioma")}
+            />
+            <InputErrors errors={errors} name="institucion" />
+          </div>
 
-            <div className='flex flex-col w-full'>
-              <InputLabel htmlFor='fecha_certificado' value="Fecha de certificado" />
-              <TextInput
-                type='date'
-                id='fecha_certificado'
-                {...register('fecha_certificado')}
-              />
-              <InputErrors errors={errors} name="fecha_certificado" />
-            </div>
+          <div className="">
+            <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma" />
+            <SelectForm
+              id="nivel"
+              register={register("nivel")}
+              url="niveles-idioma"
+              data_url="nivel_idioma"
+            />
+            <InputErrors errors={errors} name="nivel_idioma" />
+          </div>
+
+          <div className="">
+            <InputLabel
+              htmlFor="fecha_certificado"
+              value="Fecha de certificado"
+            />
+            <TextInput
+              type="date"
+              id="fecha_certificado"
+              {...register("fecha_certificado")}
+            />
+            <InputErrors errors={errors} name="fecha_certificado" />
           </div>
 
           <div className="col-span-full">
-            <AdjuntarArchivo
-              id="archivo"
-              register={register('archivo')}
-            />
+            <AdjuntarArchivo id="archivo" register={register("archivo")} />
             <InputErrors errors={errors} name="archivo" />
             <MostrarArchivo file={existingFile} />
           </div>
-          <div className='flex justify-center col-span-full' >
-            <ButtonPrimary value='Agregar estudio' />
+          <div className="flex justify-center col-span-full">
+            <ButtonPrimary value="Agregar estudio" />
           </div>
         </form>
       </div>

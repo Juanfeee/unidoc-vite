@@ -149,7 +149,8 @@ const AgregarEstudio = () => {
           </Link>
           <h3 className="font-bold text-3xl col-span-full">Agregar estudio</h3>
         </div>
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        <form 
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           onSubmit={handleSubmit(onSubmit)} >
 
           {/* Tipo de estudio */}

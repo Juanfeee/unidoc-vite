@@ -19,7 +19,7 @@ import axios from "axios";
 
 type Inputs = {
   titulo: string;
-  productos_academicos_id: number;
+  productos_academicos_id?: number;
   ambito_divulgacion_id: number;
   numero_autores: number;
   medio_divulgacion: string;

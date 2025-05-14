@@ -89,6 +89,7 @@ export const DatosPersonales = () => {
         setValue("municipio_id", ubic.municipio_id);
       }
     } catch (error) {
+      console.error("Error al obtener los datos personales:", error);
     }
   };
 

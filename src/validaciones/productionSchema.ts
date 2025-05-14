@@ -58,11 +58,10 @@ export const productionSchema = z.object({
 });
 
 export const productionSchemaUpdate = z.object({
+
   titulo: z.string().nonempty({ message: "El titulo es requerido" }),
-  productos_academicos_id: z
-    .number({ invalid_type_error: "El producto académico es requerido" })
-    .int("El producto académico es requerido")
-    .positive("El producto académico es requerido"),
+
+
 
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
