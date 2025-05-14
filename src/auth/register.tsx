@@ -71,7 +71,7 @@ const Registro = () => {
       return await trigger(["estado_civil", "fecha_nacimiento", "genero"]);
     }
     if (step === 4) {
-      return await trigger(["municipio_id"]);
+      return await trigger(["pais","departamento","municipio_id"]);
     }
     return true;
   };
