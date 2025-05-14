@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { productionSchema } from "../../validaciones/productionSchema";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
 import { SelectFormProduccionAcademica } from "../../componentes/formularios/SelectFormProduccion";
 import InputErrors from "../../componentes/formularios/InputErrors";
@@ -17,7 +17,7 @@ import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
 import Cookies from "js-cookie";
 import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
 import { useArchivoPreview } from "../../hooks/ArchivoPreview";
-import axiosInstance from "../../utils/axiosConfig";
+
 type Inputs = {
   productos_academicos: number;
   ambito_divulgacion_id: number;
@@ -31,9 +31,6 @@ type Inputs = {
 const AgregarProduccion = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-produccion`;
-  const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
@@ -42,78 +39,82 @@ const AgregarProduccion = () => {
   } = useForm<Inputs>({ resolver: zodResolver(productionSchema) });
 
   const archivoValue = watch("archivo");
-  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
+  const { existingFile } = useArchivoPreview(archivoValue);
 
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append(
+        "ambito_divulgacion_id",
+        data.ambito_divulgacion_id.toString()
+      );
+      formData.append("titulo", data.titulo);
+      formData.append("numero_autores", data.numero_autores.toString());
+      formData.append("medio_divulgacion", data.medio_divulgacion);
+      formData.append("fecha_divulgacion", data.fecha_divulgacion);
+      formData.append("archivo", data.archivo[0]);
+      const token = Cookies.get("token");
+      const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-produccion`;
 
-const onSubmit: SubmitHandler<Inputs> = async (data) => {
-  setIsSubmitting(true);
-  try {
-    const formData = new FormData();
-    formData.append("ambito_divulgacion_id", data.ambito_divulgacion_id.toString());
-    formData.append("titulo", data.titulo);
-    formData.append("numero_autores", data.numero_autores.toString());
-    formData.append("medio_divulgacion", data.medio_divulgacion);
-    formData.append("fecha_divulgacion", data.fecha_divulgacion);
-    formData.append("archivo", data.archivo[0]);
-    const token = Cookies.get("token");
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-produccion`;
-
-    await toast.promise(
-      axios.post(url, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-        timeout: 10000,
-      }),
-      {
-        pending: "Enviando datos...",
-        success: {
-          render() {
-            setTimeout(() => {
-              window.location.href = "/index";
-            }, 1500);
-            return "Datos guardados correctamente";
+      await toast.promise(
+        axios.post(url, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
           },
-          autoClose: 1500,
-        },
-        error: {
-          render({ data }) {
-            const error = data;
-            if (axios.isAxiosError(error)) {
-              if (error.code === "ECONNABORTED") {
-                return "Tiempo de espera agotado. Intenta de nuevo.";
-              } else if (error.response) {
-                const errores = error.response.data?.errors;
-                if (errores && typeof errores === 'object') {
-                  return `Errores: ${Object.values(errores).flat().join(', ')}`;
+          timeout: 10000,
+        }),
+        {
+          pending: "Enviando datos...",
+          success: {
+            render() {
+              setTimeout(() => {
+                window.location.href = "/index";
+              }, 1500);
+              return "Datos guardados correctamente";
+            },
+            autoClose: 1500,
+          },
+          error: {
+            render({ data }) {
+              const error = data;
+              if (axios.isAxiosError(error)) {
+                if (error.code === "ECONNABORTED") {
+                  return "Tiempo de espera agotado. Intenta de nuevo.";
+                } else if (error.response) {
+                  const errores = error.response.data?.errors;
+                  if (errores && typeof errores === "object") {
+                    return `Errores: ${Object.values(errores)
+                      .flat()
+                      .join(", ")}`;
+                  }
+                  return (
+                    error.response.data?.message ||
+                    "Error al guardar los datos."
+                  );
+                } else if (error.request) {
+                  return "No se recibió respuesta del servidor.";
                 }
-                return error.response.data?.message || "Error al guardar los datos.";
-              } else if (error.request) {
-                return "No se recibió respuesta del servidor.";
               }
-            }
-            return "Error inesperado al guardar los datos.";
+              return "Error inesperado al guardar los datos.";
+            },
+            autoClose: 3000,
           },
-          autoClose: 3000,
         }
-      }
-    );
-  } catch (error) {
-    console.error("Error al enviar los datos:", error);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
-
+      );
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const produccionSeleccionado = watch("productos_academicos");
   return (
     <>
       <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
-        <div className='flex gap-x-4 col-span-full' >
+        <div className="flex gap-x-4 col-span-full">
           <Link to={"/index"}>
             <ButtonRegresar />
           </Link>
@@ -123,23 +124,34 @@ const onSubmit: SubmitHandler<Inputs> = async (data) => {
         </div>
         <form
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-          onSubmit={handleSubmit((onSubmit))}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex flex-col w-full">
-            <InputLabel htmlFor="productos_academicos" value="Productos academicos" />
+            <InputLabel
+              htmlFor="productos_academicos"
+              value="Productos academicos"
+            />
             <SelectFormProduccionAcademica
               id="productos_academicos"
-              register={register("productos_academicos")}
+              register={register("ambito_divulgacion_id", {
+                valueAsNumber: true,
+                required: true,
+              })}
               url="productos-academicos"
             />
             <InputErrors errors={errors} name="productos_academicos" />
           </div>
           <div>
-            <InputLabel htmlFor="ambito_divulgacion_id" value="Ambito de divulgación" />
+            <InputLabel
+              htmlFor="ambito_divulgacion_id"
+              value="Ambito de divulgación"
+            />
             <SelectFormProduccionAcademica
               id="ambito_divulgacion_id"
-              register={register("ambito_divulgacion_id", { valueAsNumber: true, required: true })}
-
+              register={register("ambito_divulgacion_id", {
+                valueAsNumber: true,
+                required: true,
+              })}
               parentId={produccionSeleccionado}
               url="ambitos_divulgacion"
             />
@@ -162,7 +174,6 @@ const onSubmit: SubmitHandler<Inputs> = async (data) => {
               id="numero_autores"
               placeholder="Numero de autores..."
               {...register("numero_autores", { valueAsNumber: true })}
-
             />
             <InputErrors errors={errors} name="numero_autores" />
           </div>
@@ -192,10 +203,7 @@ const onSubmit: SubmitHandler<Inputs> = async (data) => {
           </div>
           <div className="col-span-full">
             <InputLabel htmlFor="archivo" value="Archivo" />
-            <AdjuntarArchivo
-              id="archivo"
-              register={register('archivo')}
-            />
+            <AdjuntarArchivo id="archivo" register={register("archivo")} />
             <InputErrors errors={errors} name="archivo" />
             <MostrarArchivo file={existingFile} />
           </div>

@@ -27,7 +27,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<Inputs>({ resolver: zodResolver(loginSchema) });
 

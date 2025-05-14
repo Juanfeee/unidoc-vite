@@ -20,17 +20,18 @@ import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo"
 
 type Inputs = {
   tipo_estudio: string;
-  graduado: string;
+  graduado: "Si" | "No";
   institucion: string;
-  fecha_graduacion: string;
-  titulo_convalidado: string;
-  fecha_convalidacion: string;
-  resolucion_convalidacion: string;
-  posible_fecha_graduacion?: string;
   titulo_estudio: string;
+  titulo_convalidado: "Si" | "No";
   fecha_inicio: string;
-  fecha_fin: string;
-  archivo: FileList;
+  
+  fecha_fin?: string;
+  resolucion_convalidacion?: string;
+  fecha_graduacion?: string;
+  posible_fecha_graduacion?: string;
+  fecha_convalidacion?: string;
+  archivo?: FileList;
 };
 
 
@@ -130,7 +131,10 @@ const EditarEstudio = () => {
     formData.append("titulo_estudio", data.titulo_estudio);
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_fin", data.fecha_fin || '');
-    formData.append("archivo", data.archivo[0] || '');
+    
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
 
 
     const token = Cookies.get("token");

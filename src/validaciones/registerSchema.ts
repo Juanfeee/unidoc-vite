@@ -5,12 +5,10 @@ const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
 export const registerSchema = z
   .object({
-
     numero_identificacion: z
-      .string()
+      .number()
       .min(1, { message: "Campo vacio" })
-      .max(50, { message: "El número de identificación no puede tener más de 50 caracteres" })
-      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+      .max(50, { message: "El número de identificación no puede tener más de 50 caracteres" }),
 
     primer_nombre: z
       .string()
@@ -26,7 +24,6 @@ export const registerSchema = z
 
     segundo_nombre: z
       .string()
-      .nullable()
       .optional()
       .refine(val => val === null || val === undefined || val === '' || val.length >= 1, {
         message: "Debe tener mínimo 1 caracter.",
@@ -40,7 +37,6 @@ export const registerSchema = z
 
     segundo_apellido: z
       .string()
-      .nullable()
       .optional()
       .refine(val => val === null || val === undefined || val === '' || val.length >= 1, {
         message: "Debe tener mínimo 1 caracter.",
@@ -52,6 +48,12 @@ export const registerSchema = z
         message: "No se permiten emojis ni caracteres especiales.",
       }),
 
+    pais: z
+    .number({ invalid_type_error: "El país es requerido" }),
+    
+    departamento: z
+      .number({ invalid_type_error: "El departamento es requerido" }), 
+      
     municipio_id: z
       .number({ invalid_type_error: "El municipio es requerido" }),  
     email: z

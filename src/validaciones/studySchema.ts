@@ -75,13 +75,15 @@ export const studySchema = z
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       }),
+
     fecha_fin: z
       .string({
         invalid_type_error: "Esa no es una fecha",
       })
-      .refine((val) => !isNaN(Date.parse(val)), {
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      }),
+      })
+      .optional(),
 
     archivo: z
       // 1) forzamos que venga un FileList
@@ -110,100 +112,130 @@ export const studySchema = z
         }
       ),
   })
+  .refine(
+    (data) => {
+      const fechaInicio = new Date(data.fecha_inicio);
+      const fechaFinalizacion = new Date(data.fecha_fin ?? "");
+      if (fechaFinalizacion < fechaInicio) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
+      path: ["fecha_fin"],
+    }
+  );
 
+export const studySchemaUpdate = z
+  .object({
+    tipo_estudio: z.string().min(1, { message: "Campo vacio" }),
 
-export const studySchemaUpdate = z.object({
-  tipo_estudio: z.string().min(1, { message: "Campo vacio" }),
-
-  graduado: z.enum(["Si", "No"], {
-    errorMap: () => ({ message: "Seleccione una opcion" }),
-  }),
-
-  institucion: z
-    .string()
-    .min(7, { message: "Minimo 7 caracteres" })
-    .max(100, { message: "Campo demasiado largo" })
-    .regex(regexSinEmojis, {
-      message: "No se permiten emojis ni caracteres especiales",
+    graduado: z.enum(["Si", "No"], {
+      errorMap: () => ({ message: "Seleccione una opcion" }),
     }),
 
-  titulo_estudio: z
-    .string()
-    .min(7, { message: "Minimo 7 caracteres" })
-    .max(100, { message: "Campo demasiado largo" })
-    .regex(regexSinEmojis, {
-      message: "No se permiten emojis ni caracteres especiales",
-    }),
-  resolucion_convalidacion: z
-    .string()
-    .min(7, { message: "Minimo 7 caracteres" })
-    .max(100, { message: "Campo demasiado largo" })
-    .regex(regexSinEmojis, {
-      message: "No se permiten emojis ni caracteres especiales",
-    })
-    .optional(),
+    institucion: z
+      .string()
+      .min(7, { message: "Minimo 7 caracteres" })
+      .max(100, { message: "Campo demasiado largo" })
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      }),
 
-  titulo_convalidado: z.enum(["Si", "No"], {
-    errorMap: () => ({ message: "Seleccione una opcion" }),
-  }),
+    titulo_estudio: z
+      .string()
+      .min(7, { message: "Minimo 7 caracteres" })
+      .max(100, { message: "Campo demasiado largo" })
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      }),
+    resolucion_convalidacion: z
+      .string()
+      .min(7, { message: "Minimo 7 caracteres" })
+      .max(100, { message: "Campo demasiado largo" })
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      })
+      .optional(),
 
-  fecha_graduacion: z
-    .string({
-      invalid_type_error: "Esa no es una fecha",
-    })
-    .refine((val) => val === "" || !isNaN(Date.parse(val)), {
-      message: "Formato de fecha incorrecto",
-    })
-    .optional(),
-
-  posible_fecha_graduacion: z
-    .string({
-      invalid_type_error: "Esa no es una fecha",
-    })
-    .refine((val) => val === "" || !isNaN(Date.parse(val)), {
-      message: "Formato de fecha incorrecto",
-    })
-    .optional(),
-
-  fecha_convalidacion: z
-    .string({
-      invalid_type_error: "Esa no es una fecha",
-    })
-    .refine((val) => val === "" || !isNaN(Date.parse(val)), {
-      message: "Formato de fecha incorrecto",
-    })
-    .optional(),
-
-  fecha_inicio: z
-    .string({
-      invalid_type_error: "Esa no es una fecha",
-    })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Formato de fecha incorrecto",
-    }),
-  fecha_fin: z
-    .string({
-      invalid_type_error: "Esa no es una fecha",
-    })
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Formato de fecha incorrecto",
+    titulo_convalidado: z.enum(["Si", "No"], {
+      errorMap: () => ({ message: "Seleccione una opcion" }),
     }),
 
-  archivo: z
-    .instanceof(FileList, {
-      message: "Debes subir un archivo si quieres reemplazar el existente",
-    })
-    .optional()
-    // 1) tamaño máximo 2MB, solo si hay fichero
-    .refine(
-      (files) =>
-        (files?.length ?? 0) === 0 || files![0].size <= 2 * 1024 * 1024,
-      { message: "Archivo demasiado grande (máx 2MB)" }
-    )
-    // 2) solo PDF, solo si hay fichero
-    .refine(
-      (files) =>
-        (files?.length ?? 0) === 0 || files![0].type === "application/pdf",
-      { message: "Formato de archivo inválido (solo PDF permitido)" }
-    ),
-});
+    fecha_graduacion: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
+    posible_fecha_graduacion: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
+    fecha_convalidacion: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
+    fecha_inicio: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      }),
+
+    fecha_fin: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
+    archivo: z
+      .instanceof(FileList, {
+        message: "Debes subir un archivo si quieres reemplazar el existente",
+      })
+      .optional()
+      .refine(
+        (files) =>
+          (files?.length ?? 0) === 0 || files![0].size <= 2 * 1024 * 1024,
+        { message: "Archivo demasiado grande (máx 2MB)" }
+      )
+      .refine(
+        (files) =>
+          (files?.length ?? 0) === 0 || files![0].type === "application/pdf",
+        { message: "Formato de archivo inválido (solo PDF permitido)" }
+      ),
+  })
+  .refine(
+    (data) => {
+      const fechaInicio = new Date(data.fecha_inicio);
+      const fechaFinalizacion = new Date(data.fecha_fin ?? "");
+      if (fechaFinalizacion < fechaInicio) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
+      path: ["fecha_fin"], // Esto asegura que el error se asocie con fecha_finalizacion
+    }
+  );

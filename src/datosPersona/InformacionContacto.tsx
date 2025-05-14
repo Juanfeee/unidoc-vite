@@ -21,18 +21,18 @@ import axiosInstance from "../utils/axiosConfig";
 
 
 export type Inputs = {
-  correo_alterno?: string,
   categoria_libreta_militar: string,
-  numero_libreta_militar: string,
-  numero_distrito_militar: string,
-  direccion_residencia: string,
-  barrio: string,
   telefono_movil: string,
-  celular_alternativo?: string,
   pais: number;
   departamento: number;
   municipio_id: number;
-  archivo: FileList
+  correo_alterno?: string,
+  numero_libreta_militar?: string,
+  numero_distrito_militar?: string,
+  direccion_residencia?: string,
+  barrio?: string,
+  celular_alternativo?: string,
+  archivo?: FileList
 }
 
 export const InformacionContacto = () => {
@@ -47,9 +47,6 @@ export const InformacionContacto = () => {
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-    defaultValues: {
-
-    },
   });
 
   const archivoValue = watch("archivo");

@@ -21,14 +21,14 @@ import { MostrarArchivo } from '../../componentes/formularios/MostrarArchivo';
 type Inputs = {
   tipo_experiencia: string;
   institucion_experiencia: string;
-  trabajo_actual: string;
+  trabajo_actual: "Si" | "No";
   cargo: string;
   intensidad_horaria: string;
-  experiencia_universidad: string;
+  experiencia_universidad: "Si" | "No";
   fecha_inicio: string;
-  fecha_finalizacion: string;
+  fecha_finalizacion?: string;
+  fecha_expedicion_certificado?: string;
   archivo: FileList;
-  fecha_expedicion_certificado: string;
 };
 
 const AgregarExperiencia = () => {
@@ -93,8 +93,8 @@ const AgregarExperiencia = () => {
     formData.append('cargo', formValues.cargo);
     formData.append('intensidad_horaria', formValues.intensidad_horaria);
     formData.append('fecha_inicio', formValues.fecha_inicio);
-    formData.append('fecha_finalizacion', formValues.fecha_finalizacion);
-    formData.append('fecha_expedicion_certificado', formValues.fecha_expedicion_certificado);
+    formData.append('fecha_finalizacion', formValues.fecha_finalizacion || "");
+    formData.append('fecha_expedicion_certificado', formValues.fecha_expedicion_certificado || "");
 
     if (formValues.archivo && formValues.archivo[0]) {
       formData.append('archivo', formValues.archivo[0]);

@@ -18,196 +18,198 @@ import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
 import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
 
 type Inputs = {
-    idioma: string;
-    institucion_idioma: string;
-    nivel: string;
-    fecha_certificado: string;
-    archivo: FileList;
+  idioma: string;
+  institucion_idioma: string;
+  nivel: string;
+  fecha_certificado: string;
+  archivo?: FileList;
 };
 
 const EditarIdioma = () => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const { id } = useParams();
-    const {
-        register,
-        handleSubmit,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useForm<Inputs>({
-        resolver: zodResolver(languageSchemaUpdate),
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { id } = useParams();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<Inputs>({
+    resolver: zodResolver(languageSchemaUpdate),
+  });
+
+  const archivoValue = watch("archivo");
+  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
+
+  useEffect(() => {
+    const URL = `${import.meta.env.VITE_API_URL}`; // URL para obtener el idioma específico
+
+    axiosInstance
+      .get(`${URL}/aspirante/obtener-idioma/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      })
+      .then((response) => {
+        const data = response.data.idioma;
+        setValue("idioma", data.idioma);
+        setValue("institucion_idioma", data.institucion_idioma);
+        setValue("nivel", data.nivel);
+        setValue("fecha_certificado", data.fecha_certificado);
+
+        if (data.documentos_idioma && data.documentos_idioma.length > 0) {
+          const archivo = data.documentos_idioma[0];
+          setExistingFile({
+            url: archivo.archivo_url,
+            name: archivo.archivo.split("/").pop() || "Archivo existente",
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, [setValue]);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
+    setIsSubmitting(true);
+    const formData = new FormData();
+    formData.append("_method", "PUT");
+    formData.append("idioma", data.idioma);
+    formData.append("institucion_idioma", data.institucion_idioma);
+    formData.append("nivel", data.nivel);
+    formData.append("fecha_certificado", data.fecha_certificado || "");
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
+
+    const token = Cookies.get("token");
+    const url = `${
+      import.meta.env.VITE_API_URL
+    }/aspirante/actualizar-idioma/${id}`;
+
+    const putPromise = axiosInstance.post(url, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+      timeout: 10000,
     });
 
+    toast.promise(putPromise, {
+      pending: "Actualizando datos...",
+      success: {
+        render() {
+          // Redirige después de actualizar
+          setTimeout(() => {
+            window.location.href = "/index";
+          }, 1500);
+          return "Datos actualizados correctamente";
+        },
+        autoClose: 1500,
+      },
+      error: {
+        render({ data }) {
+          const error = data;
+          if (axios.isAxiosError(error)) {
+            if (error.code === "ECONNABORTED") {
+              return "Tiempo de espera agotado. Intenta de nuevo.";
+            } else if (error.response) {
+              const errores = error.response.data?.errors;
+              if (errores && typeof errores === "object") {
+                const mensajes = Object.values(errores).flat().join("\n");
+                return `Errores del formulario:\n${mensajes}`;
+              }
+              return (
+                error.response.data?.message || "Error al actualizar los datos."
+              );
+            } else if (error.request) {
+              return "No se recibió respuesta del servidor.";
+            }
+          }
+          return "Error inesperado al actualizar los datos.";
+        },
+        autoClose: 3000,
+      },
+    });
+  };
 
-    const archivoValue = watch('archivo')
-    const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
+  return (
+    <>
+      <form
+        className="flex flex-col gap-y-4 rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="flex flex-col sm:grid grid-cols-3 gap-x-8 bg-white gap-y-6 py-12 px-8 rounded-xl">
+          <div className="flex gap-x-4 col-span-full">
+            <Link to={"/index"}>
+              <ButtonRegresar />
+            </Link>
+            <h3 className="font-bold text-3xl col-span-full">Editar idioma</h3>
+          </div>
 
-    useEffect(() => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4">
+            <div className="flex flex-col w-full">
+              <InputLabel htmlFor="idioma" value="Idioma" />
+              <TextInput
+                id="idioma"
+                placeholder="Ingrese el idioma"
+                {...register("idioma")}
+              />
+              <InputErrors errors={errors} name="idioma" />
+            </div>
 
-        const URL = `${import.meta.env.VITE_API_URL}`; // URL para obtener el idioma específico
+            <div className="flex flex-col w-full">
+              <InputLabel htmlFor="institucion" value="Institución" />
+              <TextInput
+                id="institucion_idioma"
+                placeholder="Nombre de la institución"
+                {...register("institucion_idioma")}
+              />
+              <InputErrors errors={errors} name="institucion" />
+            </div>
+          </div>
 
-        axiosInstance.get(`${URL}/aspirante/obtener-idioma/${id}`, {
-            headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`,
-            },
-        })
-            .then((response) => {
-                const data = response.data.idioma;
-                setValue('idioma', data.idioma);
-                setValue('institucion_idioma', data.institucion_idioma);
-                setValue('nivel', data.nivel);
-                setValue('fecha_certificado', data.fecha_certificado);
+          <div className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4">
+            <div className="flex flex-col w-full">
+              <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma" />
+              <SelectForm
+                id="nivel"
+                register={register("nivel")}
+                url="niveles-idioma"
+                data_url="nivel_idioma"
+              />
+              <InputErrors errors={errors} name="nivel_idioma" />
+            </div>
 
-                if (data.documentos_idioma && data.documentos_idioma.length > 0) {
-                    const archivo = data.documentos_idioma[0];
-                    setExistingFile({
-                        url: archivo.archivo_url,
-                        name: archivo.archivo.split("/").pop() || "Archivo existente",
-                    });
-                }
+            <div className="flex flex-col w-full">
+              <InputLabel
+                htmlFor="fecha_certificado"
+                value="Fecha de certificado"
+              />
+              <TextInput
+                type="date"
+                id="fecha_certificado"
+                {...register("fecha_certificado")}
+              />
+              <InputErrors errors={errors} name="fecha_certificado" />
+            </div>
+          </div>
 
-
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, [setValue])
-
-    const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
-        setIsSubmitting(true);
-        const formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append("idioma", data.idioma);
-        formData.append("institucion_idioma", data.institucion_idioma);
-        formData.append("nivel", data.nivel);
-        formData.append("fecha_certificado", data.fecha_certificado || '');
-        formData.append("archivo", data.archivo[0] || '');
-
-        const token = Cookies.get("token");
-        const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-idioma/${id}`;
-
-        const putPromise = axiosInstance.post(url, formData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "multipart/form-data",
-            },
-            timeout: 10000,
-        });
-
-        toast.promise(putPromise, {
-            pending: "Actualizando datos...",
-            success: {
-                render() {
-                    // Redirige después de actualizar
-                    setTimeout(() => {
-                        window.location.href = "/index";
-                    }, 1500);
-                    return "Datos actualizados correctamente";
-                },
-                autoClose: 1500,
-            },
-            error: {
-                render({ data }) {
-                    const error = data;
-                    if (axios.isAxiosError(error)) {
-                        if (error.code === "ECONNABORTED") {
-                            return "Tiempo de espera agotado. Intenta de nuevo.";
-                        } else if (error.response) {
-                            const errores = error.response.data?.errors;
-                            if (errores && typeof errores === 'object') {
-                                const mensajes = Object.values(errores)
-                                    .flat()
-                                    .join('\n');
-                                return `Errores del formulario:\n${mensajes}`;
-                            }
-                            return error.response.data?.message || "Error al actualizar los datos.";
-                        } else if (error.request) {
-                            return "No se recibió respuesta del servidor.";
-                        }
-                    }
-                    return "Error inesperado al actualizar los datos.";
-                },
-                autoClose: 3000,
-            },
-        });
-    };
-
-    return (
-        <>
-            <form className='flex flex-col gap-y-4 rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative'
-                onSubmit={handleSubmit(onSubmit)}>
-                <div className='flex flex-col sm:grid grid-cols-3 gap-x-8 bg-white gap-y-6 py-12 px-8 rounded-xl'>
-                    <div className='flex gap-x-4 col-span-full'>
-                        <Link to={"/index"}>
-                            <ButtonRegresar />
-                        </Link>
-                        <h3 className="font-bold text-3xl col-span-full">Editar idioma</h3>
-                    </div>
-
-                    <div className='grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4'>
-                        <div className='flex flex-col w-full'>
-                            <InputLabel htmlFor='idioma' value="Idioma" />
-                            <TextInput
-                                id='idioma'
-                                placeholder="Ingrese el idioma"
-                                {...register('idioma')}
-                            />
-                            <InputErrors errors={errors} name="idioma" />
-                        </div>
-
-                        <div className='flex flex-col w-full'>
-                            <InputLabel htmlFor='institucion' value="Institución" />
-                            <TextInput
-                                id='institucion_idioma'
-                                placeholder="Nombre de la institución"
-                                {...register('institucion_idioma')}
-                            />
-                            <InputErrors errors={errors} name="institucion" />
-                        </div>
-                    </div>
-
-                    <div className='grid grid-cols-1 sm:grid-cols-2 col-span-full gap-4'>
-                        <div className='flex flex-col w-full'>
-                            <InputLabel htmlFor='nivel_idioma' value="Nivel de idioma" />
-                            <SelectForm
-                                id='nivel'
-                                register={register('nivel')}
-                                url='niveles-idioma'
-                                data_url='nivel_idioma'
-                            />
-                            <InputErrors errors={errors} name="nivel_idioma" />
-                        </div>
-
-                        <div className='flex flex-col w-full'>
-                            <InputLabel htmlFor='fecha_certificado' value="Fecha de certificado" />
-                            <TextInput
-                                type='date'
-                                id='fecha_certificado'
-                                {...register('fecha_certificado')}
-                            />
-                            <InputErrors errors={errors} name="fecha_certificado" />
-                        </div>
-                    </div>
-
-                    <div className="col-span-full">
-                        <AdjuntarArchivo
-                            id="archivo"
-                            register={register('archivo')}
-                        />
-                        <InputErrors errors={errors} name="archivo" />
-                        <MostrarArchivo file={existingFile} />
-                    </div>
-                    <div className='flex justify-center col-span-full' >
-                        <ButtonPrimary
-                            value={isSubmitting ? "Enviando..." : "Editar idioma"}
-                            disabled={isSubmitting}
-
-                        />
-                    </div>
-                </div>
-            </form>
-        </>
-    );
+          <div className="col-span-full">
+            <AdjuntarArchivo id="archivo" register={register("archivo")} />
+            <InputErrors errors={errors} name="archivo" />
+            <MostrarArchivo file={existingFile} />
+          </div>
+          <div className="flex justify-center col-span-full">
+            <ButtonPrimary
+              value={isSubmitting ? "Enviando..." : "Editar idioma"}
+              disabled={isSubmitting}
+            />
+          </div>
+        </div>
+      </form>
+    </>
+  );
 };
 
 export default EditarIdioma;

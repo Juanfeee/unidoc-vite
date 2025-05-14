@@ -1,11 +1,9 @@
-import { BeakerIcon } from '@heroicons/react/24/outline'
 import { PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router'
 import axiosInstance from '../../../utils/axiosConfig';
 import { useEffect, useState } from 'react';
 import AgregarLink from '../../../componentes/ButtonAgregar';
 import EstadoDocumento from '../../../componentes/Estado';
-import { set } from 'react-hook-form';
 import { BeakerIcons } from '../../../assets/icons/Iconos';
 
 

@@ -3,7 +3,7 @@ import { LabelText } from "../../componentes/formularios/LabelText";
 import { Texto } from "../../componentes/formularios/Texto";
 import axiosInstance from "../../utils/axiosConfig";
 import Cookies from "js-cookie";
-import { Link, useNavigate } from "react-router";
+import { Link} from "react-router";
 import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 
@@ -12,7 +12,6 @@ const InformacionPersonalDocente = () => {
   const [datos, setDatos] = useState<any>();
   const [municipio, setMunicipio] = useState<any>([]);
   const [aptitudes, setAptitudes] = useState<any[]>([]);
-  const navigate = useNavigate();
   const URL = import.meta.env.VITE_API_URL;
 
   // Obtener imagen de perfil

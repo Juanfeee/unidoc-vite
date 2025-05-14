@@ -24,7 +24,7 @@ type Inputs = {
   fecha_finalizacion_afiliacion?: string;
   tipo_afiliado: string;
   numero_afiliado?: string;
-  archivo: FileList
+  archivo?: FileList
 }
 
 export const EpsFormulario = () => {

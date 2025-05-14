@@ -10,8 +10,8 @@ import TextInput from "../componentes/formularios/TextInput";
 import { LabelRadio } from "../componentes/formularios/LabelRadio";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import Cookies from "js-cookie";
-import { userSchema, userSchemaUpdate } from "../validaciones/datosPersonaSchema";
-import { useEffect, useState } from "react";
+import {  userSchemaUpdate } from "../validaciones/datosPersonaSchema";
+import { useEffect} from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion";
@@ -21,18 +21,18 @@ import { useArchivoPreview } from "../hooks/ArchivoPreview";
 
 export type Inputs = {
   primer_nombre: string;
-  segundo_nombre: string;
+  segundo_nombre?: string;
   primer_apellido: string;
-  segundo_apellido: string;
+  segundo_apellido?: string;
   fecha_nacimiento: string;
-  genero: string;
+  genero: "Masculino" | "Femenino" | "Otro";
   estado_civil: string;
-  archivo: FileList;
   tipo_identificacion: string;
   numero_identificacion: string;
   pais: number;
   departamento: number;
   municipio_id: number;
+  archivo?: FileList;
 };
 
 export const DatosPersonales = () => {
@@ -112,9 +112,9 @@ export const DatosPersonales = () => {
     formData.append("tipo_identificacion", data.tipo_identificacion);
     formData.append("numero_identificacion", data.numero_identificacion);
     formData.append("primer_nombre", data.primer_nombre);
-    formData.append("segundo_nombre", data.segundo_nombre);
+    formData.append("segundo_nombre", data.segundo_nombre || "");
     formData.append("primer_apellido", data.primer_apellido);
-    formData.append("segundo_apellido", data.segundo_apellido);
+    formData.append("segundo_apellido", data.segundo_apellido || "");
     formData.append("fecha_nacimiento", data.fecha_nacimiento);
     formData.append("genero", data.genero);
     formData.append("estado_civil", data.estado_civil);

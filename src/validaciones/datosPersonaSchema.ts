@@ -101,11 +101,13 @@ export const userSchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
+
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
 
   genero: z.enum(["Masculino", "Femenino", "Otro"], {
     errorMap: () => ({ message: "El genero no es valido" }),
   }),
+
   archivo: z
     // 1) forzamos que venga un FileList
     .instanceof(FileList, { message: "Debes subir un archivo" })
@@ -133,6 +135,10 @@ export const userSchema = z.object({
     ),
 });
 export const userSchemaUpdate = z.object({
+  pais: z.number({ invalid_type_error: "El municipio es requerido" }),
+
+  departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
+
   tipo_identificacion: z
     .string()
     .min(1, { message: "Seleccione un tipo de identificación" }),
@@ -160,7 +166,6 @@ export const userSchemaUpdate = z.object({
 
   segundo_nombre: z
     .string()
-    .nullable()
     .optional()
     .refine(
       (val) =>
@@ -197,7 +202,6 @@ export const userSchemaUpdate = z.object({
 
   segundo_apellido: z
     .string()
-    .nullable()
     .optional()
     .refine(
       (val) =>
@@ -231,12 +235,13 @@ export const userSchemaUpdate = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
+
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
 
   genero: z.enum(["Masculino", "Femenino", "Otro"], {
     errorMap: () => ({ message: "El genero no es valido" }),
   }),
-  
+
   archivo: z
     .instanceof(FileList, {
       message: "Debes subir un archivo si quieres reemplazar el existente",

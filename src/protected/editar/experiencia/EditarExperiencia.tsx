@@ -21,17 +21,19 @@ import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo"
 type Inputs = {
   tipo_experiencia: string;
   institucion_experiencia: string;
-  trabajo_actual: string;
   cargo: string;
-  intensidad_horaria: string;
-  experiencia_universidad: string;
   fecha_inicio: string;
-  fecha_finalizacion: string;
-  archivo: FileList;
-  fecha_expedicion_certificado: string;
+  intensidad_horaria: string;
+  trabajo_actual: "Si" | "No";
+  experiencia_universidad: "Si" | "No";
+  fecha_finalizacion?: string;
+  fecha_expedicion_certificado?: string;
+  archivo?: FileList;
 };
 
 const EditarExperiencia = () => {
+
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { id } = useParams();
@@ -103,7 +105,9 @@ const EditarExperiencia = () => {
     formData.append("intensidad_horaria", data.intensidad_horaria);
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
-    formData.append("archivo", data.archivo[0] || '');
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
 
 
     const token = Cookies.get("token");

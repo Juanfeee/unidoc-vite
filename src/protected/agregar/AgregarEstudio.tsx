@@ -21,29 +21,30 @@ import { useArchivoPreview } from "../../hooks/ArchivoPreview";
 
 type Inputs = {
   tipo_estudio: string;
-  graduado: string;
+  graduado: "Si" | "No";
   institucion: string;
-  fecha_graduacion: string;
-  titulo_convalidado: string;
-  fecha_convalidacion: string;
-  resolucion_convalidacion: string;
-  posible_fecha_graduacion: string;
   titulo_estudio: string;
+  titulo_convalidado: "Si" | "No";
   fecha_inicio: string;
-  fecha_fin: string;
   archivo: FileList;
-}
+  
+  fecha_fin?: string;
+  resolucion_convalidacion?: string;
+  fecha_graduacion?: string;
+  posible_fecha_graduacion?: string;
+  fecha_convalidacion?: string;
+};
+
 
 
 const AgregarEstudio = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(studySchema) });
 
   const archivoValue = watch('archivo')
-  const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
+  const { existingFile } = useArchivoPreview(archivoValue);
 
   // Efecto para limpiar los campos de fecha de graduación y posible fecha de convalidación si el graduado es "No"
   const convalido = watch('titulo_convalidado');
@@ -136,6 +137,7 @@ const AgregarEstudio = () => {
       setIsSubmitting(false);
     }
   };
+  console.log("error", errors);
 
   return (
     <>

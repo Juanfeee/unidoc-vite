@@ -1,10 +1,9 @@
-import { BeakerIcon, PencilSquareIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {PlusIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axiosInstance from '../../../utils/axiosConfig';
 import EliminarBoton from '../../../componentes/EliminarBoton';
-import { SubmitHandler } from 'react-hook-form';
-import { BeakerIcons, PencilIcon } from '../../../assets/icons/Iconos';
+import { PencilIcon } from '../../../assets/icons/Iconos';
 import { ButtonRegresar } from '../../../componentes/formularios/ButtonRegresar';
 
 

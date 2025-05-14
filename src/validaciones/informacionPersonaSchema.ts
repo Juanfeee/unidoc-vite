@@ -1,12 +1,21 @@
-import { optional, z } from "zod";
+import { z } from "zod";
 const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 export const informacionContacto = z.object({
   categoria_libreta_militar: z.string().min(1, { message: "Es requerido" }),
+  pais: z.number({ invalid_type_error: "El municipio es requerido" }),
+
+  departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
+
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
+
   numero_libreta_militar: z.string().optional(),
+
   numero_distrito_militar: z.string().optional(),
+
   direccion_residencia: z.string().max(100).optional(),
+
   barrio: z.string().max(100).optional(),
+
   correo_alterno: z
     .string()
     .email({ message: "Correo no valido" })
@@ -47,13 +56,23 @@ export const informacionContacto = z.object({
       { message: "Formato de archivo inválido (solo PDF permitido)" }
     ),
 });
+
 export const informacionContactoUpdate = z.object({
   categoria_libreta_militar: z.string().min(1, { message: "Es requerido" }),
+  pais: z.number({ invalid_type_error: "El municipio es requerido" }),
+
+  departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
+  
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
+
   numero_libreta_militar: z.string().optional(),
+
   numero_distrito_militar: z.string().optional(),
+
   direccion_residencia: z.string().max(100).optional(),
+
   barrio: z.string().max(100).optional(),
+
   correo_alterno: z
     .string()
     .email({ message: "Correo no valido" })
@@ -75,6 +94,7 @@ export const informacionContactoUpdate = z.object({
     })
     .optional()
     .or(z.literal("")),
+
   archivo: z
     .instanceof(FileList, {
       message: "Debes subir un archivo si quieres reemplazar el existente",

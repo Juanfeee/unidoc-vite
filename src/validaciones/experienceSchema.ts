@@ -39,33 +39,35 @@ export const experienciaSchema = z
         message: "El número no debe ser mayor a 100",
       }),
 
+    experiencia_universidad: z.enum(["Si", "No"], {
+      errorMap: () => ({ message: "Seleccione una opción" }),
+    }), 
     fecha_inicio: z
       .string({
-        invalid_type_error: "Esa no es una fecha válida",
+        invalid_type_error: "Esa no es una fecha",
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       }),
+
     fecha_finalizacion: z
       .string({
-        invalid_type_error: "Esa no es una fecha válida",
-      })
-      .optional()
-      .refine(
-        (val) => val === undefined || val === "" || !isNaN(Date.parse(val)),
-        {
-          message: "Formato de fecha incorrecto",
-        }
-      ),
-
-    fecha_expedicion_certificado: z
-      .string({
-        invalid_type_error: "Esa no es una fecha válida",
+        invalid_type_error: "Esa no es una fecha",
       })
       .refine((val) => val === "" || !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       })
       .optional(),
+
+    fecha_expedicion_certificado: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
     archivo: z
       // 1) forzamos que venga un FileList
       .instanceof(FileList, { message: "Debes subir un archivo" })
@@ -105,7 +107,7 @@ export const experienciaSchema = z
     {
       message:
         "La fecha de finalización no puede ser menor que la fecha de inicio",
-      path: ["fecha_finalizacion"], // Esto asegura que el error se asocie con fecha_finalizacion
+      path: ["fecha_finalizacion"],
     }
   );
 
@@ -114,6 +116,10 @@ export const experienciaSchemaUpdate = z
     tipo_experiencia: z
       .string()
       .min(1, { message: "Seleccione un tipo de experiencia" }),
+
+    experiencia_universidad: z.enum(["Si", "No"], {
+      errorMap: () => ({ message: "Seleccione una opción" }),
+    }),
 
     institucion_experiencia: z
       .string()
@@ -145,36 +151,33 @@ export const experienciaSchemaUpdate = z
         message: "Formato de fecha incorrecto",
       }),
     fecha_finalizacion: z
-      .union([
-        z.string().refine((val) => !isNaN(Date.parse(val)), {
-          message: "Formato de fecha incorrecto",
-        }),
-        z.literal(""),
-        z.null(),
-        z.undefined(),
-      ])
-      .optional(),
-
-    fecha_expedicion_certificado: z
       .string({
-        invalid_type_error: "Esa no es una fecha válida",
+        invalid_type_error: "Esa no es una fecha",
       })
       .refine((val) => val === "" || !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       })
       .optional(),
+
+    fecha_expedicion_certificado: z
+      .string({
+        invalid_type_error: "Esa no es una fecha",
+      })
+      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
+        message: "Formato de fecha incorrecto",
+      })
+      .optional(),
+
     archivo: z
       .instanceof(FileList, {
         message: "Debes subir un archivo si quieres reemplazar el existente",
       })
       .optional()
-      // 1) tamaño máximo 2MB, solo si hay fichero
       .refine(
         (files) =>
           (files?.length ?? 0) === 0 || files![0].size <= 2 * 1024 * 1024,
         { message: "Archivo demasiado grande (máx 2MB)" }
       )
-      // 2) solo PDF, solo si hay fichero
       .refine(
         (files) =>
           (files?.length ?? 0) === 0 || files![0].type === "application/pdf",
@@ -184,15 +187,11 @@ export const experienciaSchemaUpdate = z
   .refine(
     (data) => {
       const fechaInicio = new Date(data.fecha_inicio);
-      if (
-        data.fecha_finalizacion === undefined ||
-        data.fecha_finalizacion === null ||
-        data.fecha_finalizacion === ""
-      ) {
-        return true;
+      const fechaFinalizacion = new Date(data.fecha_finalizacion ?? "");
+      if (fechaFinalizacion < fechaInicio) {
+        return false;
       }
-      const fechaFinalizacion = new Date(data.fecha_finalizacion);
-      return fechaFinalizacion >= fechaInicio;
+      return true;
     },
     {
       message:

@@ -8,7 +8,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { restablecerContrasenaSchema2 } from "../validaciones/restablecerContrasenaSchema";
-import { useEffect } from "react";
 
 type Inputs = {
   email: string;
@@ -47,7 +46,7 @@ const RestablecerContrasena2 = () => {
     }
 
     try {
-      const response = await toast.promise(
+       await toast.promise(
         axios.post(
           url,
           { ...data, token },

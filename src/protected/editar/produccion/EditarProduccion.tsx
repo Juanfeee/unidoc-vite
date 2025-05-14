@@ -1,37 +1,35 @@
-import { Link, useNavigate, useParams } from "react-router"
-import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar"
-import { InputLabel } from "../../../componentes/formularios/InputLabel"
-import { SelectFormProduccionAcademica } from "../../../componentes/formularios/SelectFormProduccion"
-import InputErrors from "../../../componentes/formularios/InputErrors"
-import TextInput from "../../../componentes/formularios/TextInput"
-import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo"
-import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary"
-import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { productionSchemaUpdate } from "../../../validaciones/productionSchema"
-import Cookies from "js-cookie"
-import { useEffect, useState } from "react"
-import { useArchivoPreview } from "../../../hooks/ArchivoPreview"
-import axiosInstance from "../../../utils/axiosConfig"
-import { toast } from "react-toastify"
-import axios from "axios"
+import { Link, useParams } from "react-router";
+import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
+import { InputLabel } from "../../../componentes/formularios/InputLabel";
+import { SelectFormProduccionAcademica } from "../../../componentes/formularios/SelectFormProduccion";
+import InputErrors from "../../../componentes/formularios/InputErrors";
+import TextInput from "../../../componentes/formularios/TextInput";
+import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
+import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
+import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { productionSchemaUpdate } from "../../../validaciones/productionSchema";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
+import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
+import axiosInstance from "../../../utils/axiosConfig";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 type Inputs = {
-  producto_academico_id: number;
-  ambito_divulgacion_id: number;
   titulo: string;
+  productos_academicos: number;
+  ambito_divulgacion_id: number;
   numero_autores: number;
   medio_divulgacion: string;
   fecha_divulgacion: string;
-  archivo: FileList;
+  archivo?: FileList;
 };
 
 const EditarProduccion = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = useParams();
-
-  const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-produccion`;
 
   const {
     register,
@@ -48,32 +46,39 @@ const EditarProduccion = () => {
     const URL = import.meta.env.VITE_API_URL;
 
     try {
-      const response = await axiosInstance.get(`${URL}/aspirante/obtener-produccion/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
+      const response = await axiosInstance.get(
+        `${URL}/aspirante/obtener-produccion/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
       const produccionAcademica = response.data.produccion;
 
-      const respAmbito = await axiosInstance.get(`${URL}/tiposProduccionAcademica/ambito-divulgacion-completo/${produccionAcademica.ambito_divulgacion_id}`);
+      const respAmbito = await axiosInstance.get(
+        `${URL}/tiposProduccionAcademica/ambito-divulgacion-completo/${produccionAcademica.ambito_divulgacion_id}`
+      );
 
-      setValue("producto_academico_id", respAmbito.data.producto_academico_id);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      setValue("productos_academicos", respAmbito.data.producto_academico_id);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setValue("ambito_divulgacion_id", respAmbito.data.id_ambito_divulgacion);
       setValue("titulo", produccionAcademica.titulo);
       setValue("numero_autores", produccionAcademica.numero_autores);
       setValue("medio_divulgacion", produccionAcademica.medio_divulgacion);
       setValue("fecha_divulgacion", produccionAcademica.fecha_divulgacion);
 
-      if (produccionAcademica.documentos_produccion_academica && produccionAcademica.documentos_produccion_academica.length > 0) {
+      if (
+        produccionAcademica.documentos_produccion_academica &&
+        produccionAcademica.documentos_produccion_academica.length > 0
+      ) {
         const archivo = produccionAcademica.documentos_produccion_academica[0];
         setExistingFile({
           url: archivo.archivo_url,
           name: archivo.archivo.split("/").pop() || "Archivo existente",
         });
       }
-
     } catch (error) {
       console.error("Error al obtener la producción académica:", error);
     }
@@ -83,21 +88,27 @@ const EditarProduccion = () => {
     fetchProduccionAcademica();
   }, []);
 
-
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true);
     const formData = new FormData();
-    formData.append('_method', 'PUT');
-    formData.append("ambito_divulgacion_id", data.ambito_divulgacion_id.toString());
+    formData.append("_method", "PUT");
+    formData.append(
+      "ambito_divulgacion_id",
+      data.ambito_divulgacion_id.toString()
+    );
     formData.append("titulo", data.titulo);
-    formData.append("numero_autores", data.numero_autores.toString())
+    formData.append("numero_autores", data.numero_autores.toString());
     formData.append("medio_divulgacion", data.medio_divulgacion);
     formData.append("fecha_divulgacion", data.fecha_divulgacion);
-    formData.append("archivo", data.archivo[0] || '');
-
+    
+    if (data.archivo && data.archivo.length > 0) {
+      formData.append("archivo", data.archivo[0]);
+    }
 
     const token = Cookies.get("token");
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-produccion/${id}`;
+    const url = `${
+      import.meta.env.VITE_API_URL
+    }/aspirante/actualizar-produccion/${id}`;
 
     const putPromise = axiosInstance.post(url, formData, {
       headers: {
@@ -127,13 +138,13 @@ const EditarProduccion = () => {
               return "Tiempo de espera agotado. Intenta de nuevo.";
             } else if (error.response) {
               const errores = error.response.data?.errors;
-              if (errores && typeof errores === 'object') {
-                const mensajes = Object.values(errores)
-                  .flat()
-                  .join('\n');
+              if (errores && typeof errores === "object") {
+                const mensajes = Object.values(errores).flat().join("\n");
                 return `Errores del formulario:\n${mensajes}`;
               }
-              return error.response.data?.message || "Error al actualizar los datos.";
+              return (
+                error.response.data?.message || "Error al actualizar los datos."
+              );
             } else if (error.request) {
               return "No se recibió respuesta del servidor.";
             }
@@ -145,12 +156,11 @@ const EditarProduccion = () => {
     });
   };
 
-  const produccionSeleccionado = watch("producto_academico_id");
+  const produccionSeleccionado = watch("productos_academicos");
 
   return (
-
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
-      <div className='flex gap-x-4 col-span-full' >
+      <div className="flex gap-x-4 col-span-full">
         <Link to={"/index"}>
           <ButtonRegresar />
         </Link>
@@ -160,22 +170,31 @@ const EditarProduccion = () => {
       </div>
       <form
         className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-        onSubmit={handleSubmit((onSubmit))}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="producto_academico_id" value="Productos academicos" />
+          <InputLabel
+            htmlFor="productos_academicos"
+            value="Productos academicos"
+          />
           <SelectFormProduccionAcademica
-            id="producto_academico_id"
-            register={register("producto_academico_id")}
+            id="productos_academicos"
+            register={register("productos_academicos")}
             url="productos-academicos"
           />
           <InputErrors errors={errors} name="productos_academicos" />
         </div>
         <div>
-          <InputLabel htmlFor="ambito_divulgacion_id" value="Ambito de divulgación" />
+          <InputLabel
+            htmlFor="ambito_divulgacion_id"
+            value="Ambito de divulgación"
+          />
           <SelectFormProduccionAcademica
             id="ambito_divulgacion_id"
-            register={register("ambito_divulgacion_id", { valueAsNumber: true, required: true })}
+            register={register("ambito_divulgacion_id", {
+              valueAsNumber: true,
+              required: true,
+            })}
             parentId={produccionSeleccionado}
             url="ambitos_divulgacion"
           />
@@ -184,11 +203,7 @@ const EditarProduccion = () => {
 
         <div className="flex flex-col w-full">
           <InputLabel htmlFor="titulo" value="Título" />
-          <TextInput
-            id="titulo"
-            placeholder="Titulo"
-            {...register("titulo")}
-          />
+          <TextInput id="titulo" placeholder="Titulo" {...register("titulo")} />
           <InputErrors errors={errors} name="titulo" />
         </div>
         <div className="flex flex-col w-full">
@@ -227,10 +242,7 @@ const EditarProduccion = () => {
         </div>
         <div className="col-span-full">
           <InputLabel htmlFor="archivo" value="Archivo" />
-          <AdjuntarArchivo
-            id="archivo"
-            register={register('archivo')}
-          />
+          <AdjuntarArchivo id="archivo" register={register("archivo")} />
           <InputErrors errors={errors} name="archivo" />
           <MostrarArchivo file={existingFile} />
         </div>
@@ -242,8 +254,7 @@ const EditarProduccion = () => {
         </div>
       </form>
     </div>
+  );
+};
 
-  )
-}
-
-export default EditarProduccion
+export default EditarProduccion;

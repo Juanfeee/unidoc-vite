@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { set, SubmitHandler, useForm } from "react-hook-form";
+import {  SubmitHandler, useForm } from "react-hook-form";
 import { rutSchema, rutSchemaUpdate } from "../validaciones/rutSchema";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -23,7 +23,7 @@ type Inputs = {
   tipo_persona: string;
   codigo_ciiu: string;
   responsabilidades_tributarias: string;
-  archivo: FileList;
+  archivo?: FileList;
 };
 
 export const Rut = () => {
@@ -38,8 +38,7 @@ export const Rut = () => {
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-    defaultValues: {
-    },
+
   });
 
   const archivoValue = watch("archivo");

@@ -35,9 +35,12 @@ export const epsSchema = z
     fecha_finalizacion_afiliacion: z
       .string()
       .optional()
-      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
-        message: "Formato de fecha incorrecto",
-      }),
+      .refine(
+        (val) => val === undefined || val === "" || !isNaN(Date.parse(val)),
+        {
+          message: "Formato de fecha incorrecto",
+        }
+      ),
 
     archivo: z
       // 1) forzamos que venga un FileList
@@ -116,9 +119,12 @@ export const epsSchemaUpdate = z
     fecha_finalizacion_afiliacion: z
       .string()
       .optional()
-      .refine((val) => val === "" || !isNaN(Date.parse(val)), {
-        message: "Formato de fecha incorrecto",
-      }),
+      .refine(
+        (val) => val === undefined || val === "" || !isNaN(Date.parse(val)),
+        {
+          message: "Formato de fecha incorrecto",
+        }
+      ),
 
     archivo: z
       .instanceof(FileList, {

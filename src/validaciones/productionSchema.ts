@@ -1,18 +1,27 @@
 import { z } from "zod";
 
 export const productionSchema = z.object({
+  productos_academicos: z
+    .number({ invalid_type_error: "El producto académico es requerido" })
+    .int("El producto académico es requerido")
+    .positive("El producto académico es requerido"),
+
   titulo: z.string().nonempty({ message: "El titulo es requerido" }),
+
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
     .int("El municipio debe ser un entero")
     .positive("Selecciona un municipio válido"),
+
   numero_autores: z
     .number({ invalid_type_error: "Debe ser un número" })
     .int({ message: "Debe ser un número entero" })
     .positive({ message: "Debe ser un número positivo" }),
+
   medio_divulgacion: z
     .string()
     .nonempty({ message: "El medio de divulgacion es requerido" }),
+
   fecha_divulgacion: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -20,6 +29,7 @@ export const productionSchema = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
+
   archivo: z
     // 1) forzamos que venga un FileList
     .instanceof(FileList, { message: "Debes subir un archivo" })
@@ -49,17 +59,24 @@ export const productionSchema = z.object({
 
 export const productionSchemaUpdate = z.object({
   titulo: z.string().nonempty({ message: "El titulo es requerido" }),
+  productos_academicos: z
+    .number({ invalid_type_error: "El producto académico es requerido" })
+    .int("El producto académico es requerido")
+    .positive("El producto académico es requerido"),
+
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
-    .int("El municipio debe ser un entero")
-    .positive("Selecciona un municipio válido"),
+    .int("El ambito de divulgación es requerido")
+    .positive("El ambito de divulgación es requerido"),
   numero_autores: z
     .number({ invalid_type_error: "Debe ser un número" })
     .int({ message: "Debe ser un número entero" })
     .positive({ message: "Debe ser un número positivo" }),
+
   medio_divulgacion: z
     .string()
     .nonempty({ message: "El medio de divulgacion es requerido" }),
+
   fecha_divulgacion: z
     .string({
       invalid_type_error: "Esa no es una fecha",
@@ -67,6 +84,7 @@ export const productionSchemaUpdate = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
+    
   archivo: z
     .instanceof(FileList, {
       message: "Debes subir un archivo si quieres reemplazar el existente",

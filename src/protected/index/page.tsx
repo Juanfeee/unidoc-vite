@@ -2,7 +2,6 @@
 import InformacionPersonalDocente from './InformacionPersonalDocente'
 import InformacionTrayectoriaDocente from './InformacionTrayectoriaDocente'
 
-type Props = {}
 
 const Index = () => {
 

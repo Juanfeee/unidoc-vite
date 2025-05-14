@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { registerSchema } from "../validaciones/registerSchema"
 import axios from "axios"
 import { toast } from "react-toastify"
-import { Link, useNavigate } from "react-router"
-import React, { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom";
+import React from "react"
 
 import { SelectForm } from "../componentes/formularios/SelectForm"
 import { LabelRadio } from "../componentes/formularios/LabelRadio"
@@ -16,23 +16,23 @@ import InputErrors from "../componentes/formularios/InputErrors"
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion"
 
 type Inputs = {
-  email: string
-  password: string
-  password_confirmation: string
-  primer_nombre: string
-  segundo_nombre?: string
-  primer_apellido: string
-  segundo_apellido?: string
-  fecha_nacimiento: string
-  genero: string
-  estado_civil: string
-  tipo_identificacion: string
-  numero_identificacion: string
-  pais: number
-  departamento: number
-  municipio_id: number
+  numero_identificacion: number;
+  primer_nombre: string;
+  primer_apellido: string;
+  segundo_nombre?: string;
+  segundo_apellido?: string;
+  pais: number;
+  departamento: number;
+  municipio_id: number;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  fecha_nacimiento: string;
+  genero: "Masculino" | "Femenino" | "Otro";
+  tipo_identificacion: string;
+  estado_civil: string;
+};
 
-}
 
 
 const Registro = () => {
@@ -42,6 +42,7 @@ const Registro = () => {
   const navigate = useNavigate();
   //Url de la API
   const url = import.meta.env.VITE_API_URL + "/auth/registrar-usuario";
+  
   const {
     register,
     handleSubmit,
@@ -50,8 +51,7 @@ const Registro = () => {
     formState: { errors },
   } = useForm<Inputs>({
     mode: "onChange",
-    resolver: zodResolver(registerSchema), defaultValues: {
-    }
+    resolver: zodResolver(registerSchema)
   });
 
 
@@ -71,7 +71,10 @@ const Registro = () => {
       return await trigger(["estado_civil", "fecha_nacimiento", "genero"]);
     }
     if (step === 4) {
-      return await trigger(["municipio_id"]);
+      return await trigger(["pais","departamento", "municipio_id"]);
+    }
+    if (step === 5) {
+      return await trigger(["email", "password", "password_confirmation"]);
     }
     return true;
   };
@@ -113,7 +116,7 @@ const Registro = () => {
       registroPromise, {
       pending: "Registrando... Por favor espera.",
       success: {
-        render({ data }) {
+        render() {
           // Si la respuesta es exitosa, redirigimos y mostramos el mensaje
           return "¡Bienvenido! Redirigiendo...";
         },
@@ -158,7 +161,6 @@ const Registro = () => {
 
   const paisSeleccionado = watch("pais");
   const departamentoSeleccionado = watch("departamento");
-  const municipioSeleccionado = watch("municipio_id");
 
 
   return (

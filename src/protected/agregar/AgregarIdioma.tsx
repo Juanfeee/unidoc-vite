@@ -27,7 +27,7 @@ type Inputs = {
 
 const AgregarIdioma = () => {
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>({
     resolver: zodResolver(languageSchema)
   });
 

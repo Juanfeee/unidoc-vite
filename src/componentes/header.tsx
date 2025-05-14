@@ -42,25 +42,29 @@ const Header = () => {
     fetchProfileImage();
   }, []);
 
-  // Cerrar el dropdown al hacer clic fuera
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownOpen(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+
+const dropdownRef = useRef<HTMLLIElement | null>(null);
+
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
 
   const logout = async () => {
     try {
       const token = Cookies.get("token"); // Obtén el token
 
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/cerrar-sesion`,
         {},
         {
@@ -87,7 +91,6 @@ const Header = () => {
 const { pathname } = useLocation();
 const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-const dropdownRef = useRef(null);
 
 const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);

@@ -13,7 +13,6 @@ import { jwtDecode } from "jwt-decode";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 type Inputs = {
-  archivo: FileList;
   password: string;
   new_password: string;
   new_password_confirmation: string;
@@ -63,7 +62,7 @@ const CambiarContraseña = () => {
       const url = `${import.meta.env.VITE_API_URL}/auth/actualizar-contrasena/${id_sub}`;
 
       try {
-        const response = await axiosInstance.post(url, formData, {
+        await axiosInstance.post(url, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
