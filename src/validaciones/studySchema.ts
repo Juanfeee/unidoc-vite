@@ -173,7 +173,7 @@ export const studySchema = z
     {
       message:
         "La fecha de graduación no puede ser menor que la fecha de finalización",
-      path: ["fecha_graduacion"],
+      path: ["fecha_grado"],
     }
   );
 
@@ -314,6 +314,6 @@ export const studySchemaUpdate = z
     {
       message:
         "La fecha de graduación no puede ser menor que la fecha de finalización",
-      path: ["fecha_graduacion"],
+      path: ["fecha_grado"],
     }
   );
