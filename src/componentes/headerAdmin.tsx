@@ -3,12 +3,11 @@
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 import { useState } from "react";
 
 const HeaderAdmin = () => {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

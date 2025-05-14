@@ -11,7 +11,7 @@ import TextInput from "../componentes/formularios/TextInput";
 import InputErrors from "../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
-import logoClaro from "../assets/images/logoClaro.png";
+import logoClaro from "../assets/images/logoClaro.jpg";
 
 
 type Inputs = {
