@@ -19,7 +19,7 @@ import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
 import { useArchivoPreview } from "../../hooks/ArchivoPreview";
 
 type Inputs = {
-  productos_academicos: number;
+  productos_academicos_id: number;
   ambito_divulgacion_id: number;
   titulo: string;
   numero_autores: number;
@@ -110,7 +110,7 @@ const AgregarProduccion = () => {
     }
   };
 
-  const produccionSeleccionado = watch("productos_academicos");
+  const produccionSeleccionado = watch("productos_academicos_id");
   return (
     <>
       <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
@@ -128,18 +128,18 @@ const AgregarProduccion = () => {
         >
           <div className="flex flex-col w-full">
             <InputLabel
-              htmlFor="productos_academicos"
+              htmlFor="productos_academicos_id"
               value="Productos academicos"
             />
             <SelectFormProduccionAcademica
-              id="productos_academicos"
-              register={register("ambito_divulgacion_id", {
+              id="productos_academicos_id"
+              register={register("productos_academicos_id", {
                 valueAsNumber: true,
                 required: true,
               })}
               url="productos-academicos"
             />
-            <InputErrors errors={errors} name="productos_academicos" />
+            <InputErrors errors={errors} name="productos_academicos_id" />
           </div>
           <div>
             <InputLabel

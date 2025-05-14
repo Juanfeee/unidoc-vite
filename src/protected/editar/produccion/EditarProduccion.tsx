@@ -19,7 +19,7 @@ import axios from "axios";
 
 type Inputs = {
   titulo: string;
-  productos_academicos: number;
+  productos_academicos_id: number;
   ambito_divulgacion_id: number;
   numero_autores: number;
   medio_divulgacion: string;
@@ -61,7 +61,7 @@ const EditarProduccion = () => {
         `${URL}/tiposProduccionAcademica/ambito-divulgacion-completo/${produccionAcademica.ambito_divulgacion_id}`
       );
 
-      setValue("productos_academicos", respAmbito.data.producto_academico_id);
+      setValue("productos_academicos_id", respAmbito.data.producto_academico_id);
       await new Promise((resolve) => setTimeout(resolve, 500));
       setValue("ambito_divulgacion_id", respAmbito.data.id_ambito_divulgacion);
       setValue("titulo", produccionAcademica.titulo);
@@ -156,7 +156,7 @@ const EditarProduccion = () => {
     });
   };
 
-  const produccionSeleccionado = watch("productos_academicos");
+  const produccionSeleccionado = watch("productos_academicos_id");
 
   return (
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
@@ -165,7 +165,7 @@ const EditarProduccion = () => {
           <ButtonRegresar />
         </Link>
         <h3 className="font-bold text-3xl col-span-full">
-          Agregar producción académica
+          Editar producción académica
         </h3>
       </div>
       <form
@@ -174,15 +174,15 @@ const EditarProduccion = () => {
       >
         <div className="flex flex-col w-full">
           <InputLabel
-            htmlFor="productos_academicos"
+            htmlFor="productos_academicos_id"
             value="Productos academicos"
           />
           <SelectFormProduccionAcademica
-            id="productos_academicos"
-            register={register("productos_academicos")}
+            id="productos_academicos_id"
+            register={register("productos_academicos_id")}
             url="productos-academicos"
           />
-          <InputErrors errors={errors} name="productos_academicos" />
+          <InputErrors errors={errors} name="productos_academicos_id" />
         </div>
         <div>
           <InputLabel

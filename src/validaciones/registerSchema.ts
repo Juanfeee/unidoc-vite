@@ -6,7 +6,7 @@ const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 export const registerSchema = z
   .object({
     numero_identificacion: z
-      .number()
+      .string()
       .min(1, { message: "Campo vacio" })
       .max(50, { message: "El número de identificación no puede tener más de 50 caracteres" }),
 

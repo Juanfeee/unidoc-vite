@@ -16,7 +16,6 @@ import InputErrors from "../componentes/formularios/InputErrors"
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion"
 
 type Inputs = {
-  numero_identificacion: number;
   primer_nombre: string;
   primer_apellido: string;
   segundo_nombre?: string;
@@ -30,6 +29,7 @@ type Inputs = {
   fecha_nacimiento: string;
   genero: "Masculino" | "Femenino" | "Otro";
   tipo_identificacion: string;
+  numero_identificacion: string;
   estado_civil: string;
 };
 
