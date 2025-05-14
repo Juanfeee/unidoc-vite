@@ -100,6 +100,15 @@ export const userSchema = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
+    })
+    .refine((val) => {
+      const fecha = new Date(val);
+      const hoy = new Date();
+      // Nos aseguramos de comparar solo año, mes y día (sin hora)
+      hoy.setHours(0, 0, 0, 0);
+      return fecha < hoy;
+    }, {
+      message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
     }),
 
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
@@ -135,6 +144,7 @@ export const userSchema = z.object({
     ),
 });
 export const userSchemaUpdate = z.object({
+
   pais: z.number({ invalid_type_error: "El municipio es requerido" }),
 
   departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
@@ -234,6 +244,15 @@ export const userSchemaUpdate = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
+    })
+    .refine((val) => {
+      const fecha = new Date(val);
+      const hoy = new Date();
+      // Nos aseguramos de comparar solo año, mes y día (sin hora)
+      hoy.setHours(0, 0, 0, 0);
+      return fecha < hoy;
+    }, {
+      message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
     }),
 
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),

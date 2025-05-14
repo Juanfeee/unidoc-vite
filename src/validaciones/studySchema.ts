@@ -28,14 +28,7 @@ export const studySchema = z
       .regex(regexSinEmojis, {
         message: "No se permiten emojis ni caracteres especiales",
       }),
-    resolucion_convalidacion: z
-      .string()
-      .min(7, { message: "Minimo 7 caracteres" })
-      .max(100, { message: "Campo demasiado largo" })
-      .regex(regexSinEmojis, {
-        message: "No se permiten emojis ni caracteres especiales",
-      })
-      .optional(),
+
 
     titulo_convalidado: z.enum(["Si", "No"], {
       errorMap: () => ({ message: "Seleccione una opcion" }),
@@ -50,6 +43,33 @@ export const studySchema = z
       })
       .optional(),
 
+    resolucion_convalidacion: z
+      .string()
+      .optional()
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length >= 1,
+        {
+          message: "Debe tener mínimo 1 caracter.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length <= 100,
+        {
+          message: "Debe tener máximo 100 caracteres.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null ||
+          val === undefined ||
+          val === "" ||
+          regexSinEmojis.test(val),
+        {
+          message: "No se permiten emojis ni caracteres especiales.",
+        }
+      ),
     posible_fecha_graduacion: z
       .string({
         invalid_type_error: "Esa no es una fecha",
@@ -116,15 +136,44 @@ export const studySchema = z
     (data) => {
       const fechaInicio = new Date(data.fecha_inicio);
       const fechaFinalizacion = new Date(data.fecha_fin ?? "");
-      if (fechaFinalizacion < fechaInicio) {
-        return false;
-      }
-      return true;
+
+      // Solo validar si existe fecha_fin
+      return data.fecha_fin ? fechaFinalizacion >= fechaInicio : true;
     },
     {
       message:
         "La fecha de finalización no puede ser menor que la fecha de inicio",
       path: ["fecha_fin"],
+    }
+  )
+  .refine(
+    (data) => {
+      const fechaInicio = new Date(data.fecha_inicio);
+      const fechaGraduacion = new Date(data.fecha_graduacion ?? "");
+
+      // Solo validar si existe fecha_graduacion
+      return data.fecha_graduacion ? fechaGraduacion >= fechaInicio : true;
+    },
+    {
+      message:
+        "La fecha de graduación no puede ser menor que la fecha de inicio",
+      path: ["fecha_grado"],
+    }
+  )
+  .refine(
+    (data) => {
+      const fechaFinalizacion = new Date(data.fecha_fin ?? "");
+      const fechaGraduacion = new Date(data.fecha_graduacion ?? "");
+
+      // Solo validar si existen ambas fechas
+      return data.fecha_fin && data.fecha_graduacion
+        ? fechaGraduacion >= fechaFinalizacion
+        : true;
+    },
+    {
+      message:
+        "La fecha de graduación no puede ser menor que la fecha de finalización",
+      path: ["fecha_graduacion"],
     }
   );
 
@@ -228,14 +277,43 @@ export const studySchemaUpdate = z
     (data) => {
       const fechaInicio = new Date(data.fecha_inicio);
       const fechaFinalizacion = new Date(data.fecha_fin ?? "");
-      if (fechaFinalizacion < fechaInicio) {
-        return false;
-      }
-      return true;
+
+      // Solo validar si existe fecha_fin
+      return data.fecha_fin ? fechaFinalizacion >= fechaInicio : true;
     },
     {
       message:
         "La fecha de finalización no puede ser menor que la fecha de inicio",
-      path: ["fecha_fin"], // Esto asegura que el error se asocie con fecha_finalizacion
+      path: ["fecha_fin"],
+    }
+  )
+  .refine(
+    (data) => {
+      const fechaInicio = new Date(data.fecha_inicio);
+      const fechaGraduacion = new Date(data.fecha_graduacion ?? "");
+
+      // Solo validar si existe fecha_graduacion
+      return data.fecha_graduacion ? fechaGraduacion >= fechaInicio : true;
+    },
+    {
+      message:
+        "La fecha de graduación no puede ser menor que la fecha de inicio",
+      path: ["fecha_grado"],
+    }
+  )
+  .refine(
+    (data) => {
+      const fechaFinalizacion = new Date(data.fecha_fin ?? "");
+      const fechaGraduacion = new Date(data.fecha_graduacion ?? "");
+
+      // Solo validar si existen ambas fechas
+      return data.fecha_fin && data.fecha_graduacion
+        ? fechaGraduacion >= fechaFinalizacion
+        : true;
+    },
+    {
+      message:
+        "La fecha de graduación no puede ser menor que la fecha de finalización",
+      path: ["fecha_graduacion"],
     }
   );

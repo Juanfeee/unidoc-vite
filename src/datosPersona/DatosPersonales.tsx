@@ -67,9 +67,9 @@ export const DatosPersonales = () => {
         setValue("tipo_identificacion", user.tipo_identificacion);
         setValue("numero_identificacion", user.numero_identificacion);
         setValue("primer_nombre", user.primer_nombre);
-        setValue("segundo_nombre", user.segundo_nombre);
+        setValue("segundo_nombre", user.segundo_nombre || "");
         setValue("primer_apellido", user.primer_apellido);
-        setValue("segundo_apellido", user.segundo_apellido);
+        setValue("segundo_apellido", user.segundo_apellido || "");
         setValue("fecha_nacimiento", user.fecha_nacimiento);
         setValue("genero", user.genero);
         setValue("estado_civil", user.estado_civil);

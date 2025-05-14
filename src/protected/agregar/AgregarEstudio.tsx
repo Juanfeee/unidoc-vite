@@ -41,7 +41,8 @@ const AgregarEstudio = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(studySchema) });
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<Inputs>({
+    resolver: zodResolver(studySchema) });
 
   const archivoValue = watch('archivo')
   const { existingFile } = useArchivoPreview(archivoValue);
@@ -51,7 +52,7 @@ const AgregarEstudio = () => {
   useEffect(() => {
     if (convalido === 'No') {
       setValue('fecha_convalidacion', '');
-      setValue('resolucion_convalidacion', 'no tiene resolucion de convalidacion');
+      setValue('resolucion_convalidacion', '');
     } else if (convalido === 'Si') {
       setValue('resolucion_convalidacion', '');
     }
@@ -67,7 +68,7 @@ const AgregarEstudio = () => {
 
 
 
-
+  console.log("errors", errors);
   // Función para manejar el envío del formulario
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true); // 1. Desactivar el botón al iniciar el envío

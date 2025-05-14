@@ -2,9 +2,9 @@ import { z } from "zod";
 const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 export const informacionContacto = z.object({
   categoria_libreta_militar: z.string().min(1, { message: "Es requerido" }),
-  pais: z.number({ invalid_type_error: "El municipio es requerido" }),
+  pais: z.number({ invalid_type_error: "El pais es requerido" }),
 
-  departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
+  departamento: z.number({ invalid_type_error: "El departamento es requerido" }),
 
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
 
@@ -59,9 +59,9 @@ export const informacionContacto = z.object({
 
 export const informacionContactoUpdate = z.object({
   categoria_libreta_militar: z.string().min(1, { message: "Es requerido" }),
-  pais: z.number({ invalid_type_error: "El municipio es requerido" }),
+  pais: z.number({ invalid_type_error: "El pais es requerido" }),
 
-  departamento: z.number({ invalid_type_error: "El municipio es requerido" }),
+  departamento: z.number({ invalid_type_error: "El departamento es requerido" }),
   
   municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
 

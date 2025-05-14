@@ -15,6 +15,7 @@ import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { MostrarArchivo } from "../componentes/formularios/MostrarArchivo";
 import { useArchivoPreview } from "../hooks/ArchivoPreview";
+import axiosInstance from "../utils/axiosConfig";
 
 type Inputs = {
   tipo_afiliacion: string;
@@ -117,7 +118,7 @@ export const EpsFormulario = () => {
 
     try {
       await toast.promise(
-        axios.post(url, formData, {
+        axiosInstance.post(url, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
@@ -140,6 +141,7 @@ export const EpsFormulario = () => {
     }
   };
 
+  console.log("errors", errors);
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Formulario EPS</h2>

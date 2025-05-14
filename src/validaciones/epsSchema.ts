@@ -83,7 +83,7 @@ export const epsSchema = z
     {
       message:
         "La fecha de finalización no puede ser menor que la fecha de inicio",
-      path: ["fecha_finalizacion"], // Esto asegura que el error se asocie con fecha_finalizacion
+      path: ["fecha_finalizacion_afiliacion"], // Esto asegura que el error se asocie con fecha_finalizacion
     }
   );
 
