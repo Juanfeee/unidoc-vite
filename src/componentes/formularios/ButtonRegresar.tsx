@@ -1,4 +1,3 @@
-import React from 'react'
 import ArrowLeft from '@heroicons/react/24/outline/ArrowLeftIcon'
 
 type Props = {

@@ -158,7 +158,6 @@ const Registro = () => {
 
   const paisSeleccionado = watch("pais");
   const departamentoSeleccionado = watch("departamento");
-  const municipioSeleccionado = watch("municipio_id");
 
 
   return (
