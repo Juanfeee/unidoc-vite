@@ -39,7 +39,8 @@ const HeaderAdmin = () => {
 
       // Redirigir después de un breve retraso
       setTimeout(() => {
-        navigate("/");
+        
+        window.location.href = "/";
       }, 500);
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
