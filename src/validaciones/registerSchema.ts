@@ -2,60 +2,96 @@ import { z } from "zod";
 
 const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 
-
 export const registerSchema = z
   .object({
-
     numero_identificacion: z
       .string()
       .min(1, { message: "Campo vacio" })
-      .max(50, { message: "El número de identificación no puede tener más de 50 caracteres" })
-      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+      .max(50, {
+        message:
+          "El número de identificación no puede tener más de 50 caracteres",
+      })
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      }),
 
     primer_nombre: z
       .string()
       .min(1, { message: "Campo vacio" })
       .max(100, { message: "El nombre no puede tener más de 100 caracteres" })
-      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      }),
 
     primer_apellido: z
       .string()
       .min(1, { message: "Campo vacio" })
       .max(100, { message: "El apellido no puede tener más de 100 caracteres" })
-      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" }),
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      }),
 
     segundo_nombre: z
       .string()
-      .nullable()
       .optional()
-      .refine(val => val === null || val === undefined || val === '' || val.length >= 1, {
-        message: "Debe tener mínimo 1 caracter.",
-      })
-      .refine(val => val === null || val === undefined || val === '' || val.length <= 100, {
-        message: "Debe tener máximo 100 caracteres.",
-      })
-      .refine(val => val === null || val === undefined || val === '' || regexSinEmojis.test(val), {
-        message: "No se permiten emojis ni caracteres especiales.",
-      }),
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length >= 1,
+        {
+          message: "Debe tener mínimo 1 caracter.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length <= 100,
+        {
+          message: "Debe tener máximo 100 caracteres.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null ||
+          val === undefined ||
+          val === "" ||
+          regexSinEmojis.test(val),
+        {
+          message: "No se permiten emojis ni caracteres especiales.",
+        }
+      ),
 
     segundo_apellido: z
       .string()
-      .nullable()
       .optional()
-      .refine(val => val === null || val === undefined || val === '' || val.length >= 1, {
-        message: "Debe tener mínimo 1 caracter.",
-      })
-      .refine(val => val === null || val === undefined || val === '' || val.length <= 100, {
-        message: "Debe tener máximo 100 caracteres.",
-      })
-      .refine(val => val === null || val === undefined || val === '' || regexSinEmojis.test(val), {
-        message: "No se permiten emojis ni caracteres especiales.",
-      }),
-
-    municipio_id: z
-      .number({ invalid_type_error: "El municipio es requerido" }),  
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length >= 1,
+        {
+          message: "Debe tener mínimo 1 caracter.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length <= 100,
+        {
+          message: "Debe tener máximo 100 caracteres.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null ||
+          val === undefined ||
+          val === "" ||
+          regexSinEmojis.test(val),
+        {
+          message: "No se permiten emojis ni caracteres especiales.",
+        }
+      ),
+    pais: z.number({ invalid_type_error: "El pais es requerido" }),
+    departamento: z.number({ invalid_type_error: "El departamento es requerido" }),
+    municipio_id: z.number({ invalid_type_error: "El municipio es requerido" }),
     email: z
-      .string().email({ message: "Correo no valido" })
+      .string()
+      .email({ message: "Correo no valido" })
       .max(100, { message: "El correo no puede tener más de 100 caracteres" }),
 
     password: z
@@ -64,7 +100,9 @@ export const registerSchema = z
 
     password_confirmation: z
       .string()
-      .regex(regexSinEmojis, { message: "No se permiten emojis ni caracteres especiales" })
+      .regex(regexSinEmojis, {
+        message: "No se permiten emojis ni caracteres especiales",
+      })
       .min(1, { message: "La confirmación de contraseña es requerida" }),
 
     fecha_nacimiento: z
@@ -84,11 +122,9 @@ export const registerSchema = z
       .string()
       .min(1, { message: "Seleccione un tipo de identificación" }),
 
-    estado_civil: z
-      .string()
-      .min(1, { message: "Seleccione un estado civil" }),
-  }).refine((data) => data.password === data.password_confirmation, {
+    estado_civil: z.string().min(1, { message: "Seleccione un estado civil" }),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
     message: "Las contraseñas no coinciden",
-    path: ["password_confirmation"]
+    path: ["password_confirmation"],
   });
-

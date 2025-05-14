@@ -21,10 +21,10 @@ type Inputs = {
   password_confirmation: string
   primer_nombre: string
   segundo_nombre?: string
-  primer_apellido: string
   segundo_apellido?: string
+  primer_apellido: string
   fecha_nacimiento: string
-  genero: string
+  genero: "Masculino" | "Femenino" | "Otro"
   estado_civil: string
   tipo_identificacion: string
   numero_identificacion: string
