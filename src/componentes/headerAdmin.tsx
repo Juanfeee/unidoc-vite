@@ -54,13 +54,13 @@ const HeaderAdmin = () => {
     }
   };
 
-const { pathname } = useLocation();
-const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-const dropdownRef = useRef(null);
+  const { pathname } = useLocation();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
-const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
 
   return (
@@ -81,19 +81,14 @@ const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
           <nav className="hidden md:flex h-full">
             <ul className='flex items-center gap-8 text-base'>
               <li>
-                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/index">
+                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/dashboard">
                   Inicio
                 </Link>
               </li>
               <li>
-                <Link className={`hover:border-b-2 ${pathname === "/datos-personales" ? "border-b-2 border-blue-500" : ""}`} to="/datos-personales">
-                  Datos personales
-                </Link>
-              </li>
-              <li>
-                <Link className={`hover:border-b-2 ${pathname === "/normativas" ? "border-b-2 border-blue-500" : ""}`} to="/normativas">
-                  Normativas
-                </Link>
+                <button onClick={() => { logout(); toggleMobileMenu(); }} className="text-left text-red-600">
+                  Cerrar sesión
+                </button>
               </li>
             </ul>
           </nav>
@@ -104,23 +99,8 @@ const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
           <div className="absolute top-16 left-0 w-full bg-white border-t z-40 shadow-md md:hidden">
             <ul className="flex flex-col p-4 gap-4 text-base">
               <li>
-                <Link to="/index" className={`${pathname === "/index" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
+                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/dashboard">
                   Inicio
-                </Link>
-              </li>
-              <li>
-                <Link to="/datos-personales" className={`${pathname === "/datos-personales" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
-                  Datos personales
-                </Link>
-              </li>
-              <li>
-                <Link to="/normativas" className={`${pathname === "/normativas" ? "font-bold text-blue-600" : ""}`} onClick={toggleMobileMenu}>
-                  Normativas
-                </Link>
-              </li>
-              <li>
-                <Link to="/configuracion" onClick={toggleMobileMenu}>
-                  Configuración
                 </Link>
               </li>
               <li>

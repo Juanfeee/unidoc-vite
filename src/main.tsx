@@ -29,6 +29,7 @@ import AdminLayouts from './layouts/AdminLayouts.tsx'
 import Dashboard from './protected/admin/dashboard.tsx'
 import PreAptitud from './protected/editar/aptitud/pre-aptitud.tsx'
 import EditarAptitud from './protected/editar/aptitud/EditarAptitud.tsx'
+import RestablecerContrasena2 from './auth/restablecerContrasena-2.tsx'
 
 
 
@@ -41,6 +42,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="inicio-sesion" element={<Login />} />
         <Route path="registro" element={<Registro />} />
         <Route path="restablecer-contrasena" element={<RestablecerContrasena />} />
+        <Route path="restablecer-contrasena2" element={<RestablecerContrasena2 />} />
 
         {/* Rutas protegidas para aspirante */}
         <Route element={<ProtectedRoute allowedRoles={["Aspirante"]}><AspiranteLayouts /></ProtectedRoute>}>

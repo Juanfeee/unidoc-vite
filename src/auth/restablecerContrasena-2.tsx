@@ -7,14 +7,18 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { restablecerContrasenaSchema } from "../validaciones/restablecerContrasenaSchema"
 import axios from "axios"
 import { toast } from "react-toastify"
+import Cookies from "js-cookie"
 import { Link } from "react-router"
 
 type Inputs = {
   email: string
+  password: string
+  password_confirmation: string
+  token: string
 }
 
 
-const RestablecerContrasena = () => {
+const RestablecerContrasena2 = () => {
 
   const {
     register,
@@ -43,12 +47,13 @@ const RestablecerContrasena = () => {
       success: {
         render({ data }) {
           const { token } = data.data;
+
           // Redirige después de un pequeño delay
           setTimeout(() => {
             window.location.href = "/";
           }, 500);
 
-          return "¡Te hemos enviado un correo, revísalo";
+          return "¡Tu contraseña ha sido restablecida con éxito!";
         },
         autoClose: 500,
       },
@@ -82,22 +87,35 @@ const RestablecerContrasena = () => {
   }
 
   return (
-    <form
+    <form className="flex flex-col items-center justify-center h-screen"
+
+
       onSubmit={handleSubmit(onSubmit)}>
       <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada " >
         <div className='flex flex-col gap-2 w-full' >
           < h3 className="font-bold text-2xl" > Restablecer contraseña </h3>
-          <h3>¡Ouh! <span className='text-yellow-500 font-bold'>¿Olvidaste</span> tu contraseña? No te preocupes, <span className='text-green-600 font-bold'>¡restaurémosla!</span></h3>
+          <h3>Ok! <span className='text-yellow-500 font-bold'>Coloca</span> tu nueva contraseña y esta vez <span className='text-green-600 font-bold'>no la olvides!</span></h3>
 
         </div>
-        <div className="">
-          <InputLabel htmlFor="email" value="Email" />
+        < div className="" >
+          <InputLabel htmlFor="password" value="Contraseña" />
           <TextInput
-            id="email"
-            type="text"
-            placeholder="Email..."
-            {...register('email')} />
-          <InputErrors errors={errors} name="email" />
+            id="password"
+            type="password"
+            placeholder="Contraseña..."
+            {...register("password")}
+          />
+          < InputErrors errors={errors} name="password" />
+        </div>
+        < div className="" >
+          <InputLabel htmlFor="password_confirmation" value="Confirmar contraseña" />
+          <TextInput
+            id="password_confirmation"
+            type="password"
+            placeholder="Confirmar contraseña..."
+            {...register("password_confirmation")}
+          />
+          < InputErrors errors={errors} name="password_confirmation" />
         </div>
         <div className="">
           <ButtonPrimary
@@ -117,4 +135,4 @@ const RestablecerContrasena = () => {
 
   )
 }
-export default RestablecerContrasena
+export default RestablecerContrasena2

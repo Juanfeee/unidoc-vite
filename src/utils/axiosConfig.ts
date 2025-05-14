@@ -36,6 +36,7 @@ axiosInstance.interceptors.response.use(
       // Si hay una respuesta del servidor
       if (error.response.status === 401) {
         //Borrar la cookie del token
+        Cookies.remove("rol");
         Cookies.remove("token");
         sessionStorage.clear()
         
