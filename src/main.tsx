@@ -43,7 +43,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="registro" element={<Registro />} />
         <Route path="restablecer-contrasena" element={<RestablecerContrasena />} />
         <Route path="restablecer-contrasena2" element={<RestablecerContrasena2 />} />
-        y
+        
 
         {/* Rutas protegidas para aspirante */}
         <Route element={<ProtectedRoute allowedRoles={["Aspirante"]}><AspiranteLayouts /></ProtectedRoute>}>

@@ -19,6 +19,7 @@ const RestablecerContrasena = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<Inputs>({ resolver: zodResolver(restablecerContrasenaSchema) });
 
@@ -33,7 +34,7 @@ const RestablecerContrasena = () => {
         'Content-Type': 'application/json', // Tipo de contenido
         'Accept': 'application/json' // Aceptar respuesta en formato JSON
       },
-      timeout: 210000 // 10 segundos timeout
+      timeout: 10000 // 10 segundos timeout
     })
 
     // Manejo de la respuesta
@@ -41,11 +42,10 @@ const RestablecerContrasena = () => {
       loginPromise, {
       pending: "Enviando correo...",
       success: {
-        render({ data }) {
-          const { token } = data.data;
+        render() {
+          reset()
           return "¡Te hemos enviado un correo, revísalo";
         },
-        autoClose: 500,
       },
       error: {
         render({ data }) {
