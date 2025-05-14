@@ -136,7 +136,7 @@ const Login = () => {
           <InputErrors errors={errors} name="password" />
           <p className="text-sm pt-2 text-gray-500 text-start">
             <Link to="/restablecer-contrasena" className="text-blue-500 hover:text-blue-600">
-              ¿Olvidates tu contraseña?
+              ¿Olvidaste tu contraseña?
             </Link>
           </p>
 
