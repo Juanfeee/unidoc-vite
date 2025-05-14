@@ -43,7 +43,7 @@ const RestablecerContrasena2 = () => {
     // Manejo de la respuesta
     toast.promise(
       loginPromise, {
-      pending: "Enviando correo...",
+      pending: "Cambiando contraseña...",
       success: {
         render({ data }) {
           const { token } = data.data;

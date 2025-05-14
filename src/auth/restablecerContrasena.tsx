@@ -43,11 +43,6 @@ const RestablecerContrasena = () => {
       success: {
         render({ data }) {
           const { token } = data.data;
-          // Redirige después de un pequeño delay
-          setTimeout(() => {
-            window.location.href = "/";
-          }, 500);
-
           return "¡Te hemos enviado un correo, revísalo";
         },
         autoClose: 500,
