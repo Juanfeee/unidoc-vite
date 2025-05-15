@@ -90,7 +90,14 @@ createRoot(document.getElementById("root")!).render(
         </Route>
 
         {/* Ruta para talento humano */}
-        <Route path="talento-humano" element={<TalentoHumanoLayouts />}>
+        <Route
+          path="talento-humano"
+          element={
+            <ProtectedRoute allowedRoles={["Talento Humano"]}>
+              <TalentoHumanoLayouts />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<h1>hola talento humano</h1>} />
 
           {/* rutas crear en talento humano */}
@@ -99,6 +106,9 @@ createRoot(document.getElementById("root")!).render(
             <Route path="contratacion" element={<h1>Crear contratacion</h1>} />
           </Route>
         </Route>
+
+
+
 
         {/* Ruta protegidas para administrador */}
         <Route

@@ -1,10 +1,9 @@
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import InputErrors from "../../../componentes/formularios/InputErrors";
 import { InputLabel } from "../../../componentes/formularios/InputLabel";
 import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
-
 import TextInput from "../../../componentes/formularios/TextInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { convocatoriaSchema } from "../../../validaciones/talento-humano.ts/convocatoriaSchema";
@@ -15,6 +14,8 @@ import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar"
 import { SelectLocales } from "../../../componentes/formularios/SelectsLocales";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axiosConfig";
+import { useState } from "react";
+import Cookies from "js-cookie";
 
 type Inputs = {
   nombre_convocatoria: string;
@@ -27,11 +28,13 @@ type Inputs = {
 };
 
 const AgregarConvocatoria = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(convocatoriaSchema),
   });
@@ -40,12 +43,49 @@ const AgregarConvocatoria = () => {
   const { existingFile } = useArchivoPreview(archivoValue);
 
   const onSubmit = async (data: Inputs) => {
-    const { ...formData } = data;
-      const url = `${import.meta.env.VITE_API_URL}/talentoHumano/crear-convocatoria`;
+    setIsSubmitting(true);
+    
+    const formData = new FormData();
+    formData.append("nombre_convocatoria", data.nombre_convocatoria);
+    formData.append("tipo", data.tipo);
+    formData.append("fecha_publicacion", data.fecha_publicacion);
+    formData.append("fecha_cierre", data.fecha_cierre);
+    formData.append("descripcion", data.descripcion);
+    formData.append("estado_convocatoria", data.estado_convocatoria);
+    formData.append("archivo", data.archivo[0]);
+
+
+    const url = `${
+      import.meta.env.VITE_API_URL
+    }/talentoHumano/crear-convocatoria`;
+
+    const token = Cookies.get("token");
     try {
       await toast.promise(
-        axiosInstance.post( url, formData)
+        axiosInstance.post(url, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 10000,
+        }),
+        {
+          pending: "Creando convocatoria...",
+          success: {
+            render() {
+              // setTimeout(() => {
+              //   window.location.href = "/talento-humano";
+              // }, 1500);
+              return "Convocatoria creada con éxito";
+            },
+            autoClose: 1500,
+          },
+          error: "Error al crear la convocatoria",
+        }
       );
+    } catch (error) {
+      console.error("Error al crear la convocatoria:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -142,7 +182,7 @@ const AgregarConvocatoria = () => {
         {/* Botón para agregar estudio */}
         <div className="flex justify-center col-span-full">
           <ButtonPrimary
-            value={isSubmitting ? "Enviando..." : "Agregar estudio"}
+            value={isSubmitting ? "Enviando..." : "Agregar convocatoria"}
             disabled={isSubmitting}
           />
         </div>

@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { ReactNode } from "react";
 
 // Definición de tipos para los roles de usuario
-type userRole = "Administrador" | "Aspirante" 
+type userRole = "Administrador" | "Aspirante" | "Talento Humano";
 
 type Props = {
   children: ReactNode;

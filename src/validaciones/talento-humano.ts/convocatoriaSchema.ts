@@ -72,4 +72,19 @@ export const convocatoriaSchema = z.object({
         message: "Formato de archivo inválido (solo PDF permitido)",
       }
     ),
-});
+})
+  .refine(
+    (data) => {
+      const fechaPublicacion = new Date(data.fecha_publicacion);
+      const fechaCierre = new Date(data.fecha_cierre ?? "");
+      if (fechaCierre < fechaPublicacion) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
+      path: ["fecha_cierre"],
+    }
+  );

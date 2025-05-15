@@ -63,6 +63,8 @@ const Login = () => {
               navigate("/index");
             } else if (rol === "Administrador") {
               navigate("/dashboard");
+            } else if (rol === "Talento Humano") {
+              navigate("/talento-humano");
             } else {
               toast.error("Rol no reconocido");
             }
