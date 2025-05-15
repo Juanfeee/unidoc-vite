@@ -1,33 +1,32 @@
-
-import { Link } from 'react-router'
-import { ButtonRegresar } from '../../componentes/formularios/ButtonRegresar'
-import { InputLabel } from '../../componentes/formularios/InputLabel'
-import TextInput from '../../componentes/formularios/TextInput'
-import InputErrors from '../../componentes/formularios/InputErrors'
-import { aptitudSchema } from '../../validaciones/aptitudSchema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import TextArea from '../../componentes/formularios/TextArea'
-import { toast } from 'react-toastify'
-import axiosInstance from '../../utils/axiosConfig'
-import axios from 'axios'
-import Cookies from 'js-cookie'
-import { useState } from 'react'
-import { ButtonPrimary } from '../../componentes/formularios/ButtonPrimary'
+import { Link } from "react-router";
+import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
+import { InputLabel } from "../../componentes/formularios/InputLabel";
+import TextInput from "../../componentes/formularios/TextInput";
+import InputErrors from "../../componentes/formularios/InputErrors";
+import { aptitudSchema } from "../../validaciones/aptitudSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import TextArea from "../../componentes/formularios/TextArea";
+import { toast } from "react-toastify";
+import axiosInstance from "../../utils/axiosConfig";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useState } from "react";
+import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 
 type Inputs = {
-  nombre_aptitud: string
-  descripcion_aptitud: string
-}
+  nombre_aptitud: string;
+  descripcion_aptitud: string;
+};
 
 const AgregarAptitudes = () => {
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({ resolver: zodResolver(aptitudSchema) });
-
-
-
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>({ resolver: zodResolver(aptitudSchema) });
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true); // 1. Desactivar el botón al iniciar el envío
@@ -66,10 +65,15 @@ const AgregarAptitudes = () => {
                   return "Tiempo de espera agotado. Intenta de nuevo.";
                 } else if (error.response) {
                   const errores = error.response.data?.errors;
-                  if (errores && typeof errores === 'object') {
-                    return `Errores: ${Object.values(errores).flat().join(', ')}`;
+                  if (errores && typeof errores === "object") {
+                    return `Errores: ${Object.values(errores)
+                      .flat()
+                      .join(", ")}`;
                   }
-                  return error.response.data?.message || "Error al guardar los datos.";
+                  return (
+                    error.response.data?.message ||
+                    "Error al guardar los datos."
+                  );
                 } else if (error.request) {
                   return "No se recibió respuesta del servidor.";
                 }
@@ -87,27 +91,26 @@ const AgregarAptitudes = () => {
     }
   };
 
-  
   return (
-    <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8">
+    <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
       <div className="flex gap-4 items-center">
         <div className="flex gap-1 ">
-          <Link to={'/index'}>
-            <ButtonRegresar
-            />
+          <Link to={"/index"}>
+            <ButtonRegresar />
           </Link>
         </div>
         <h4 className="font-bold text-xl">Agregar apitud</h4>
       </div>
-      <form className="flex flex-col gap-6"
-        onSubmit={handleSubmit(onSubmit)} >
-
+      <form
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="">
           <InputLabel htmlFor="Aptitud" value="Aptitud" />
           <TextInput
             id="Aptitud"
             placeholder="Titulo de aptitud..."
-            {...register('nombre_aptitud')}
+            {...register("nombre_aptitud")}
           />
           <InputErrors errors={errors} name="nombre_aptitud" />
         </div>
@@ -116,7 +119,7 @@ const AgregarAptitudes = () => {
           <TextArea
             id="Descripcion"
             placeholder="Descripción de la aptitud..."
-            {...register('descripcion_aptitud')}
+            {...register("descripcion_aptitud")}
           />
           <InputErrors errors={errors} name="descripcion_aptitud" />
         </div>
@@ -124,11 +127,10 @@ const AgregarAptitudes = () => {
           <ButtonPrimary
             value={isSubmitting ? "Enviando..." : "Agregar estudio"}
             disabled={isSubmitting}
-
           />
         </div>
       </form>
-    </div >
-  )
-}
-export default AgregarAptitudes
+    </div>
+  );
+};
+export default AgregarAptitudes;
