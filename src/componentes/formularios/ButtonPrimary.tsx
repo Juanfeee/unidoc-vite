@@ -19,7 +19,7 @@ export const ButtonPrimary = ({
   return (
     <button
       className={clsx(
-        'font-semibold py-2 px-16 rounded-2xl transition-all',
+        'font-semibold py-2 px-6 md:px-16 rounded-2xl transition-all',
         !className?.includes('bg-') && 'bg-blue-500 hover:bg-blue-600 text-white',
         (disabled || loading) && 'opacity-70 cursor-not-allowed',
         className

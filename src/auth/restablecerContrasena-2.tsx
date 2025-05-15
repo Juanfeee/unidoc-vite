@@ -16,7 +16,6 @@ type Inputs = {
 };
 
 const RestablecerContrasena2 = () => {
-
   const navigate = useNavigate();
   // Obtener los parámetros de búsqueda de la URL
   const [searchParams] = useSearchParams();
@@ -28,16 +27,16 @@ const RestablecerContrasena2 = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<Inputs>({ 
+  } = useForm<Inputs>({
     resolver: zodResolver(restablecerContrasenaSchema2),
     defaultValues: {
-      email: email || "" // Establecer el valor predeterminado del email 
-    }
+      email: email || "", // Establecer el valor predeterminado del email
+    },
   });
 
-
-
-  const url = `${import.meta.env.VITE_API_URL}/auth/restablecer-contrasena-token`;
+  const url = `${
+    import.meta.env.VITE_API_URL
+  }/auth/restablecer-contrasena-token`;
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     if (!token) {
@@ -46,7 +45,7 @@ const RestablecerContrasena2 = () => {
     }
 
     try {
-       await toast.promise(
+      await toast.promise(
         axios.post(
           url,
           { ...data, token },
@@ -76,7 +75,10 @@ const RestablecerContrasena2 = () => {
                     case 500:
                       return "Error en el servidor";
                     default:
-                      return error.response.data?.message || "Error al restablecer la contraseña";
+                      return (
+                        error.response.data?.message ||
+                        "Error al restablecer la contraseña"
+                      );
                   }
                 }
                 if (error.request) {
@@ -90,70 +92,74 @@ const RestablecerContrasena2 = () => {
       );
 
       setTimeout(() => {
-        
         navigate("/");
       }, 1000);
-      
-      reset();
 
+      reset();
     } catch (error) {
       console.error("Error al restablecer contraseña:", error);
     }
   };
 
   return (
-    <form
-      className="flex flex-col items-center justify-center h-screen"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada">
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex bg-white flex-col gap-8 md:gap-4 px-8 py-4 sm:w-[500px] items-center justify-center md:min-h-[550px] shadow-lg  relative rounded-3xl">
         <div className="flex flex-col gap-2 w-full">
           <h3 className="font-bold text-2xl">Restablecer contraseña</h3>
           <h3>
-            ¡Perfecto! <span className="text-yellow-500 font-bold">Ingresa</span> tu nueva 
-            contraseña para <span className="text-green-600 font-bold">{email}</span>
+            ¡Perfecto!{" "}
+            <span className="text-yellow-500 font-bold">Ingresa</span> tu nueva
+            contraseña para{" "}
+            <span className="text-green-600 font-bold">{email}</span>
           </h3>
         </div>
-        <div className="">
-          <InputLabel htmlFor="password" value="Nueva contraseña" />
-          <TextInput
-            id="password"
-            type="password"
-            placeholder="Ingresa tu nueva contraseña..."
-            {...register("password")}
-          />
-          <InputErrors errors={errors} name="password" />
-        </div>
+        <form
+          className="flex flex-col gap-4 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="">
+            <InputLabel htmlFor="password" value="Nueva contraseña" />
+            <TextInput
+              id="password"
+              type="password"
+              placeholder="Ingresa tu nueva contraseña..."
+              {...register("password")}
+            />
+            <InputErrors errors={errors} name="password" />
+          </div>
 
-        <div className="">
-          <InputLabel htmlFor="password_confirmation" value="Confirmar contraseña" />
-          <TextInput
-            id="password_confirmation"
-            type="password"
-            placeholder="Confirma tu nueva contraseña..."
-            {...register("password_confirmation")}
-          />
-          <InputErrors errors={errors} name="password_confirmation" />
-        </div>
+          <div className="">
+            <InputLabel
+              htmlFor="password_confirmation"
+              value="Confirmar contraseña"
+            />
+            <TextInput
+              id="password_confirmation"
+              type="password"
+              placeholder="Confirma tu nueva contraseña..."
+              {...register("password_confirmation")}
+            />
+            <InputErrors errors={errors} name="password_confirmation" />
+          </div>
 
-        <div className="">
-          <ButtonPrimary
-            className="w-full"
-            value={isSubmitting ? "Procesando..." : "Restablecer contraseña"}
-            type="submit"
-            disabled={isSubmitting}
-          />
-        </div>
+          <div className="">
+            <ButtonPrimary
+              className="w-full"
+              value={isSubmitting ? "Procesando..." : "Restablecer contraseña"}
+              type="submit"
+              disabled={isSubmitting}
+            />
+          </div>
 
-        <p className="text-base text-gray-500 text-center">
-          <Link to="/" className="text-blue-500 hover:text-blue-600">
-            Volver a iniciar sesión
-          </Link>
-        </p>
-
-        <div className="absolute size-full right-0 rotate-5 rounded-3xl -z-10 bg-blue-500"></div>
+          <p className="text-base text-gray-500 text-center">
+            <Link to="/" className="text-blue-500 hover:text-blue-600">
+              Volver a iniciar sesión
+            </Link>
+          </p>
+        </form>
+        <div className="hidden sm:flex absolute size-full right-0 rotate-5 rounded-3xl -z-10  bg-blue-500"></div>
       </div>
-    </form>
+    </div>
   );
 };
 

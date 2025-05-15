@@ -3,12 +3,13 @@ import { LabelText } from "../../componentes/formularios/LabelText";
 import { Texto } from "../../componentes/formularios/Texto";
 import axiosInstance from "../../utils/axiosConfig";
 import Cookies from "js-cookie";
-import { Link} from "react-router";
+import { Link } from "react-router";
 import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 
 const InformacionPersonalDocente = () => {
-  const [profileImage, setProfileImage] = useState<string>("https://img.freepik.com/...");
+  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+
   const [datos, setDatos] = useState<any>();
   const [municipio, setMunicipio] = useState<any>([]);
   const [aptitudes, setAptitudes] = useState<any[]>([]);
@@ -17,18 +18,19 @@ const InformacionPersonalDocente = () => {
   // Obtener imagen de perfil
   const fetchProfileImage = async () => {
     try {
-      const cachedImage = sessionStorage.getItem("profileImage");
-      if (cachedImage) {
-        setProfileImage(cachedImage);
-      }
+      // 2. Hacer petición al servidor
+      const response = await axiosInstance.get(
+        `${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`,
+        {
+          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        }
+      );
 
-      const response = await axiosInstance.get("/aspirante/obtener-foto-perfil", {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      });
+      const documentos = response.data.fotoPerfil?.documentos_foto_perfil;
 
-      if (response.data?.image) {
-        setProfileImage(response.data.image);
-        sessionStorage.setItem("profileImage", response.data.image);
+      if (documentos && documentos.length > 0) {
+        const imageUrl = documentos[0].archivo_url;
+        setProfileImageUrl(imageUrl);
       }
     } catch (error) {
       console.error("Error al obtener la imagen de perfil:", error);
@@ -38,32 +40,31 @@ const InformacionPersonalDocente = () => {
   // Obtener datos del usuario
   const fetchDatos = async () => {
     try {
-
-
       // 2. Hacer petición al servidor para obtener los datos del usuario
-      const response = await axiosInstance.get('/auth/obtener-usuario-autenticado');
+      const response = await axiosInstance.get(
+        "/auth/obtener-usuario-autenticado"
+      );
 
       // 3. Si el usuario existe, actualizamos el estado y sessionStorage
       const user = response.data.user;
       setDatos(user);
 
-
       // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
       const municipio = user.municipio_id;
       if (municipio) {
         try {
-          const responseMunicipio = await axiosInstance.get(`${URL}/ubicaciones/municipio/${municipio}`);
+          const responseMunicipio = await axiosInstance.get(
+            `${URL}/ubicaciones/municipio/${municipio}`
+          );
           setMunicipio(responseMunicipio.data);
         } catch (municipioError) {
           console.error("Error al obtener el municipio:");
         }
       }
-
     } catch (error) {
       console.error("Error al obtener los datos del docente:", error);
     }
   };
-
 
   // Obtener aptitudes
   const fetchAptitudes = async () => {
@@ -79,7 +80,10 @@ const InformacionPersonalDocente = () => {
 
       if (response.data?.aptitudes) {
         setAptitudes(response.data.aptitudes);
-        sessionStorage.setItem("aptitudes", JSON.stringify(response.data.aptitudes));
+        sessionStorage.setItem(
+          "aptitudes",
+          JSON.stringify(response.data.aptitudes)
+        );
       }
     } catch (error) {
       console.error("Error al obtener las aptitudes:", error);
@@ -89,7 +93,11 @@ const InformacionPersonalDocente = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await Promise.all([fetchAptitudes(), fetchProfileImage(), fetchDatos()]);
+        await Promise.all([
+          fetchAptitudes(),
+          fetchProfileImage(),
+          fetchDatos(),
+        ]);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
       }
@@ -115,22 +123,30 @@ const InformacionPersonalDocente = () => {
           </div>
 
           <div className="grid items-center sm:grid-cols-2 col-span-full gap-y-4">
-            <h3 className="col-span-full font-semibold text-lg">Datos personales</h3>
+            <h3 className="col-span-full font-semibold text-lg">
+              Datos personales
+            </h3>
 
-            <div className="flex gap-x-4 items-center ">
-              <img
-                src={profileImage}
-                alt="Foto de perfil del docente"
-                className="size-14 object-cover rounded-full"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    "https://img.freepik.com/fotos-premium/retrato-hombre-negocios-expresion-cara-seria-fondo-estudio-espacio-copia-bengala-persona-corporativa-enfoque-pensamiento-duda-mirada-facial-dilema-o-concentracion_590464-84924.jpg";
-                }}
-              />
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0 size-14 rounded-full overflow-hidden border border-gray-200">
+                <img
+                  className="w-full h-full object-cover"
+                  src={
+                    profileImageUrl ||
+                    "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                  }
+                  alt="Perfil"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+                  }}
+                />
+              </div>
               <Texto
-                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${datos.primer_apellido} ${datos?.segundo_apellido || ""}`}
+                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${
+                  datos.primer_apellido
+                } ${datos?.segundo_apellido || ""}`}
               />
-
             </div>
 
             {/* <div className="flex sm:justify-end">
@@ -138,7 +154,6 @@ const InformacionPersonalDocente = () => {
                 value="0.0"
               />
             </div> */}
-
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 col-span-full gap-x-8 gap-y-6 border-t-1 py-4 border-gray-200">
@@ -147,17 +162,14 @@ const InformacionPersonalDocente = () => {
               <Texto className="break-words" value={datos.email} />
             </div>
             <div>
-              <LabelText
-                value="Ubicación"
-              />
+              <LabelText value="Ubicación" />
               <Texto
-                value={`${municipio.municipio_nombre || ""
-                  }, ${municipio.departamento_nombre || ""
-                  }`}
+                value={`${municipio.municipio_nombre || ""}, ${
+                  municipio.departamento_nombre || ""
+                }`}
               />
             </div>
           </div>
-
 
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">
             <div className="flex col-span-full items-center justify-between">
@@ -182,7 +194,6 @@ const InformacionPersonalDocente = () => {
                   </Link>
                 </div>
               </div>
-
             </div>
 
             <div className="col-span-full">
@@ -195,7 +206,6 @@ const InformacionPersonalDocente = () => {
               </ul>
             </div>
           </div>
-
         </div>
       </div>
     </>

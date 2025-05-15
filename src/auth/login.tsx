@@ -13,11 +13,10 @@ import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logoClaro from "../assets/images/logoClaro.jpg";
 
-
 type Inputs = {
-  email: string
-  password: string
-}
+  email: string;
+  password: string;
+};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -31,33 +30,31 @@ const Login = () => {
   } = useForm<Inputs>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-
     const loginPromise = axios.post(url, data, {
-
       //Cabeceras de la peticion
       headers: {
-        'Content-Type': 'application/json', // Tipo de contenido
-        'Accept': 'application/json' // Aceptar respuesta en formato JSON
+        "Content-Type": "application/json", // Tipo de contenido
+        Accept: "application/json", // Aceptar respuesta en formato JSON
       },
-      timeout: 10000 // 10 segundos timeout
-    })
+      timeout: 10000, // 10 segundos timeout
+    });
 
     // Manejo de la respuesta
-    toast.promise(
-      loginPromise, {
+    toast.promise(loginPromise, {
       pending: "Iniciando sesión...",
       success: {
         render({ data }) {
           const { token, rol } = data.data;
 
-          Cookies.set('token', token, {
-            sameSite: 'Strict',
-            path: '/',
+          Cookies.set("token", token, {
+            sameSite: "Strict",
+            path: "/",
           });
 
-          Cookies.set('rol', rol, { // Guardar el rol en cookies
-            sameSite: 'Strict',
-            path: '/',
+          Cookies.set("rol", rol, {
+            // Guardar el rol en cookies
+            sameSite: "Strict",
+            path: "/",
           });
 
           // Redirige después de un pequeño delay dependiendo su rol
@@ -88,7 +85,9 @@ const Login = () => {
                 case 500:
                   return "Error en el servidor";
                 default:
-                  return error.response.data?.message || "Error al iniciar sesión";
+                  return (
+                    error.response.data?.message || "Error al iniciar sesión"
+                  );
               }
             } else if (error.request) {
               return "No se recibió respuesta del servidor";
@@ -97,67 +96,70 @@ const Login = () => {
           return "Error al iniciar sesión";
         },
         autoClose: 2000,
-
-      }
-    }
-    );
-
-  }
+      },
+    });
+  };
 
   return (
-    <form className="flex flex-col items-center justify-center h-screen"
-      onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex bg-white flex-col gap-4 px-8 py-4 w-[500px] min-h-[550px] shadow-lg justify-center relative rounded-3xl animacion-entrada " >
-
-        <div className='flex flex-col gap-2 w-full' >
+    <div className="flex flex-col items-center justify-center h-screen">
+      <div className="flex bg-white flex-col gap-8 md:gap-4 px-8 py-4 sm:w-[500px] items-center justify-center md:min-h-[550px] shadow-lg  relative rounded-3xl">
+        <div className="flex flex-col gap-2  w-full">
           <div className="flex  justify-center items-center">
             <img className="size-30" src={logoClaro} alt="" />
           </div>
-          < h3 className="font-bold text-2xl" > Iniciar sesión </h3>
-          <h3>¡Hola! <span className='text-blue-500 font-bold'>Ingresa</span> con tu correo y contraseña</h3>
+          <h3 className="font-bold text-2xl"> Iniciar sesión </h3>
+          <h3>
+            ¡Hola! <span className="text-blue-500 font-bold">Ingresa</span> con
+            tu correo y contraseña
+          </h3>
         </div>
-        <div className="">
-          <InputLabel htmlFor="email" value="Email" />
-          <TextInput
-            id="email"
-            type="text"
-            placeholder="Email..."
-            {...register('email')} />
-          <InputErrors errors={errors} name="email" />
-        </div>
-        <div className="">
-          <InputLabel htmlFor="password" value="Contraseña" />
-          <TextInput
-            id="password"
-            type="password"
-            placeholder="Contraseña..."
-            {...register('password')} />
-          <InputErrors errors={errors} name="password" />
-          <p className="text-sm pt-2 text-gray-500 text-start">
-            <Link to="/restablecer-contrasena" className="text-blue-500 hover:text-blue-600">
-              ¿Olvidaste tu contraseña?
+        <form className="flex flex-col gap-6 w-full" onSubmit={handleSubmit(onSubmit)}>
+          <div className="">
+            <InputLabel htmlFor="email" value="Email" />
+            <TextInput
+              id="email"
+              type="text"
+              placeholder="Email..."
+              {...register("email")}
+            />
+            <InputErrors errors={errors} name="email" />
+          </div>
+          <div className="">
+            <InputLabel htmlFor="password" value="Contraseña" />
+            <TextInput
+              id="password"
+              type="password"
+              placeholder="Contraseña..."
+              {...register("password")}
+            />
+            <InputErrors errors={errors} name="password" />
+            <p className="text-sm pt-2 text-gray-500 text-start">
+              <Link
+                to="/restablecer-contrasena"
+                className="text-blue-500 hover:text-blue-600"
+              >
+                ¿Olvidaste tu contraseña?
+              </Link>
+            </p>
+          </div>
+          <div className="">
+            <ButtonPrimary
+              className="w-full"
+              value="Iniciar Sesión"
+              type="submit"
+            />
+          </div>
+          <p className="text-base text-gray-500 text-center">
+            ¿No tienes una cuenta?{" "}
+            <Link to="/registro" className="text-blue-500 hover:text-blue-600">
+              Regístrate aquí
             </Link>
           </p>
+        </form>
+        <div className="hidden sm:flex absolute size-full right-0 rotate-5 rounded-3xl -z-10  bg-blue-500"></div>
+      </div>
+    </div>
+  );
+};
 
-        </div>
-        <div className="">
-          <ButtonPrimary
-            className="w-full"
-            value="Iniciar Sesión"
-            type="submit"
-          />
-        </div>
-        <p className="text-base text-gray-500 text-center">
-          ¿No tienes una cuenta?{" "}
-          <Link to="/registro" className="text-blue-500 hover:text-blue-600">
-            Regístrate aquí
-          </Link>
-        </p>
-        <div className='absolute size-full right-0 rotate-5 rounded-3xl -z-10  bg-blue-500'></div>
-      </div >
-    </form >
-
-  )
-}
-
-export default Login
+export default Login;
