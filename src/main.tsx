@@ -32,6 +32,7 @@ import EditarAptitud from "./protected/editar/aptitud/EditarAptitud.tsx";
 import RestablecerContrasena2 from "./auth/restablecerContrasena-2.tsx";
 import TalentoHumanoLayouts from "./layouts/TalentoHumano.tsx";
 import AgregarConvocatoria from "./protected/talento-humano/agregar/AgregarConvocatoria.tsx";
+import AgregarContratacion from "./protected/talento-humano/agregar/AgregarContratacion.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -103,10 +104,9 @@ createRoot(document.getElementById("root")!).render(
           {/* rutas crear en talento humano */}
           <Route path="crear">
             <Route path="convocatoria" element={<AgregarConvocatoria />} />
-            <Route path="contratacion" element={<h1>Crear contratacion</h1>} />
+            <Route path="contratacion" element={<AgregarContratacion/>} />
           </Route>
         </Route>
-
 
 
 
