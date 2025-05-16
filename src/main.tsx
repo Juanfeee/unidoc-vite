@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Link, Route, Routes } from "react-router";
 import Registro from "./auth/register.tsx";
 import Login from "./auth/login.tsx";
 import InformacionPersona from "./protected/datos-personales/page.tsx";
@@ -31,7 +31,8 @@ import PreAptitud from "./protected/editar/aptitud/pre-aptitud.tsx";
 import EditarAptitud from "./protected/editar/aptitud/EditarAptitud.tsx";
 import RestablecerContrasena2 from "./auth/restablecerContrasena-2.tsx";
 import TalentoHumanoLayouts from "./layouts/TalentoHumano.tsx";
-import AgregarConvocatoria from "./protected/talento-humano/agregar/AgregarConvocatoria.tsx";
+import VerConvocatoria from "./protected/talento-humano/convocatoria/VerConvocatoria.tsx";
+import Convocatoria from "./protected/talento-humano/convocatoria/Convocatoria.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -98,17 +99,22 @@ createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
-          <Route index element={<h1>hola talento humano</h1>} />
+          <Route index element={<div><Link to="convocatorias" ><p>irconvocatorias</p></Link></div>} />
 
-          {/* rutas crear en talento humano */}
-          <Route path="crear">
-            <Route path="convocatoria" element={<AgregarConvocatoria />} />
-            <Route path="contratacion" element={<h1>Crear contratacion</h1>} />
+          <Route path="convocatorias">
+            <Route index element={<VerConvocatoria />} />
+            <Route path="">
+              <Route path="convocatoria" element={<Convocatoria />} />
+              <Route
+                path="convocatoria/:id"
+                element={<Convocatoria />}
+              />
+            </Route>
           </Route>
+
+
+          {/* rutas obtener en talento humano */}
         </Route>
-
-
-
 
         {/* Ruta protegidas para administrador */}
         <Route

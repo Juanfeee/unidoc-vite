@@ -9,6 +9,7 @@ type Props = {
 export const SelectLocales = ({ id, className, register }: Props) => {
 const optionsMap: { [key: string]: Record<string, string> } = {
   estado_convocatoria: mappeoEstadoConvocatoria
+  
 };
 
 
