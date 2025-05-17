@@ -68,7 +68,6 @@ const Convocatoria = () => {
         },
       });
       const data = response.data.convocatoria;
-      console.log(data);
       setIsConvocatoriaRegistered(true);
       setValue("nombre_convocatoria", data.nombre_convocatoria);
       setValue("tipo", data.tipo);
@@ -131,9 +130,9 @@ const Convocatoria = () => {
           pending: "Creando convocatoria...",
           success: {
             render() {
-              // setTimeout(() => {
-              //   window.location.href = "/talento-humano";
-              // }, 1500);
+              setTimeout(() => {
+                // window.location.href = "/talento-humano";
+              }, 1500);
               return "Convocatoria creada con éxito";
             },
             autoClose: 1500,

@@ -7,7 +7,7 @@ type Props = {
 export const ButtonTable = ({className, value }: Props) => {
   return (
     <p
-      className={`border-2 bg-blue-500  hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-2xl ${className}`}
+      className={` hover:bg-[#266AAE]/90 text-white bg-[#266AAE] font-semibold py-2 px-16 rounded-lg ${className}`}
     > { value } </p>
   )
 }

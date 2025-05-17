@@ -10,3 +10,19 @@ body {
   background-color: #f2f2f2;
   color: #333;
 }
+
+.fondo-image {
+  background-image: url('https://humanicemosdh.org/wp-content/uploads/2024/07/Pieza-convocatoria-Auxiliar-Administrativo.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+.fondo-image2{
+  background-image: url('https://uchile.cl/dam/jcr:4d4c6a12-05e2-4284-b69f-8a99e84261a8/f173750-0-h.png');
+  background-size: cover;
+  background-position: center;
+}

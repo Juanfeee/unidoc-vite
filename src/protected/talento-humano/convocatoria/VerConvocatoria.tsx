@@ -8,6 +8,7 @@ import axios from "axios";
 import EliminarBoton from "../../../componentes/EliminarBoton";
 import { Link } from "react-router";
 import { PencilIcon } from "../../../assets/icons/Iconos";
+import InputSearch from "../../../componentes/formularios/InputSearch";
 
 interface Convocatoria {
   id_convocatoria: number;
@@ -22,19 +23,18 @@ const VerConvocatoria = () => {
   const [convocatorias, setConvocatorias] = useState<Convocatoria[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
 
   const fetchDatos = async () => {
     try {
       setLoading(true);
-      setError(null);
+
       const response = await axiosInstance.get(
         "/talentoHumano/obtener-convocatorias"
       );
       setConvocatorias(response.data.convocatorias);
     } catch (error) {
       console.error("Error al obtener convocatorias:", error);
-      setError("No se pudieron cargar las convocatorias. Intente nuevamente.");
     } finally {
       setLoading(false);
     }
@@ -120,40 +120,28 @@ const VerConvocatoria = () => {
   );
 
   return (
-    <div className="flex flex-col gap-4 h-full  bg-white rounded-3xl p-8">
+    <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
       <h1 className="text-lg font-semibold">Convocatorias</h1>
 
-      <div className="flex justify-between items-center">
-        <input
+      <div className="flex justify-between items-center w-full">
+        <InputSearch
           type="text"
           placeholder="Buscar..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="p-2 border rounded w-64"
         />
         <Link to="convocatoria">
           <ButtonTable value="Agregar Convocatoria" />
         </Link>
       </div>
 
-      {error ? (
-        <div className="flex flex-col items-center justify-center h-64 text-red-500">
-          <p>{error}</p>
-          <button
-            className="mt-4 text-blue-500 hover:underline"
-            onClick={fetchDatos}
-          >
-            Reintentar
-          </button>
-        </div>
-      ) : (
         <DataTable
           data={convocatorias}
           columns={columns}
           globalFilter={globalFilter}
           loading={loading}
         />
-      )}
+
     </div>
   );
 };

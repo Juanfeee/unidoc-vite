@@ -33,6 +33,8 @@ import RestablecerContrasena2 from "./auth/restablecerContrasena-2.tsx";
 import TalentoHumanoLayouts from "./layouts/TalentoHumano.tsx";
 import VerConvocatoria from "./protected/talento-humano/convocatoria/VerConvocatoria.tsx";
 import Convocatoria from "./protected/talento-humano/convocatoria/Convocatoria.tsx";
+import TalentoHumano from "./protected/talento-humano/TalentoHumano.tsx";
+import VerPostulaciones from "./protected/talento-humano/postulaciones/VerPostulaciones.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -99,7 +101,7 @@ createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
-          <Route index element={<div><Link to="convocatorias" ><p>irconvocatorias</p></Link></div>} />
+          <Route index element={<TalentoHumano/>} />
 
           <Route path="convocatorias">
             <Route index element={<VerConvocatoria />} />
@@ -111,7 +113,9 @@ createRoot(document.getElementById("root")!).render(
               />
             </Route>
           </Route>
-
+          <Route path="postulaciones">
+            <Route index element={<VerPostulaciones/>} />
+          </Route>
 
           {/* rutas obtener en talento humano */}
         </Route>
