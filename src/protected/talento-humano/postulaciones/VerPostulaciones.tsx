@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Cookie from "js-cookie";
+import EliminarBoton from "../../../componentes/EliminarBoton";
 
 interface Postulaciones {
   id_postulacion: number;
@@ -157,17 +158,6 @@ const VerPostulaciones = () => {
         header: "Acciones",
         cell: ({ row }) => (
           <div className="flex space-x-2">
-            <button
-              className="bg-blue-500 text-white px-2 py-1 rounded"
-              onClick={() =>
-                handleVerHojaVida(
-                  row.original.convocatoria_id,
-                  row.original.user_id
-                )
-              }
-            >
-              Ver Hoja de Vida
-            </button>
             <select
               className="border rounded px-2 py-1"
               onChange={(e) =>
@@ -181,6 +171,17 @@ const VerPostulaciones = () => {
               <option value="Aceptada">Aceptar</option>
               <option value="Rechazada">Rechazar</option>
             </select>
+            <button
+              className="bg-blue-500 text-white px-2 py-1 rounded"
+              onClick={() =>
+                handleVerHojaVida(
+                  row.original.convocatoria_id,
+                  row.original.user_id
+                )
+              }
+            >
+              Ver Hoja de Vida
+            </button>
             {/* <EliminarBoton
               id={row.original.id_postulacion}
               onConfirmDelete={handleEliminar}
@@ -193,7 +194,8 @@ const VerPostulaciones = () => {
   );
 
   return (
-    <div className="flex flex-col gap-4 h-full min-w-5xl bg-white rounded-3xl p-8 min-h-screen">
+    <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
+
       <h1 className="text-lg font-semibold">Postulaciones</h1>
       <div className="flex justify-between items-center w-full">
         <InputSearch

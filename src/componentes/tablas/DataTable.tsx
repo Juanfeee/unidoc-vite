@@ -36,12 +36,12 @@ export function DataTable<TData extends Record<string, any>>({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-bg-[#266AAE]">
-      <table className="min-w-full ">
+    <div className="overflow-x-auto w-full rounded-lg border border-bg-[#266AAE]">
+      <table className="w-fit">
         <thead className="bg-[#266AAE]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr 
-            className=" bg-[#266AAE]"
+            className=" "
             key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th
