@@ -33,6 +33,8 @@ import RestablecerContrasena2 from "./auth/restablecerContrasena-2.tsx";
 import TalentoHumanoLayouts from "./layouts/TalentoHumano.tsx";
 import VerConvocatoria from "./protected/talento-humano/convocatoria/VerConvocatoria.tsx";
 import Convocatoria from "./protected/talento-humano/convocatoria/Convocatoria.tsx";
+import Convocatorias from "./protected/convocatorias/page.tsx";
+import Postulaciones from "./protected/postulaciones/page.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -62,6 +64,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="index" element={<Index />} />
           <Route path="datos-personales" element={<InformacionPersona />} />
           <Route path="normativas" element={<Normativas />} />
+          <Route path="convocatorias" element={<Convocatorias />} />
           <Route path="configuracion" element={<Configuracion />} />
           <Route path="perfil" element={<MiPerfil />} />
 
@@ -75,6 +78,12 @@ createRoot(document.getElementById("root")!).render(
             <Route path="aptitudes" element={<AgregarAptitudes />} />
           </Route>
 
+          {/* Rutas anidadas para ver postulaciones */}
+          <Route path="ver">
+            <Route index element={<span>No found</span>} />
+            <Route path="postulaciones" element={< Postulaciones/>} />
+          </Route>
+          
           {/* Rutas anidadas para editar */}
           <Route path="editar">
             <Route path="estudios" element={<PreEstudio />} />

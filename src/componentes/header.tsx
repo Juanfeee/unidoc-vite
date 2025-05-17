@@ -138,6 +138,18 @@ const Header = () => {
                   Normativas
                 </Link>
               </li>
+              <li>
+                <Link
+                  className={`hover:border-b-2 ${
+                    pathname === "/convocatorias"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  to="/convocatorias"
+                >
+                  Convocatorias
+                </Link>
+              </li>
               <li className="relative" ref={dropdownRef}>
                 <div
                   onClick={toggleDropdown}
@@ -218,6 +230,17 @@ const Header = () => {
                   onClick={toggleMobileMenu}
                 >
                   Normativas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/convocatorias"
+                  className={`${
+                    pathname === "/convocatorias" ? "font-bold text-blue-600" : ""
+                  }`}
+                  onClick={toggleMobileMenu}
+                >
+                  Convocatorias
                 </Link>
               </li>
               <li>
