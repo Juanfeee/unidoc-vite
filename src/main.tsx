@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { BrowserRouter, Link, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes } from "react-router";
 import Registro from "./auth/register.tsx";
 import Login from "./auth/login.tsx";
 import InformacionPersona from "./protected/datos-personales/page.tsx";
@@ -35,6 +35,8 @@ import VerConvocatoria from "./protected/talento-humano/convocatoria/VerConvocat
 import Convocatoria from "./protected/talento-humano/convocatoria/Convocatoria.tsx";
 import TalentoHumano from "./protected/talento-humano/TalentoHumano.tsx";
 import VerPostulaciones from "./protected/talento-humano/postulaciones/VerPostulaciones.tsx";
+import Convocatorias from "./protected/convocatorias/page.tsx";
+import Postulaciones from "./protected/postulaciones/page.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -64,6 +66,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="index" element={<Index />} />
           <Route path="datos-personales" element={<InformacionPersona />} />
           <Route path="normativas" element={<Normativas />} />
+          <Route path="convocatorias" element={<Convocatorias />} />
           <Route path="configuracion" element={<Configuracion />} />
           <Route path="perfil" element={<MiPerfil />} />
 
@@ -77,6 +80,12 @@ createRoot(document.getElementById("root")!).render(
             <Route path="aptitudes" element={<AgregarAptitudes />} />
           </Route>
 
+          {/* Rutas anidadas para ver postulaciones */}
+          <Route path="ver">
+            <Route index element={<span>No found</span>} />
+            <Route path="postulaciones" element={< Postulaciones/>} />
+          </Route>
+          
           {/* Rutas anidadas para editar */}
           <Route path="editar">
             <Route path="estudios" element={<PreEstudio />} />
