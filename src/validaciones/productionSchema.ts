@@ -1,12 +1,19 @@
 import { z } from "zod";
 
+const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
+
 export const productionSchema = z.object({
   productos_academicos_id: z
     .number({ invalid_type_error: "El producto académico es requerido" })
     .int("El producto académico es requerido")
     .positive("El producto académico es requerido"),
 
-  titulo: z.string().nonempty({ message: "El titulo es requerido" }),
+  titulo: z
+    .string()
+    .min(7, { message: "Mínimo 7 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
@@ -20,7 +27,10 @@ export const productionSchema = z.object({
 
   medio_divulgacion: z
     .string()
-    .nonempty({ message: "El medio de divulgacion es requerido" }),
+    .min(7, { message: "Mínimo 7 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
   fecha_divulgacion: z
     .string({
@@ -58,10 +68,12 @@ export const productionSchema = z.object({
 });
 
 export const productionSchemaUpdate = z.object({
-
-  titulo: z.string().nonempty({ message: "El titulo es requerido" }),
-
-
+  titulo: z
+    .string()
+    .min(7, { message: "Mínimo 7 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
@@ -74,7 +86,10 @@ export const productionSchemaUpdate = z.object({
 
   medio_divulgacion: z
     .string()
-    .nonempty({ message: "El medio de divulgacion es requerido" }),
+    .min(7, { message: "Mínimo 7 caracteres" })
+    .regex(regexSinEmojis, {
+      message: "No se permiten emojis ni caracteres especiales",
+    }),
 
   fecha_divulgacion: z
     .string({
@@ -83,7 +98,7 @@ export const productionSchemaUpdate = z.object({
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
     }),
-    
+
   archivo: z
     .instanceof(FileList, {
       message: "Debes subir un archivo si quieres reemplazar el existente",

@@ -6,7 +6,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Cookie from "js-cookie";
-import EliminarBoton from "../../../componentes/EliminarBoton";
 
 interface Postulaciones {
   id_postulacion: number;
@@ -46,23 +45,23 @@ const VerPostulaciones = () => {
     fetchDatos();
   }, []);
 
-  const handleEliminar = async (id: number) => {
-    try {
-      await axiosInstance.delete(`/talentoHumano/eliminar-postulacion/${id}`);
+  // const handleEliminar = async (id: number) => {
+  //   try {
+  //     await axiosInstance.delete(`/talentoHumano/eliminar-postulacion/${id}`);
 
-      // Actualizar estado de manera óptima
-      setPostulaciones((prev) =>
-        prev.filter((item) => item.id_postulacion !== id)
-      );
-      toast.success("Convocatoria eliminada correctamente");
-    } catch (error) {
-      console.error("Error al eliminar:", error);
+  //     // Actualizar estado de manera óptima
+  //     setPostulaciones((prev) =>
+  //       prev.filter((item) => item.id_postulacion !== id)
+  //     );
+  //     toast.success("Convocatoria eliminada correctamente");
+  //   } catch (error) {
+  //     console.error("Error al eliminar:", error);
 
-      if (axios.isAxiosError(error)) {
-        toast.error("Error al eliminar la convocatoria");
-      }
-    }
-  };
+  //     if (axios.isAxiosError(error)) {
+  //       toast.error("Error al eliminar la convocatoria");
+  //     }
+  //   }
+  // };
 
   // Actualizar el estado de la postulación
   const handleActualizar = async (

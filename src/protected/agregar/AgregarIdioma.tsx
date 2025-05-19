@@ -128,7 +128,7 @@ const AgregarIdioma = () => {
               placeholder="Nombre de la institución"
               {...register("institucion_idioma")}
             />
-            <InputErrors errors={errors} name="institucion" />
+            <InputErrors errors={errors} name="institucion_idioma" />
           </div>
 
           <div className="">
@@ -139,7 +139,7 @@ const AgregarIdioma = () => {
               url="niveles-idioma"
               data_url="nivel_idioma"
             />
-            <InputErrors errors={errors} name="nivel_idioma" />
+            <InputErrors errors={errors} name="nivel" />
           </div>
 
           <div className="">
@@ -161,7 +161,7 @@ const AgregarIdioma = () => {
             <MostrarArchivo file={existingFile} />
           </div>
           <div className="flex justify-center col-span-full">
-            <ButtonPrimary value="Agregar estudio" />
+            <ButtonPrimary value="Agregar idioma" />
           </div>
         </form>
       </div>

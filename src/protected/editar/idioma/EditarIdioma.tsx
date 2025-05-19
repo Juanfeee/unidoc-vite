@@ -163,7 +163,7 @@ const EditarIdioma = () => {
               placeholder="Nombre de la institución"
               {...register("institucion_idioma")}
             />
-            <InputErrors errors={errors} name="institucion" />
+            <InputErrors errors={errors} name="institucion_idioma" />
           </div>
 
           <div className="">
@@ -174,7 +174,7 @@ const EditarIdioma = () => {
               url="niveles-idioma"
               data_url="nivel_idioma"
             />
-            <InputErrors errors={errors} name="nivel_idioma" />
+            <InputErrors errors={errors} name="nivel" />
           </div>
 
           <div className="">

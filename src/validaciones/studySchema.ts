@@ -48,9 +48,9 @@ export const studySchema = z
       .optional()
       .refine(
         (val) =>
-          val === null || val === undefined || val === "" || val.length >= 1,
+          val === null || val === undefined || val === "" || val.length >= 7,
         {
-          message: "Debe tener mínimo 1 caracter.",
+          message: "Debe tener mínimo 7 caracter.",
         }
       )
       .refine(

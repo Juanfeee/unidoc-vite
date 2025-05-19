@@ -1,4 +1,4 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchivo";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import InputErrors from "../../../componentes/formularios/InputErrors";

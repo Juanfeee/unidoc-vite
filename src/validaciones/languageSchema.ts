@@ -4,7 +4,7 @@ const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 export const languageSchema = z.object({
   idioma: z
     .string()
-    .min(1, { message: "Campo vacío" })
+    .min(7, { message: "Minimo 7 caracteres" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",
@@ -58,7 +58,7 @@ export const languageSchema = z.object({
 export const languageSchemaUpdate = z.object({
   idioma: z
     .string()
-    .min(1, { message: "Campo vacío" })
+    .min(7, { message: "Minimo 7 caracteres" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",
@@ -66,7 +66,7 @@ export const languageSchemaUpdate = z.object({
 
   institucion_idioma: z
     .string()
-    .min(1, { message: "Campo vacío" })
+    .min(7, { message: "Minimo 7 caracteres" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",

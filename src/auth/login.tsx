@@ -49,12 +49,14 @@ const Login = () => {
           Cookies.set("token", token, {
             sameSite: "Strict",
             path: "/",
+            expires: 1
           });
 
           Cookies.set("rol", rol, {
             // Guardar el rol en cookies
             sameSite: "Strict",
             path: "/",
+            expires: 1
           });
 
           // Redirige después de un pequeño delay dependiendo su rol
