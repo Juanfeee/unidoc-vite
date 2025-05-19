@@ -17,7 +17,7 @@ export const AdjuntarArchivo = ({id, register, nombre}: Props) => {
       type="file"
       accept=".pdf,application/pdf"
       {...register}
-      className="file:bg-gray-200 file:text-gray-700 file:rounded-md file:px-2 file:py-2 file:border-none file:shadow-sm file:hover:bg-gray-300 transition text-sm flex file:items-center file:cursor-pointer w-full h-10"
+      className="file:bg-gray-200 file:text-gray-700 file:rounded-md file:px-2 file:py-2 file:border-none file:shadow-sm file:hover:bg-gray-300 transition text-sm flex file:items-center file:cursor-pointer w-full sm:w-fit  h-10"
     />
     
   </div>

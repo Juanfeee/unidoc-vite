@@ -4,6 +4,7 @@ import {
   getFilteredRowModel,
   ColumnDef,
   flexRender,
+  ColumnFiltersState
 } from "@tanstack/react-table";
 import { useState } from "react";
 
@@ -20,7 +21,7 @@ export function DataTable<TData extends Record<string, any>>({
   globalFilter = "",
   loading = false,
 }: DataTableProps<TData>) {
-  const [columnFilters, setColumnFilters] = useState([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,

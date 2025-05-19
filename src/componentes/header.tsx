@@ -138,7 +138,7 @@ const Header = () => {
                   Normativas
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   className={`hover:border-b-2 ${
                     pathname === "/convocatorias"
@@ -149,7 +149,7 @@ const Header = () => {
                 >
                   Convocatorias
                 </Link>
-              </li>
+              </li> */}
               <li className="relative" ref={dropdownRef}>
                 <div
                   onClick={toggleDropdown}
@@ -232,7 +232,7 @@ const Header = () => {
                   Normativas
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/convocatorias"
                   className={`${
@@ -242,7 +242,7 @@ const Header = () => {
                 >
                   Convocatorias
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link to="/configuracion" onClick={toggleMobileMenu}>
                   Configuración
