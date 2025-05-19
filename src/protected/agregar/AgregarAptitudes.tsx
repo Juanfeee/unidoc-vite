@@ -92,17 +92,16 @@ const AgregarAptitudes = () => {
   };
 
   return (
-    <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
-      <div className="flex gap-4 items-center">
-        <div className="flex gap-1 ">
+      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md sm:w-xl max-w-4xl gap-y-4">
+        <div className="flex gap-x-4 col-span-full items-center">
+
           <Link to={"/index"}>
             <ButtonRegresar />
           </Link>
-        </div>
-        <h4 className="font-bold text-xl">Agregar apitud</h4>
+        <h4 className="font-bold text-xl">Agregar aptitud</h4>
       </div>
       <form
-        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+        className="grid grid-cols-1 gap-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="">
@@ -125,7 +124,7 @@ const AgregarAptitudes = () => {
         </div>
         <div className="flex justify-center col-span-full">
           <ButtonPrimary
-            value={isSubmitting ? "Enviando..." : "Agregar estudio"}
+            value={isSubmitting ? "Enviando..." : "Agregar aptitud"}
             disabled={isSubmitting}
           />
         </div>

@@ -198,7 +198,7 @@ const EditarExperiencia = () => {
               htmlFor="experiencia-si"
               value="Si"
               inputProps={register("experiencia_universidad")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="experiencia_universidad-no"
@@ -240,7 +240,7 @@ const EditarExperiencia = () => {
               htmlFor="trabajo_actual-si"
               value="Si"
               inputProps={register("trabajo_actual")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="trabajo_actual-no"

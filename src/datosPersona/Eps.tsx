@@ -228,7 +228,7 @@ export const EpsFormulario = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
-            nombre="eps"
+            nombre="EPS"
           />
           <InputErrors errors={errors} name="archivo" />
           <MostrarArchivo file={existingFile} />

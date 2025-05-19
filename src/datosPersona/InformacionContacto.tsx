@@ -182,7 +182,7 @@ export const InformacionContacto = () => {
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Informacion de contacto</h2>
+      <h2 className="text-2xl font-bold mb-6">Información de contacto</h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div>
@@ -218,7 +218,7 @@ export const InformacionContacto = () => {
           <InputErrors errors={errors} name="municipio_id" />
         </div>
         <div>
-          <InputLabel htmlFor="categoria_libreta_militar" value="Categoria libreta militar" />
+          <InputLabel htmlFor="categoria_libreta_militar" value="Categoría libreta militar" />
           <SelectForm
             id="categoria_libreta_militar"
             register={register("categoria_libreta_militar")}
@@ -261,7 +261,7 @@ export const InformacionContacto = () => {
             className="w-full"
             id="direccion_residencia"
             type="text"
-            placeholder="Direccion de residencia..."
+            placeholder="Dirección de residencia..."
             {...register("direccion_residencia")}
           />
           <InputErrors errors={errors} name="direccion_residencia" />
@@ -279,12 +279,12 @@ export const InformacionContacto = () => {
           <InputErrors errors={errors} name="barrio" />
         </div>
         <div>
-          <InputLabel htmlFor="telefono_movil" value="Teléfono movil" />
+          <InputLabel htmlFor="telefono_movil" value="Teléfono móvil" />
           <TextInput
             className="w-full"
             id="telefono_movil"
             type="number"
-            placeholder="Telefono..."
+            placeholder="Teléfono..."
             {...register("telefono_movil")}
           />
           <InputErrors errors={errors} name="telefono_movil" />

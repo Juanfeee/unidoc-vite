@@ -217,7 +217,7 @@ const EditarEstudio = () => {
               htmlFor="graduado-si"
               value="Si"
               inputProps={register("graduado")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="graduado-no"
@@ -281,13 +281,13 @@ const EditarEstudio = () => {
 
         {/* Convalidado */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="convalido" value="Convalido" />
+          <InputLabel htmlFor="convalido" value="¿Convalidó?" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="convalido-si"
               value="Si"
               inputProps={register("titulo_convalidado")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="convalido-no"

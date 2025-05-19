@@ -72,7 +72,7 @@ const PreAptitud = () => {
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-[300px] sm:w-[600px] bg-white rounded-3xl p-8">
+    <div className="flex flex-col gap-4 h-full sm:w-[600px] bg-white rounded-3xl p-8">
       <div className="flex flex-col gap-4">
 
         <Link to={"/index"}>

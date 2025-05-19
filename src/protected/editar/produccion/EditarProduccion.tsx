@@ -175,7 +175,7 @@ const EditarProduccion = () => {
         <div className="flex flex-col w-full">
           <InputLabel
             htmlFor="productos_academicos_id"
-            value="Productos academicos"
+            value="Productos académicos"
           />
           <SelectFormProduccionAcademica
             id="productos_academicos_id"
@@ -187,7 +187,7 @@ const EditarProduccion = () => {
         <div>
           <InputLabel
             htmlFor="ambito_divulgacion_id"
-            value="Ambito de divulgación"
+            value="Ámbito de divulgación"
           />
           <SelectFormProduccionAcademica
             id="ambito_divulgacion_id"

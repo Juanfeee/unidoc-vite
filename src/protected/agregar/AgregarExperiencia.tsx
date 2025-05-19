@@ -192,7 +192,7 @@ const AgregarExperiencia = () => {
               htmlFor="experiencia-si"
               value="Si"
               inputProps={register("experiencia_universidad")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="experiencia_universidad-no"
@@ -234,7 +234,7 @@ const AgregarExperiencia = () => {
               htmlFor="trabajo_actual-si"
               value="Si"
               inputProps={register("trabajo_actual")}
-              label="Si"
+              label="Sí"
             />
             <LabelRadio
               htmlFor="trabajo_actual-no"
@@ -281,7 +281,7 @@ const AgregarExperiencia = () => {
         )}
 
         <div>
-          <InputLabel htmlFor="fecha_expedicion_certificado" value="Fecha expedicion de certificado" />
+          <InputLabel htmlFor="fecha_expedicion_certificado" value="Fecha de expedición del certificado" />
           <TextInput
             type="date"
             id="fecha_expedicion_certificado"

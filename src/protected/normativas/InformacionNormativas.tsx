@@ -12,7 +12,7 @@ const InformacionNormativas = () => {
         {/* Contenido de normativas */}
         <div className="text-gray-600 text-justify text-lg leading-relaxed space-y-4">
           <Texto 
-            value="El Banco de Aspirantes constituye la herramienta para la recopilación de información y documentación, constituyen como referentes normativos los Acuerdos Superiores, Académicos, Resoluciones Rectorales y Circulares, reglamentarios del proceso de selección y vinculación de profesores."
+            value="El Banco de Aspirantes constituye la herramienta para la recopilación de información y documentación. Como referentes normativos se constituyen los Acuerdos Superiores, Académicos, Resoluciones Rectorales y Circulares, reglamentarios del proceso de selección y vinculación de profesores."
             className="text-gray-700 leading-7"
           />
         </div>

@@ -129,7 +129,7 @@ const AgregarProduccion = () => {
           <div className="flex flex-col w-full">
             <InputLabel
               htmlFor="productos_academicos_id"
-              value="Productos academicos"
+              value="Productos académicos"
             />
             <SelectFormProduccionAcademica
               id="productos_academicos_id"
@@ -144,7 +144,7 @@ const AgregarProduccion = () => {
           <div>
             <InputLabel
               htmlFor="ambito_divulgacion_id"
-              value="Ambito de divulgación"
+              value="Ámbito de divulgación"
             />
             <SelectFormProduccionAcademica
               id="ambito_divulgacion_id"
@@ -162,7 +162,7 @@ const AgregarProduccion = () => {
             <InputLabel htmlFor="titulo" value="Título" />
             <TextInput
               id="titulo"
-              placeholder="Titulo"
+              placeholder="Título..."
               {...register("titulo")}
             />
             <InputErrors errors={errors} name="titulo" />
@@ -172,7 +172,7 @@ const AgregarProduccion = () => {
             <TextInput
               type="number"
               id="numero_autores"
-              placeholder="Numero de autores..."
+              placeholder="Número de autores..."
               {...register("numero_autores", { valueAsNumber: true })}
             />
             <InputErrors errors={errors} name="numero_autores" />
@@ -184,7 +184,7 @@ const AgregarProduccion = () => {
             />
             <TextInput
               id="medio_divulgacion"
-              placeholder="medio divulgacion"
+              placeholder="Medio de divulgación..."
               {...register("medio_divulgacion")}
             />
             <InputErrors errors={errors} name="medio_divulgacion" />

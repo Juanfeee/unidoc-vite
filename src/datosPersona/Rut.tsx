@@ -139,12 +139,12 @@ export const Rut = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         <div>
-          <InputLabel htmlFor="numero_rut" value="Numero RUT" />
+          <InputLabel htmlFor="numero_rut" value="Número RUT" />
           <TextInput
             className="w-full"
             id="numero_rut"
             type="text"
-            placeholder="Numero RUT..."
+            placeholder="Número RUT..."
             {...register("numero_rut")}
           />
           <InputErrors errors={errors} name="numero_rut" />
@@ -165,7 +165,7 @@ export const Rut = () => {
 
         {/* Tipo persona */}
         <div>
-          <InputLabel htmlFor="tipo_persona" value="Tipo persona" />
+          <InputLabel htmlFor="tipo_persona" value="Tipo de persona" />
           <SelectForm
             id="tipo_persona"
             register={register("tipo_persona")}
@@ -205,7 +205,7 @@ export const Rut = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
-            nombre="rut"
+            nombre="RUT"
           />
           <InputErrors errors={errors} name="archivo" />
         </div>
