@@ -71,7 +71,11 @@ export const informacionContactoUpdate = z.object({
 
   direccion_residencia: z.string().max(100).optional(),
 
-  barrio: z.string().max(100).optional(),
+  barrio: z.string().max(100)
+  .regex(regexSinEmojis, {
+    message: "No se permiten emojis ni caracteres especiales",
+  })
+  .optional(),
 
   correo_alterno: z
     .string()
