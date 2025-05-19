@@ -55,7 +55,7 @@ export const experienciaSchema = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
 
@@ -85,7 +85,7 @@ export const experienciaSchema = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       )
       .optional(),
@@ -188,7 +188,7 @@ export const experienciaSchemaUpdate = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
     fecha_finalizacion: z
@@ -217,7 +217,7 @@ export const experienciaSchemaUpdate = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       )
       .optional(),

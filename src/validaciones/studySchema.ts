@@ -104,7 +104,7 @@ export const studySchema = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
 
@@ -269,7 +269,7 @@ export const studySchemaUpdate = z
         },
         {
           message:
-            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+            "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
 
@@ -342,3 +342,4 @@ export const studySchemaUpdate = z
       path: ["fecha_grado"],
     }
   );
+  

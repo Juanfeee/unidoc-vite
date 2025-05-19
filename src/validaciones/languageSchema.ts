@@ -4,7 +4,7 @@ const regexSinEmojis = /^[\p{L}\p{N}\s-]+$/u;
 export const languageSchema = z.object({
   idioma: z
     .string()
-    .min(7, { message: "Minimo 7 caracteres" })
+    .min(1, { message: "Campo vacio" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",
@@ -36,7 +36,7 @@ export const languageSchema = z.object({
         return fecha < hoy;
       },
       {
-        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        message: "La fecha no puede ser hoy ni una fecha futura",
       }
     ),
 
@@ -70,7 +70,7 @@ export const languageSchema = z.object({
 export const languageSchemaUpdate = z.object({
   idioma: z
     .string()
-    .min(7, { message: "Minimo 7 caracteres" })
+    .min(1, { message: "Campo vacio" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",
@@ -102,7 +102,7 @@ export const languageSchemaUpdate = z.object({
         return fecha < hoy;
       },
       {
-        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        message: "La fecha no puede ser hoy ni una fecha futura",
       }
     ),
 

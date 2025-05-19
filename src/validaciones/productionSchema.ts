@@ -17,8 +17,8 @@ export const productionSchema = z.object({
 
   ambito_divulgacion_id: z
     .number({ invalid_type_error: "El ambito de divulgación es requerido" })
-    .int("El municipio debe ser un entero")
-    .positive("Selecciona un municipio válido"),
+    .int(" debe ser un entero")
+    .positive("Selecciona una opcion válido"),
 
   numero_autores: z
     .number({ invalid_type_error: "Debe ser un número" })
@@ -51,7 +51,7 @@ export const productionSchema = z.object({
         return fecha < hoy;
       },
       {
-        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        message: "La fecha no puede ser hoy ni una fecha futura",
       }
     ),
 
@@ -125,7 +125,7 @@ export const productionSchemaUpdate = z.object({
         return fecha < hoy;
       },
       {
-        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        message: "La fecha no puede ser hoy ni una fecha futura",
       }
     ),
 
