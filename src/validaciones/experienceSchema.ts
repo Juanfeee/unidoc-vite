@@ -28,27 +28,36 @@ export const experienciaSchema = z
       errorMap: () => ({ message: "Seleccione una opción" }),
     }),
     intensidad_horaria: z
-      .string()
-      .refine((val) => !isNaN(Number(val)), {
-        message: "Debe ser un número",
+      .number({ invalid_type_error: "Debe ser un número" })
+      .int({ message: "Debe ser un número entero" })
+      .max(127, {
+        message: "Máximo 127 horas",
       })
-      .refine((val) => Number(val) >= 1, {
-        message: "El número debe ser al menos 1",
-      })
-      .refine((val) => Number(val) <= 100, {
-        message: "El número no debe ser mayor a 100",
-      }),
+      .positive({ message: "Debe ser un número positivo" }),
 
     experiencia_universidad: z.enum(["Si", "No"], {
       errorMap: () => ({ message: "Seleccione una opción" }),
-    }), 
+    }),
     fecha_inicio: z
       .string({
         invalid_type_error: "Esa no es una fecha",
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      }),
+      })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      ),
 
     fecha_finalizacion: z
       .string({
@@ -66,6 +75,19 @@ export const experienciaSchema = z
       .refine((val) => val === "" || !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      )
       .optional(),
 
     archivo: z
@@ -141,7 +163,13 @@ export const experienciaSchemaUpdate = z
       errorMap: () => ({ message: "Seleccione una opción" }),
     }),
 
-    intensidad_horaria: z.coerce.string().nonempty({ message: "Campo vacío" }),
+    intensidad_horaria: z
+      .number({ invalid_type_error: "Debe ser un número" })
+      .int({ message: "Debe ser un número entero" })
+      .max(127, {
+        message: "Máximo 127 horas",
+      })
+      .positive({ message: "Debe ser un número positivo" }),
 
     fecha_inicio: z
       .string({
@@ -149,7 +177,20 @@ export const experienciaSchemaUpdate = z
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      }),
+      })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      ),
     fecha_finalizacion: z
       .string({
         invalid_type_error: "Esa no es una fecha",
@@ -166,6 +207,19 @@ export const experienciaSchemaUpdate = z
       .refine((val) => val === "" || !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
       })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      )
       .optional(),
 
     archivo: z

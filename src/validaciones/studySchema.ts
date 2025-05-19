@@ -29,7 +29,6 @@ export const studySchema = z
         message: "No se permiten emojis ni caracteres especiales",
       }),
 
-
     titulo_convalidado: z.enum(["Si", "No"], {
       errorMap: () => ({ message: "Seleccione una opcion" }),
     }),
@@ -94,7 +93,20 @@ export const studySchema = z
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      }),
+      })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      ),
 
     fecha_fin: z
       .string({
@@ -246,7 +258,20 @@ export const studySchemaUpdate = z
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      }),
+      })
+      .refine(
+        (val) => {
+          const fecha = new Date(val);
+          const hoy = new Date();
+          // Nos aseguramos de comparar solo año, mes y día (sin hora)
+          hoy.setHours(0, 0, 0, 0);
+          return fecha < hoy;
+        },
+        {
+          message:
+            "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+        }
+      ),
 
     fecha_fin: z
       .string({

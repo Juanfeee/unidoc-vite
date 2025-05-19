@@ -23,7 +23,7 @@ type Inputs = {
   institucion_experiencia: string;
   trabajo_actual: "Si" | "No";
   cargo: string;
-  intensidad_horaria: string;
+  intensidad_horaria: number;
   experiencia_universidad: "Si" | "No";
   fecha_inicio: string;
   fecha_finalizacion?: string;
@@ -91,7 +91,7 @@ const AgregarExperiencia = () => {
     formData.append('institucion_experiencia', formValues.institucion_experiencia);
     formData.append('trabajo_actual', formValues.trabajo_actual);
     formData.append('cargo', formValues.cargo);
-    formData.append('intensidad_horaria', formValues.intensidad_horaria);
+    formData.append('intensidad_horaria', formValues.intensidad_horaria.toString());
     formData.append('fecha_inicio', formValues.fecha_inicio);
     formData.append('fecha_finalizacion', formValues.fecha_finalizacion || "");
     formData.append('fecha_expedicion_certificado', formValues.fecha_expedicion_certificado || "");
@@ -253,7 +253,7 @@ const AgregarExperiencia = () => {
             type="number"
             id="intensidad_horaria"
             placeholder="Intensidad horaria"
-            {...register('intensidad_horaria')}
+            {...register('intensidad_horaria', { valueAsNumber: true })}
           />
           <InputErrors errors={errors} name="intensidad_horaria" />
         </div>

@@ -23,7 +23,7 @@ type Inputs = {
   institucion_experiencia: string;
   cargo: string;
   fecha_inicio: string;
-  intensidad_horaria: string;
+  intensidad_horaria: number;
   trabajo_actual: "Si" | "No";
   experiencia_universidad: "Si" | "No";
   fecha_finalizacion?: string;
@@ -46,6 +46,7 @@ const EditarExperiencia = () => {
   } = useForm<Inputs>({
     resolver: zodResolver(experienciaSchemaUpdate),
     defaultValues: {
+      experiencia_universidad: "No",
 
     },
   });
@@ -102,7 +103,7 @@ const EditarExperiencia = () => {
     formData.append("institucion_experiencia", data.institucion_experiencia);
     formData.append("trabajo_actual", data.trabajo_actual);
     formData.append("cargo", data.cargo);
-    formData.append("intensidad_horaria", data.intensidad_horaria);
+    formData.append("intensidad_horaria", data.intensidad_horaria.toString());
     formData.append("fecha_inicio", data.fecha_inicio);
     formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
     if (data.archivo && data.archivo.length > 0) {
@@ -259,7 +260,7 @@ const EditarExperiencia = () => {
             type="number"
             id="intensidad_horaria"
             placeholder="Intensidad horaria"
-            {...register('intensidad_horaria')}
+            {...register('intensidad_horaria', { valueAsNumber: true })}
           />
           <InputErrors errors={errors} name="intensidad_horaria" />
         </div>

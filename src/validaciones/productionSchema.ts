@@ -23,6 +23,9 @@ export const productionSchema = z.object({
   numero_autores: z
     .number({ invalid_type_error: "Debe ser un número" })
     .int({ message: "Debe ser un número entero" })
+    .max(127, {
+      message: "Máximo 127 autores",
+    })
     .positive({ message: "Debe ser un número positivo" }),
 
   medio_divulgacion: z
@@ -38,7 +41,19 @@ export const productionSchema = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
-    }),
+    })
+    .refine(
+      (val) => {
+        const fecha = new Date(val);
+        const hoy = new Date();
+        // Nos aseguramos de comparar solo año, mes y día (sin hora)
+        hoy.setHours(0, 0, 0, 0);
+        return fecha < hoy;
+      },
+      {
+        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+      }
+    ),
 
   archivo: z
     // 1) forzamos que venga un FileList
@@ -82,6 +97,9 @@ export const productionSchemaUpdate = z.object({
   numero_autores: z
     .number({ invalid_type_error: "Debe ser un número" })
     .int({ message: "Debe ser un número entero" })
+    .max(127, {
+      message: "Máximo 127 autores",
+    })
     .positive({ message: "Debe ser un número positivo" }),
 
   medio_divulgacion: z
@@ -97,7 +115,19 @@ export const productionSchemaUpdate = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
-    }),
+    })
+    .refine(
+      (val) => {
+        const fecha = new Date(val);
+        const hoy = new Date();
+        // Nos aseguramos de comparar solo año, mes y día (sin hora)
+        hoy.setHours(0, 0, 0, 0);
+        return fecha < hoy;
+      },
+      {
+        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+      }
+    ),
 
   archivo: z
     .instanceof(FileList, {

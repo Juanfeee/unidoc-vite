@@ -12,7 +12,7 @@ export const languageSchema = z.object({
 
   institucion_idioma: z
     .string()
-    .min(1, { message: "Campo vacío" })
+    .min(7, { message: "Minimo 7 caracteres" })
     .max(50, { message: "Máximo 50 caracteres" })
     .regex(regexSinEmojis, {
       message: "No se permiten emojis ni caracteres especiales",
@@ -26,7 +26,19 @@ export const languageSchema = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
-    }),
+    })
+    .refine(
+      (val) => {
+        const fecha = new Date(val);
+        const hoy = new Date();
+        // Nos aseguramos de comparar solo año, mes y día (sin hora)
+        hoy.setHours(0, 0, 0, 0);
+        return fecha < hoy;
+      },
+      {
+        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+      }
+    ),
 
   archivo: z
     // 1) forzamos que venga un FileList
@@ -80,7 +92,19 @@ export const languageSchemaUpdate = z.object({
     })
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Formato de fecha incorrecto",
-    }),
+    })
+    .refine(
+      (val) => {
+        const fecha = new Date(val);
+        const hoy = new Date();
+        // Nos aseguramos de comparar solo año, mes y día (sin hora)
+        hoy.setHours(0, 0, 0, 0);
+        return fecha < hoy;
+      },
+      {
+        message: "La fecha de nacimiento no puede ser hoy ni una fecha futura",
+      }
+    ),
 
   archivo: z
     .instanceof(FileList, {
