@@ -37,6 +37,8 @@ import TalentoHumano from "./protected/talento-humano/TalentoHumano.tsx";
 import VerPostulaciones from "./protected/talento-humano/postulaciones/VerPostulaciones.tsx";
 import Convocatorias from "./protected/convocatorias/page.tsx";
 import Postulaciones from "./protected/postulaciones/page.tsx";
+import Contratacion from "./protected/talento-humano/contratacion/contratacion.tsx";
+import VerContrataciones from "./protected/talento-humano/contratacion/VerContratacion.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -83,9 +85,9 @@ createRoot(document.getElementById("root")!).render(
           {/* Rutas anidadas para ver postulaciones */}
           <Route path="ver">
             <Route index element={<span>No found</span>} />
-            <Route path="postulaciones" element={< Postulaciones/>} />
+            <Route path="postulaciones" element={< Postulaciones />} />
           </Route>
-          
+
           {/* Rutas anidadas para editar */}
           <Route path="editar">
             <Route path="estudios" element={<PreEstudio />} />
@@ -110,7 +112,7 @@ createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
-          <Route index element={<TalentoHumano/>} />
+          <Route index element={<TalentoHumano />} />
 
           <Route path="convocatorias">
             <Route index element={<VerConvocatoria />} />
@@ -122,8 +124,18 @@ createRoot(document.getElementById("root")!).render(
               />
             </Route>
           </Route>
+
           <Route path="postulaciones">
-            <Route index element={<VerPostulaciones/>} />
+            <Route index element={<VerPostulaciones />} />
+          </Route>
+
+          <Route path="contrataciones">
+            <Route index element={<VerContrataciones />} />
+             <Route path="">
+              <Route path="contratacion" element={<Contratacion/>} />
+              <Route
+                path="contratacion/:id" element={<Contratacion />} />
+            </Route>
           </Route>
 
           {/* rutas obtener en talento humano */}

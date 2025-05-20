@@ -6,7 +6,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Cookie from "js-cookie";
-import EliminarBoton from "../../../componentes/EliminarBoton";
+import { Link } from "react-router-dom";
+import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 
 interface Postulaciones {
   id_postulacion: number;
@@ -18,25 +19,47 @@ interface Postulaciones {
   usuario_postulacion: {
     primer_nombre: string;
     primer_apellido: string;
+    numero_identificacion: string;
   };
+  convocatoria_postulacion: {
+    nombre_convocatoria: string;
+    estado_convocatoria: string;
+  };
+}
+
+interface Contratacion {
+  id_contratacion: number;
+  user_id: number;
+  tipo_contrato: string;
+  area: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  valor_contrato: number;
 }
 
 const VerPostulaciones = () => {
   const [postulaciones, setPostulaciones] = useState<Postulaciones[]>([]);
+  const [usuariosContratados, setUsuariosContratados] = useState<number[]>([]);
+  const [contrataciones, setContrataciones] = useState<Contratacion[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
     try {
       setLoading(true);
-
-      const response = await axiosInstance.get(
-        "/talentoHumano/obtener-postulaciones"
-      );
-      setPostulaciones(response.data.postulaciones);
-      console.log("postulaciones", response.data.postulaciones);
+      const [postulacionesRes, contratacionesRes] = await Promise.all([
+        axiosInstance.get("/talentoHumano/obtener-postulaciones"),
+        axiosInstance.get("/talentoHumano/obtener-contrataciones")
+      ]);
+      
+      setPostulaciones(postulacionesRes.data.postulaciones);
+      setContrataciones(contratacionesRes.data.contrataciones);
+      
+      const idsContratados = contratacionesRes.data.contrataciones.map((c: any) => c.user_id);
+      setUsuariosContratados(idsContratados);
     } catch (error) {
-      console.error("Error al obtener postulaciones:", error);
+      console.error("Error al obtener datos:", error);
+      toast.error("Error al cargar los datos");
     } finally {
       setLoading(false);
     }
@@ -46,25 +69,6 @@ const VerPostulaciones = () => {
     fetchDatos();
   }, []);
 
-  const handleEliminar = async (id: number) => {
-    try {
-      await axiosInstance.delete(`/talentoHumano/eliminar-postulacion/${id}`);
-
-      // Actualizar estado de manera óptima
-      setPostulaciones((prev) =>
-        prev.filter((item) => item.id_postulacion !== id)
-      );
-      toast.success("Convocatoria eliminada correctamente");
-    } catch (error) {
-      console.error("Error al eliminar:", error);
-
-      if (axios.isAxiosError(error)) {
-        toast.error("Error al eliminar la convocatoria");
-      }
-    }
-  };
-
-  // Actualizar el estado de la postulación
   const handleActualizar = async (
     id: number,
     nuevoEstado: "Aceptada" | "Rechazada"
@@ -74,7 +78,6 @@ const VerPostulaciones = () => {
         estado_postulacion: nuevoEstado,
       });
 
-      // Actualizar estado de manera óptima
       setPostulaciones((prev) =>
         prev.map((item) =>
           item.id_postulacion === id
@@ -85,19 +88,15 @@ const VerPostulaciones = () => {
       toast.success(`Postulación ${nuevoEstado.toLowerCase()} correctamente`);
     } catch (error) {
       console.error("Error al actualizar:", error);
-
       if (axios.isAxiosError(error)) {
         toast.error(`Error al ${nuevoEstado.toLowerCase()} la postulación`);
       }
     }
   };
 
-  // Ver hoja de vida del postulante en pdf
   const handleVerHojaVida = async (convocatoriaId: number, userId: number) => {
-    const url = `${
-      import.meta.env.VITE_API_URL
-    }/talentoHumano/hoja-de-vida-pdf/${convocatoriaId}/${userId}`;
-    console.log("URL de la hoja de vida:", url);
+    const url = `${import.meta.env.VITE_API_URL
+      }/talentoHumano/hoja-de-vida-pdf/${convocatoriaId}/${userId}`;
     try {
       const response = await axios.get(url, {
         responseType: "blob",
@@ -107,16 +106,12 @@ const VerPostulaciones = () => {
         withCredentials: true,
       });
 
-      // Crear un blob a partir de la respuesta
       const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-
-      // Crear una URL para el blob
       const pdfUrl = URL.createObjectURL(pdfBlob);
-
-      // Abrir el PDF en una nueva pestaña
       window.open(pdfUrl, "_blank");
     } catch (error) {
       console.error("Error al ver la hoja de vida:", error);
+      toast.error("Error al cargar la hoja de vida");
     }
   };
 
@@ -129,12 +124,12 @@ const VerPostulaciones = () => {
       },
       {
         accessorKey: "convocatoria_postulacion.nombre_convocatoria",
-        header: "Nombre Convocatoria",
+        header: "Convocatoria",
         size: 100,
       },
       {
         accessorKey: "estado_postulacion",
-        header: "Estado Postulación",
+        header: "Estado",
         size: 50,
       },
       {
@@ -144,59 +139,91 @@ const VerPostulaciones = () => {
       },
       {
         id: "nombrePostulante",
-        header: "Nombre Postulante",
+        header: "Postulante",
         accessorFn: (row) =>
           `${row.usuario_postulacion.primer_nombre} ${row.usuario_postulacion.primer_apellido}`,
         size: 200,
       },
       {
         accessorKey: "convocatoria_postulacion.estado_convocatoria",
-        header: "Estado Convocatoria",
+        header: "Estado Conv.",
         size: 50,
       },
       {
         header: "Acciones",
-        cell: ({ row }) => (
-          <div className="flex space-x-2">
-            <select
-              className="border rounded px-2 py-1"
-              onChange={(e) =>
-                handleActualizar(
-                  row.original.id_postulacion,
-                  e.target.value as "Aceptada" | "Rechazada"
+        cell: ({ row }) => {
+          const yaContratado = usuariosContratados.includes(row.original.user_id);
+          const contratoUsuario = contrataciones.find(
+            (c) => c.user_id === row.original.user_id
+          );
+          
+          return (
+            <div className="flex space-x-2">
+              <select
+                className="border rounded px-2 py-1"
+                onChange={(e) =>
+                  handleActualizar(
+                    row.original.id_postulacion,
+                    e.target.value as "Aceptada" | "Rechazada"
+                  )
+                }
+                value={row.original.estado_postulacion}
+                disabled={yaContratado}
+              >
+                <option value="Aceptada">Aceptar</option>
+                <option value="Rechazada">Rechazar</option>
+              </select>
+
+              <button
+                className="bg-blue-500 text-white px-2 py-1 rounded"
+                onClick={() =>
+                  handleVerHojaVida(
+                    row.original.convocatoria_id,
+                    row.original.user_id
+                  )
+                }
+              >
+                Hoja de Vida
+              </button>
+
+              {row.original.estado_postulacion === "Aceptada" && (
+                yaContratado ? (
+                  <Link
+                    to={`/talento-humano/contrataciones/contratacion/${contratoUsuario?.id_contratacion}`}
+                    className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+                  >
+                    Ver Contrato
+                  </Link>
+                ) : (
+                  <Link
+                    to={`/talento-humano/contrataciones/contratacion/${row.original.user_id}`}
+                    className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                  >
+                    Contratar
+                  </Link>
                 )
-              }
-            >
-              <option value="">Cambiar estado</option>
-              <option value="Aceptada">Aceptar</option>
-              <option value="Rechazada">Rechazar</option>
-            </select>
-            <button
-              className="bg-blue-500 text-white px-2 py-1 rounded"
-              onClick={() =>
-                handleVerHojaVida(
-                  row.original.convocatoria_id,
-                  row.original.user_id
-                )
-              }
-            >
-              Ver Hoja de Vida
-            </button>
-            {/* <EliminarBoton
-              id={row.original.id_postulacion}
-              onConfirmDelete={handleEliminar}
-            /> */}
-          </div>
-        ),
+              )}
+            </div>
+          );
+        },
       },
     ],
-    []
+    [usuariosContratados, contrataciones]
   );
 
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
-
-      <h1 className="text-lg font-semibold">Postulaciones</h1>
+      {/* Encabezado */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex gap-1">
+            <Link to={"/talento-humano"}>
+              <ButtonRegresar />
+            </Link>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Postulaciones</h1>
+        </div>
+      </div>
       <div className="flex justify-between items-center w-full">
         <InputSearch
           type="text"

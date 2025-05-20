@@ -9,6 +9,7 @@ import EliminarBoton from "../../../componentes/EliminarBoton";
 import { Link } from "react-router";
 import { PencilIcon } from "../../../assets/icons/Iconos";
 import InputSearch from "../../../componentes/formularios/InputSearch";
+import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 
 interface Convocatoria {
   id_convocatoria: number;
@@ -121,8 +122,17 @@ const VerConvocatoria = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
-      <h1 className="text-lg font-semibold">Convocatorias</h1>
-
+      {/* Encabezado */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4">
+          <div className="flex gap-1">
+            <Link to={"/talento-humano"}>
+              <ButtonRegresar />
+            </Link>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Convocatorias</h1>
+        </div>
+      </div>
       <div className="flex justify-between items-center w-full">
         <InputSearch
           type="text"
@@ -135,12 +145,12 @@ const VerConvocatoria = () => {
         </Link>
       </div>
 
-        <DataTable
-          data={convocatorias}
-          columns={columns}
-          globalFilter={globalFilter}
-          loading={loading}
-        />
+      <DataTable
+        data={convocatorias}
+        columns={columns}
+        globalFilter={globalFilter}
+        loading={loading}
+      />
 
     </div>
   );
