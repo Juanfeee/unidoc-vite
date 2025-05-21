@@ -13,6 +13,7 @@ import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logoClaro from "../assets/images/logoClaro.jpg";
 import { jwtDecode } from "jwt-decode";
+import InputPassword from "../componentes/formularios/InputPassword";
 
 type Inputs = {
   email: string;
@@ -132,7 +133,7 @@ const Login = () => {
           </div>
           <div className="">
             <InputLabel htmlFor="password" value="Contraseña" />
-            <TextInput
+            <InputPassword
               id="password"
               type="password"
               placeholder="Contraseña..."
