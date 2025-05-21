@@ -39,6 +39,7 @@ import Convocatorias from "./protected/convocatorias/page.tsx";
 import Postulaciones from "./protected/postulaciones/page.tsx";
 import Contratacion from "./protected/talento-humano/contratacion/contratacion.tsx";
 import VerContrataciones from "./protected/talento-humano/contratacion/VerContratacion.tsx";
+import VerContratacionesPorUsuario from "./protected/talento-humano/contratacion/VerContratacionesPorUsuario.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -131,12 +132,17 @@ createRoot(document.getElementById("root")!).render(
 
           <Route path="contrataciones">
             <Route index element={<VerContrataciones />} />
-             <Route path="">
-              <Route path="contratacion" element={<Contratacion/>} />
+            <Route path="">
+              <Route path="contratacion" element={<Contratacion />} />
               <Route
                 path="contratacion/:id" element={<Contratacion />} />
             </Route>
           </Route>
+
+          <Route
+            path="/talento-humano/contrataciones/usuario/:user_id" element={<VerContratacionesPorUsuario />}
+          />
+
 
           {/* rutas obtener en talento humano */}
         </Route>

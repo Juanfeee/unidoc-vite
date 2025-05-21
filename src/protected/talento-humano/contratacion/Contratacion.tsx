@@ -13,39 +13,43 @@ import Cookies from "js-cookie";
 import { contratacionSchema } from "../../../validaciones/talento-humano.ts/contratacionSchema";
 import { SelectLocales } from "../../../componentes/formularios/SelectsLocales";
 
+// Define la estructura de los datos del formulario
 type Inputs = {
     tipo_contrato: "Planta" | "Ocasional" | "Cátedra";
     area: "Facultad de Ciencias Administrativas, Contables y Economicas"| 
     "Facultad de Ciencias Ambientales y Desarrollo Sostenible" | "Facultad de Derecho, Ciencias Sociales y Politicas" | 
-    "Facultad de Educacion" | "Facultad de Ingenieria" ;
+    "Facultad de Educacion" | "Facultad de Ingenieria";
     fecha_inicio: string;
     fecha_fin: string;
     valor_contrato: number;
-    observaciones?: string;
+    observaciones?: string; // Campo opcional
 };
 
 const Contratacion = () => {
-    const { id } = useParams(); // El ID que viene de la URL
-    const navigate = useNavigate();
-    const [isContratacionRegistered, setIsContratacionRegistered] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { id } = useParams(); // Obtiene el ID desde los parámetros de la URL
+    const navigate = useNavigate(); // Función para redirigir navegaciones
+    const [isContratacionRegistered, setIsContratacionRegistered] = useState(false); // Estado para verificar si existe una contratación previa
+    const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar la acción de envío del formulario
 
+    // Configuración de React Hook Form
     const {
         register,
         handleSubmit,
         setValue,
         formState: { errors },
     } = useForm<Inputs>({
-        resolver: zodResolver(contratacionSchema),
+        resolver: zodResolver(contratacionSchema), // Esquema de validación usando Zod
     });
 
+    // Función para obtener los datos de la contratación desde el backend
     const fetchDatos = async () => {
-        if (!id) return;
+        if (!id) return; // Si no hay ID, no hace nada
 
         try {
             const response = await axiosInstance.get(`/talentoHumano/obtener-contratacion/${id}`);
             const data = response.data.contratacion;
 
+            // Rellena el formulario con los datos obtenidos
             setIsContratacionRegistered(true);
             setValue("tipo_contrato", data.tipo_contrato);
             setValue("area", data.area);
@@ -58,13 +62,16 @@ const Contratacion = () => {
         }
     };
 
+    // Llama a la función fetchDatos cuando el componente se monta o el ID cambia
     useEffect(() => {
         if (id) fetchDatos();
     }, [id]);
 
+    // Función para manejar el envío del formulario
     const onsubmit = async (data: Inputs) => {
-        setIsSubmitting(true);
+        setIsSubmitting(true); // Cambia el estado de envío a "true"
 
+        // Datos que se enviarán al backend
         const requestData = {
             tipo_contrato: data.tipo_contrato,
             area: data.area,
@@ -74,7 +81,7 @@ const Contratacion = () => {
             observaciones: data.observaciones || null,
         };
 
-        // Ajustar la URL para incluir el ID en la creación del contrato
+        // Determina la URL y el método HTTP según si es una actualización o creación
         const url = isContratacionRegistered
             ? `/talentoHumano/actualizar-contratacion/${id}`
             : `/talentoHumano/crear-contratacion/${id}`;
@@ -82,6 +89,7 @@ const Contratacion = () => {
         const method = isContratacionRegistered ? "PUT" : "POST";
 
         try {
+            // Envía la solicitud al backend y muestra mensajes de estado usando `toast`
             await toast.promise(
                 axiosInstance({
                     method,
@@ -99,7 +107,7 @@ const Contratacion = () => {
                     success: {
                         render() {
                             setTimeout(() => {
-                                navigate("/talento-humano/contrataciones");
+                                navigate("/talento-humano/contrataciones"); // Redirige después del éxito
                             }, 1500);
                             return isContratacionRegistered
                                 ? "Contratación actualizada con éxito"
@@ -115,25 +123,26 @@ const Contratacion = () => {
         } catch (error) {
             console.error("Error al procesar la contratación:", error);
         } finally {
-            setIsSubmitting(false);
+            setIsSubmitting(false); // Cambia el estado de envío a "false"
         }
     };
 
+    // Renderiza el formulario
     return (
         <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
             <div className="flex gap-x-4 col-span-full items-center">
                 <Link to={"/talento-humano/contrataciones"}>
-                    <ButtonRegresar />
+                    <ButtonRegresar /> {/* Botón para regresar */}
                 </Link>
                 <h3 className="font-bold text-3xl col-span-full">
                     {isContratacionRegistered
-                        ? "Ver / Editar contratación"
-                        : "Agregar contratación"}
+                        ? "Editar contratación" // Muestra si está editando una contratación
+                        : "Agregar contratación"} {/* Muestra si está creando una nueva contratación */}
                 </h3>
             </div>
             <form
                 className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-                onSubmit={handleSubmit(onsubmit)}
+                onSubmit={handleSubmit(onsubmit)} // Maneja el envío del formulario
             >
                 {/* Tipo de Contrato */}
                 <div>
@@ -151,7 +160,6 @@ const Contratacion = () => {
                     <SelectLocales id="area" register={register("area")} />
                     <InputErrors errors={errors} name="area" />
                 </div>
-
 
                 {/* Fecha de inicio */}
                 <div>
@@ -218,3 +226,5 @@ const Contratacion = () => {
 };
 
 export default Contratacion;
+
+
