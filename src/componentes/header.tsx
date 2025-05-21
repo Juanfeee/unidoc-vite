@@ -9,15 +9,15 @@ import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
-
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
+  
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
         // 2. Hacer petición al servidor
-        const token = Cookies.get("token");
-        if (!token) throw new Error("No authentication token found");
-        const decoded = jwtDecode<{ rol: RolesValidos }>(token);
-        const rol = decoded.rol;
 
         const ENDPOINTS = {
           Aspirante: `${import.meta.env.VITE_API_URL}${
@@ -29,7 +29,7 @@ const Header = () => {
         };
         const endpoint = rol ? ENDPOINTS[rol] : undefined;
         if (!endpoint) throw new Error("No endpoint found for user role");
-        
+
         const response = await axiosInstance.get(endpoint);
         const documentos = response.data.fotoPerfil?.documentos_foto_perfil;
 
@@ -162,6 +162,20 @@ const Header = () => {
                   Convocatorias
                 </Link>
               </li> */}
+              {rol === "Docente" && (
+                <li>
+                  <Link
+                    className={`hover:border-b-2 ${
+                      pathname === "/convocatorias"
+                        ? "border-b-2 border-blue-500"
+                        : ""
+                    }`}
+                    to="/mi-perfil"
+                  >
+                    Mi perfil
+                  </Link>
+                </li>
+              )}
               <li className="relative" ref={dropdownRef}>
                 <div
                   onClick={toggleDropdown}

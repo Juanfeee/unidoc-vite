@@ -39,6 +39,8 @@ import Convocatorias from "./protected/convocatorias/page.tsx";
 import Postulaciones from "./protected/postulaciones/page.tsx";
 import VerContrataciones from "./protected/talento-humano/contratacion/VerContratacion.tsx";
 import Contratacion from "./protected/talento-humano/contratacion/Contratacion.tsx";
+import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
+import EditarEvaluacion from "./protected/editar/evaluacion/EditarEvaluacion.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -60,7 +62,7 @@ createRoot(document.getElementById("root")!).render(
         {/* Rutas protegidas para aspirante */}
         <Route
           element={
-            <ProtectedRoute allowedRoles={["Aspirante" , "Docente" ] }>
+            <ProtectedRoute allowedRoles={["Aspirante", "Docente"]}>
               <AspiranteLayouts />
             </ProtectedRoute>
           }
@@ -80,12 +82,20 @@ createRoot(document.getElementById("root")!).render(
             <Route path="idioma" element={<AgregarIdioma />} />
             <Route path="produccion" element={<AgregarProduccion />} />
             <Route path="aptitudes" element={<AgregarAptitudes />} />
+            <Route
+              path="evaluacion"
+              element={
+                <ProtectedRoute allowedRoles={["Docente"]}>
+                  <EditarEvaluacion />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/* Rutas anidadas para ver postulaciones */}
           <Route path="ver">
             <Route index element={<span>No found</span>} />
-            <Route path="postulaciones" element={< Postulaciones />} />
+            <Route path="postulaciones" element={<Postulaciones />} />
           </Route>
 
           {/* Rutas anidadas para editar */}
@@ -100,7 +110,23 @@ createRoot(document.getElementById("root")!).render(
             <Route path="produccion/:id" element={<EditarProduccion />} />
             <Route path="aptitud/editar/:id" element={<EditarAptitud />} />
             <Route path="aptitud/:id" element={<PreAptitud />} />
+            <Route
+              path="evaluacion"
+              element={
+                <ProtectedRoute allowedRoles={["Docente"]}>
+                  <EditarEvaluacion />
+                </ProtectedRoute>
+              }
+            />
           </Route>
+          <Route
+            path="mi-perfil"
+            element={
+              <ProtectedRoute allowedRoles={["Docente"]}>
+                <MiPerfil />
+              </ProtectedRoute>
+            }
+          />
         </Route>
 
         {/* Ruta para talento humano */}
@@ -118,10 +144,7 @@ createRoot(document.getElementById("root")!).render(
             <Route index element={<VerConvocatoria />} />
             <Route path="">
               <Route path="convocatoria" element={<Convocatoria />} />
-              <Route
-                path="convocatoria/:id"
-                element={<Convocatoria />}
-              />
+              <Route path="convocatoria/:id" element={<Convocatoria />} />
             </Route>
           </Route>
 
@@ -131,10 +154,9 @@ createRoot(document.getElementById("root")!).render(
 
           <Route path="contrataciones">
             <Route index element={<VerContrataciones />} />
-             <Route path="">
-              <Route path="contratacion" element={<Contratacion/>} />
-              <Route
-                path="contratacion/:id" element={<Contratacion />} />
+            <Route path="">
+              <Route path="contratacion" element={<Contratacion />} />
+              <Route path="contratacion/:id" element={<Contratacion />} />
             </Route>
           </Route>
 
