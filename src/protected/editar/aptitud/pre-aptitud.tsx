@@ -5,7 +5,16 @@ import axiosInstance from "../../../utils/axiosConfig";
 import EliminarBoton from "../../../componentes/EliminarBoton";
 import { PencilIcon } from "../../../assets/icons/Iconos";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
+import Cookies from "js-cookie";
+import { RolesValidos } from "../../../types/roles";
+import { jwtDecode } from "jwt-decode";
+
 const PreAptitud = () => {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
+
   const [aptitudes, setAptitudes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +29,16 @@ const PreAptitud = () => {
       }
 
       // 2. Obtener datos del servidor
-      const response = await axiosInstance.get("/aspirante/obtener-aptitudes");
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       // 3. Actualizar estado y caché
       if (response.data?.aptitudes) {
@@ -44,7 +62,17 @@ const PreAptitud = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axiosInstance.delete(`/aspirante/eliminar-aptitud/${id}`);
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_APTITUDES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+
+      await axiosInstance.delete(`${endpoint}/${id}`);
       // Actualizar estado y caché
       const nuevasAptitudes = aptitudes.filter((a) => a.id_aptitud !== id);
       setAptitudes(nuevasAptitudes);
@@ -74,11 +102,10 @@ const PreAptitud = () => {
   return (
     <div className="flex flex-col gap-4 h-full sm:w-[600px] bg-white rounded-3xl p-8">
       <div className="flex flex-col gap-4">
-
         <Link to={"/index"}>
           <ButtonRegresar />
         </Link>
-        <div className='flex gap-4 items-center justify-between'>
+        <div className="flex gap-4 items-center justify-between">
           <h4 className="font-bold text-xl">Aptitudes</h4>
           <div className="flex gap-1">
             <Link to={"/agregar/aptitudes"}>

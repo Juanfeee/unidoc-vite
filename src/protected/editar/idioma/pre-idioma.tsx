@@ -5,10 +5,17 @@ import axiosInstance from "../../../utils/axiosConfig";
 import EliminarBoton from "../../../componentes/EliminarBoton";
 import { PencilIcon } from "../../../assets/icons/Iconos";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
+import Cookies from "js-cookie";
+import { RolesValidos } from "../../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 const PreProduccion = () => {
-  const [idiomas, setIdiomas] = useState<any[]>([]);
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
 
+  const [idiomas, setIdiomas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchDatos = async () => {
@@ -21,7 +28,16 @@ const PreProduccion = () => {
       }
 
       // 2. Obtener datos del servidor
-      const response = await axiosInstance.get("/aspirante/obtener-idiomas");
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_IDIOMAS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_IDIOMAS_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       // 3. Actualizar estado y caché
       if (response.data?.idiomas) {
@@ -45,7 +61,16 @@ const PreProduccion = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axiosInstance.delete(`/aspirante/eliminar-idioma/${id}`);
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_IDIOMAS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_IDIOMAS_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      await axiosInstance.delete(`${endpoint}/${id}`);
       // Actualizar estado y caché
       const nuevosIdiomas = idiomas.filter((i) => i.id_idioma !== id);
       setIdiomas(nuevosIdiomas);

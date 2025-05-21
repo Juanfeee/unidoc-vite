@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {  SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { rutSchema, rutSchemaUpdate } from "../validaciones/rutSchema";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -15,7 +15,9 @@ import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { useArchivoPreview } from "../hooks/ArchivoPreview";
 import { MostrarArchivo } from "../componentes/formularios/MostrarArchivo";
-
+import { RolesValidos } from "../types/roles";
+import axiosInstance from "../utils/axiosConfig";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   numero_rut: string;
@@ -27,7 +29,11 @@ type Inputs = {
 };
 
 export const Rut = () => {
-
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
+  
   const [isRutRegistered, setIsRutRegistered] = useState(false);
   const schema = isRutRegistered ? rutSchemaUpdate : rutSchema;
   const {
@@ -38,7 +44,6 @@ export const Rut = () => {
     formState: { errors },
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
-
   });
 
   const archivoValue = watch("archivo");
@@ -46,46 +51,48 @@ export const Rut = () => {
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
   //Traer los datos del usuario al cargar el componente
-    const fetchUserData = async () => {
-      const token = Cookies.get("token");
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-rut`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          timeout: 20000
-        });
-        const data = response.data.rut;
-        if (data) {
-          setIsRutRegistered(true);
-          setValue("numero_rut", data.numero_rut);
-          setValue("razon_social", data.razon_social);
-          setValue("tipo_persona", data.tipo_persona);
-          setValue("codigo_ciiu", data.codigo_ciiu);
-          setValue("responsabilidades_tributarias", data.responsabilidades_tributarias);
+  const fetchUserData = async () => {
+    try {
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_RUT_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_RUT_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
+      const data = response.data.rut;
+      if (data) {
+        setIsRutRegistered(true);
+        setValue("numero_rut", data.numero_rut);
+        setValue("razon_social", data.razon_social);
+        setValue("tipo_persona", data.tipo_persona);
+        setValue("codigo_ciiu", data.codigo_ciiu);
+        setValue(
+          "responsabilidades_tributarias",
+          data.responsabilidades_tributarias
+        );
 
-          if (data.documentos_rut && data.documentos_rut.length > 0) {
-            const archivo = data.documentos_rut[0];
-            setExistingFile({
-              url: archivo.archivo_url,
-              name: archivo.archivo.split("/").pop() || "Archivo existente",
-            });
-
-          }
-        } else {
-          console.log("No se encontraron datos del RUT")
+        if (data.documentos_rut && data.documentos_rut.length > 0) {
+          const archivo = data.documentos_rut[0];
+          setExistingFile({
+            url: archivo.archivo_url,
+            name: archivo.archivo.split("/").pop() || "Archivo existente",
+          });
         }
-      } catch (error) {
-        console.error("Error al cargar los datos del usuario:", error);
+      } else {
+        console.log("No se encontraron datos del RUT");
       }
-    };
+    } catch (error) {
+      console.error("Error al cargar los datos del usuario:", error);
+    }
+  };
 
   useEffect(() => {
     fetchUserData();
-  }
-    , []);
-
+  }, []);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     const formData = new FormData();
@@ -93,8 +100,11 @@ export const Rut = () => {
     formData.append("razon_social", data.razon_social);
     formData.append("tipo_persona", data.tipo_persona);
     formData.append("codigo_ciiu", data.codigo_ciiu);
-    formData.append("responsabilidades_tributarias", data.responsabilidades_tributarias);
-    
+    formData.append(
+      "responsabilidades_tributarias",
+      data.responsabilidades_tributarias
+    );
+
     if (data.archivo && data.archivo.length > 0) {
       formData.append("archivo", data.archivo[0]);
     }
@@ -103,41 +113,46 @@ export const Rut = () => {
     if (isRutRegistered) {
       formData.append("_method", "PUT");
     }
-    const token = Cookies.get("token");
 
-    const url = isRutRegistered
-      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-rut` // Ruta para actualizar
-      : `${import.meta.env.VITE_API_URL}/aspirante/crear-rut`; // Ruta para crear
+    const ENDPOINTS_POST = {
+      Aspirante: {
+        crear: import.meta.env.VITE_ENDPOINT_CREAR_RUT_ASPIRANTE,
+        actualizar: import.meta.env.VITE_ENDPOINT_ACTUALIZAR_RUT_ASPIRANTE,
+      },
+      Docente: {
+        crear: import.meta.env.VITE_ENDPOINT_CREAR_RUT_DOCENTE,
+        actualizar: import.meta.env.VITE_ENDPOINT_ACTUALIZAR_RUT_DOCENTE,
+      },
+    };
+
+    const url = `${import.meta.env.VITE_API_URL}${
+      isRutRegistered
+        ? ENDPOINTS_POST[rol].actualizar
+        : ENDPOINTS_POST[rol].crear
+    }`;
     try {
-      await toast.promise(
-        axios.post(url, formData, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
+      await toast.promise(axiosInstance.post(url, formData), {
+        pending: "Enviando datos...",
+        success: {
+          render() {
+            setIsRutRegistered(true);
+            return "Datos guardados correctamente";
           },
-          timeout: 10000
-        }),
-        {
-          pending: "Enviando datos...",
-          success: {
-            render() {
-              setIsRutRegistered(true)
-              return "Datos guardados correctamente";
-            }
-          },
-          error: "Error al guardar los datos"
-        }
-      );
+        },
+        error: "Error al guardar los datos",
+      });
     } catch (error) {
       console.error("Error al enviar los datos:", error);
     }
-  }
+  };
 
   return (
-
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Formulario RUT</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+      >
         <div>
           <InputLabel htmlFor="numero_rut" value="Número RUT" />
           <TextInput
@@ -189,7 +204,10 @@ export const Rut = () => {
 
         {/* Responsabilidades tributarias */}
         <div className="sm:col-span-2">
-          <InputLabel htmlFor="responsabilidades_tributarias" value="Responsabilidades tributarias" />
+          <InputLabel
+            htmlFor="responsabilidades_tributarias"
+            value="Responsabilidades tributarias"
+          />
           <TextInput
             className="w-full"
             id="responsabilidades_tributarias"
@@ -214,9 +232,7 @@ export const Rut = () => {
         <div className="col-span-full text-center">
           <ButtonPrimary type="submit" value="Guardar" />
         </div>
-
       </form>
     </div>
-
   );
 };

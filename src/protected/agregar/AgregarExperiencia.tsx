@@ -1,22 +1,25 @@
 "use client";
-import Cookies from 'js-cookie';
-import axios from 'axios';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { experienciaSchema } from '../../validaciones/experienceSchema';
-import {useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router';
-import { ButtonRegresar } from '../../componentes/formularios/ButtonRegresar';
-import { InputLabel } from '../../componentes/formularios/InputLabel';
-import { SelectForm } from '../../componentes/formularios/SelectForm';
-import InputErrors from '../../componentes/formularios/InputErrors';
-import TextInput from '../../componentes/formularios/TextInput';
-import { ButtonPrimary } from '../../componentes/formularios/ButtonPrimary';
-import { AdjuntarArchivo } from '../../componentes/formularios/AdjuntarArchivo';
-import { LabelRadio } from '../../componentes/formularios/LabelRadio';
-import { useArchivoPreview } from '../../hooks/ArchivoPreview';
-import { MostrarArchivo } from '../../componentes/formularios/MostrarArchivo';
+import Cookies from "js-cookie";
+import axios from "axios";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { experienciaSchema } from "../../validaciones/experienceSchema";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { Link } from "react-router";
+import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
+import { InputLabel } from "../../componentes/formularios/InputLabel";
+import { SelectForm } from "../../componentes/formularios/SelectForm";
+import InputErrors from "../../componentes/formularios/InputErrors";
+import TextInput from "../../componentes/formularios/TextInput";
+import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
+import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
+import { LabelRadio } from "../../componentes/formularios/LabelRadio";
+import { useArchivoPreview } from "../../hooks/ArchivoPreview";
+import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
+import { RolesValidos } from "../../types/roles";
+import axiosInstance from "../../utils/axiosConfig";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   tipo_experiencia: string;
@@ -47,21 +50,21 @@ const AgregarExperiencia = () => {
     },
   });
 
-
-  const archivoValue = watch('archivo')
+  const archivoValue = watch("archivo");
   const { existingFile } = useArchivoPreview(archivoValue);
 
   const experiencia_universidad = watch("experiencia_universidad");
 
-
   useEffect(() => {
     if (experiencia_universidad === "Si") {
-      setValue("institucion_experiencia", "Corporación Universitaria Autónoma del Cauca");
+      setValue(
+        "institucion_experiencia",
+        "Corporación Universitaria Autónoma del Cauca"
+      );
     } else {
       setValue("institucion_experiencia", "");
     }
   }, [experiencia_universidad, setValue]);
-
 
   const trabajo_actual = watch("trabajo_actual");
   useEffect(() => {
@@ -74,86 +77,98 @@ const AgregarExperiencia = () => {
     setIsSubmitting(true);
 
     try {
-    const formValues = {
-      tipo_experiencia: watch('tipo_experiencia'),
-      institucion_experiencia: watch('institucion_experiencia'),
-      trabajo_actual: watch('trabajo_actual'),
-      cargo: watch('cargo'),
-      intensidad_horaria: watch('intensidad_horaria'),
-      fecha_inicio: watch('fecha_inicio'),
-      fecha_finalizacion: watch('fecha_finalizacion'),
-      fecha_expedicion_certificado: watch('fecha_expedicion_certificado'),
-      archivo: watch('archivo')
-    };
+      const formValues = {
+        tipo_experiencia: watch("tipo_experiencia"),
+        institucion_experiencia: watch("institucion_experiencia"),
+        trabajo_actual: watch("trabajo_actual"),
+        cargo: watch("cargo"),
+        intensidad_horaria: watch("intensidad_horaria"),
+        fecha_inicio: watch("fecha_inicio"),
+        fecha_finalizacion: watch("fecha_finalizacion"),
+        fecha_expedicion_certificado: watch("fecha_expedicion_certificado"),
+        archivo: watch("archivo"),
+      };
 
-    const formData = new FormData();
-    formData.append('tipo_experiencia', formValues.tipo_experiencia);
-    formData.append('institucion_experiencia', formValues.institucion_experiencia);
-    formData.append('trabajo_actual', formValues.trabajo_actual);
-    formData.append('cargo', formValues.cargo);
-    formData.append('intensidad_horaria', formValues.intensidad_horaria.toString());
-    formData.append('fecha_inicio', formValues.fecha_inicio);
-    formData.append('fecha_finalizacion', formValues.fecha_finalizacion || "");
-    formData.append('fecha_expedicion_certificado', formValues.fecha_expedicion_certificado || "");
+      const formData = new FormData();
+      formData.append("tipo_experiencia", formValues.tipo_experiencia);
+      formData.append(
+        "institucion_experiencia",
+        formValues.institucion_experiencia
+      );
+      formData.append("trabajo_actual", formValues.trabajo_actual);
+      formData.append("cargo", formValues.cargo);
+      formData.append(
+        "intensidad_horaria",
+        formValues.intensidad_horaria.toString()
+      );
+      formData.append("fecha_inicio", formValues.fecha_inicio);
+      formData.append(
+        "fecha_finalizacion",
+        formValues.fecha_finalizacion || ""
+      );
+      formData.append(
+        "fecha_expedicion_certificado",
+        formValues.fecha_expedicion_certificado || ""
+      );
 
-    if (formValues.archivo && formValues.archivo[0]) {
-      formData.append('archivo', formValues.archivo[0]);
-    }
+      if (formValues.archivo && formValues.archivo[0]) {
+        formData.append("archivo", formValues.archivo[0]);
+      }
 
-    const token = Cookies.get("token");
-    if (!token) {
-      toast.error("No hay token de autenticación");
-      return;
-    }
+      const token = Cookies.get("token");
+      if (!token) throw new Error("No authentication token found");
+      const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+      const rol = decoded.rol;
 
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-experiencia`;
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_EXPERIENCIAS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_EXPERIENCIAS_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
 
-    const postPromise = axios.post(url, formData, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-      timeout: 20000
-    });
+      const postPromise = axiosInstance.post(endpoint, formData);
 
-    await toast.promise(postPromise, {
-      pending: "Enviando datos...",
-      success: {
-        render() {
-          // Redirige después de guardar
-          setTimeout(() => {
-            window.location.href = "/index";
-          }, 1500);
-          return "Datos guardados correctamente";
+      await toast.promise(postPromise, {
+        pending: "Enviando datos...",
+        success: {
+          render() {
+            // Redirige después de guardar
+            setTimeout(() => {
+              window.location.href = "/index";
+            }, 1500);
+            return "Datos guardados correctamente";
+          },
+          autoClose: 1500,
         },
-        autoClose: 1500,
-      },
-      error: {
-        render({ data }) {
-          const error = data;
-          if (axios.isAxiosError(error)) {
-            if (error.code === "ECONNABORTED") {
-              return "Tiempo de espera agotado. Intenta de nuevo.";
-            } else if (error.response) {
-              const errores = error.response.data?.errors;
-              if (errores && typeof errores === 'object') {
-                const mensajes = Object.values(errores)
-                  .flat()
-                  .join('\n');
-                return `Errores del formulario:\n${mensajes}`;
+        error: {
+          render({ data }) {
+            const error = data;
+            if (axios.isAxiosError(error)) {
+              if (error.code === "ECONNABORTED") {
+                return "Tiempo de espera agotado. Intenta de nuevo.";
+              } else if (error.response) {
+                const errores = error.response.data?.errors;
+                if (errores && typeof errores === "object") {
+                  const mensajes = Object.values(errores).flat().join("\n");
+                  return `Errores del formulario:\n${mensajes}`;
+                }
+                return (
+                  error.response.data?.message || "Error al guardar los datos."
+                );
+              } else if (error.request) {
+                return "No se recibió respuesta del servidor.";
               }
-              return error.response.data?.message || "Error al guardar los datos.";
-            } else if (error.request) {
-              return "No se recibió respuesta del servidor.";
             }
-          }
-          return "Error inesperado al guardar los datos.";
+            return "Error inesperado al guardar los datos.";
+          },
+          autoClose: 3000,
         },
-        autoClose: 3000,
-      },
-    });
-    }
-    catch (error) {
+      });
+    } catch (error) {
       console.error("Error al enviar el formulario:", error);
     } finally {
       setIsSubmitting(false);
@@ -165,7 +180,9 @@ const AgregarExperiencia = () => {
         <Link to={"/index"}>
           <ButtonRegresar />
         </Link>
-        <h3 className="font-bold text-3xl col-span-full">Agregar experiencia</h3>
+        <h3 className="font-bold text-3xl col-span-full">
+          Agregar experiencia
+        </h3>
       </div>
 
       <form
@@ -177,7 +194,7 @@ const AgregarExperiencia = () => {
           <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia" />
           <SelectForm
             id="tipo_experiencia"
-            register={register('tipo_experiencia')}
+            register={register("tipo_experiencia")}
             url="tipos-experiencia"
             data_url="tipo_experiencia"
           />
@@ -186,7 +203,10 @@ const AgregarExperiencia = () => {
 
         {/* Experiencia en universidad en universidad del cauca */}
         <div className="col-span-full">
-          <InputLabel htmlFor="experiencia_universidad" value="Experiencia en universidad autónoma" />
+          <InputLabel
+            htmlFor="experiencia_universidad"
+            value="Experiencia en universidad autónoma"
+          />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="experiencia-si"
@@ -210,7 +230,7 @@ const AgregarExperiencia = () => {
           <TextInput
             id="institucion_experiencia"
             placeholder="Institución"
-            {...register('institucion_experiencia')}
+            {...register("institucion_experiencia")}
           />
           <InputErrors errors={errors} name="institucion_experiencia" />
         </div>
@@ -218,11 +238,7 @@ const AgregarExperiencia = () => {
         {/* Cargo */}
         <div className="">
           <InputLabel htmlFor="cargo" value="Cargo" />
-          <TextInput
-            id="cargo"
-            placeholder="Cargo"
-            {...register('cargo')}
-          />
+          <TextInput id="cargo" placeholder="Cargo" {...register("cargo")} />
           <InputErrors errors={errors} name="cargo" />
         </div>
 
@@ -248,12 +264,15 @@ const AgregarExperiencia = () => {
 
         {/* Intensidad horaria */}
         <div className="">
-          <InputLabel htmlFor="intensidad_horaria" value="Intensidad horaria (Horas)" />
+          <InputLabel
+            htmlFor="intensidad_horaria"
+            value="Intensidad horaria (Horas)"
+          />
           <TextInput
             type="number"
             id="intensidad_horaria"
             placeholder="Intensidad horaria"
-            {...register('intensidad_horaria', { valueAsNumber: true })}
+            {...register("intensidad_horaria", { valueAsNumber: true })}
           />
           <InputErrors errors={errors} name="intensidad_horaria" />
         </div>
@@ -264,29 +283,35 @@ const AgregarExperiencia = () => {
           <TextInput
             type="date"
             id="fecha_inicio"
-            {...register('fecha_inicio')}
+            {...register("fecha_inicio")}
           />
           <InputErrors errors={errors} name="fecha_inicio" />
         </div>
         {watch("trabajo_actual") === "No" && (
           <div className="">
-            <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
+            <InputLabel
+              htmlFor="fecha_finalizacion"
+              value="Fecha de finalización"
+            />
             <TextInput
               type="date"
               id="fecha_finalizacion"
-              {...register('fecha_finalizacion')}
+              {...register("fecha_finalizacion")}
             />
             <InputErrors errors={errors} name="fecha_finalizacion" />
           </div>
         )}
 
         <div>
-          <InputLabel htmlFor="fecha_expedicion_certificado" value="Fecha de expedición del certificado" />
+          <InputLabel
+            htmlFor="fecha_expedicion_certificado"
+            value="Fecha de expedición del certificado"
+          />
           <TextInput
             type="date"
             id="fecha_expedicion_certificado"
             placeholder="Fecha expedicion de certificado"
-            {...register('fecha_expedicion_certificado')}
+            {...register("fecha_expedicion_certificado")}
           />
           <InputErrors errors={errors} name="fecha_expedicion_certificado" />
         </div>
@@ -294,10 +319,7 @@ const AgregarExperiencia = () => {
         {/* Archivo */}
         <div className="col-span-full">
           <InputLabel htmlFor="archivo" value="Archivo" />
-          <AdjuntarArchivo
-            id="archivo"
-            register={register('archivo')}
-          />
+          <AdjuntarArchivo id="archivo" register={register("archivo")} />
           <InputErrors errors={errors} name="archivo" />
           <MostrarArchivo file={existingFile} />
         </div>
@@ -311,7 +333,6 @@ const AgregarExperiencia = () => {
         </div>
       </form>
     </div>
-
   );
 };
 

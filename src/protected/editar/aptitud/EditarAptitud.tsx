@@ -12,6 +12,8 @@ import TextInput from "../../../componentes/formularios/TextInput";
 import TextArea from "../../../componentes/formularios/TextArea";
 import InputErrors from "../../../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
+import { RolesValidos } from "../../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   nombre_aptitud: string;
@@ -19,6 +21,11 @@ type Inputs = {
 };
 
 const EditarAptitud = () => {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
+
   const { id } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -34,12 +41,16 @@ const EditarAptitud = () => {
   useEffect(() => {
     const fetchAptitud = async () => {
       try {
-        const response = await axiosInstance.get(
-          `/aspirante/obtener-aptitud/${id}`,
-          {
-            headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-          }
-        );
+        const ENDPOINTS = {
+          Aspirante: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ID_ASPIRANTE
+          }`,
+          Docente: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ID_DOCENTE
+          }`,
+        };
+        const endpoint = ENDPOINTS[rol];
+        const response = await axiosInstance.get(`${endpoint}/${id}`);
 
         if (response.data?.aptitud) {
           setValue("nombre_aptitud", response.data.aptitud.nombre_aptitud);
@@ -60,23 +71,27 @@ const EditarAptitud = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setIsSubmitting(true);
     try {
-      await toast.promise(
-        axiosInstance.put(`/aspirante/actualizar-aptitud/${id}`, data, {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-        }),
-        {
-          pending: "Actualizando aptitud...",
-          success: {
-            render() {
-              setTimeout(() => {
-                window.location.href = "/index";
-              }, 1500);
-              return "Aptitud actualizada correctamente";
-            },
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_APTITUDES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      await toast.promise(axiosInstance.put(`${endpoint}/${id}`, data), {
+        pending: "Actualizando aptitud...",
+        success: {
+          render() {
+            setTimeout(() => {
+              window.location.href = "/index";
+            }, 1500);
+            return "Aptitud actualizada correctamente";
           },
-          error: "Error al actualizar la aptitud",
-        }
-      );
+        },
+        error: "Error al actualizar la aptitud",
+      });
     } catch (error) {
       console.error("Error en la actualización:", error);
     } finally {

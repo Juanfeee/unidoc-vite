@@ -6,9 +6,17 @@ import Cookies from "js-cookie";
 import { Link } from "react-router";
 import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
+import { Puntaje } from "../../componentes/formularios/puntaje";
+import { RolesValidos } from "../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 const InformacionPersonalDocente = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
 
   const [datos, setDatos] = useState<any>();
   const [municipio, setMunicipio] = useState<any>([]);
@@ -19,12 +27,16 @@ const InformacionPersonalDocente = () => {
   const fetchProfileImage = async () => {
     try {
       // 2. Hacer petición al servidor
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`,
-        {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-        }
-      );
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       const documentos = response.data.fotoPerfil?.documentos_foto_perfil;
 
@@ -73,10 +85,16 @@ const InformacionPersonalDocente = () => {
       if (cachedAptitudes) {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
-
-      const response = await axiosInstance.get("/aspirante/obtener-aptitudes", {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-      });
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       if (response.data?.aptitudes) {
         setAptitudes(response.data.aptitudes);
@@ -90,6 +108,9 @@ const InformacionPersonalDocente = () => {
     }
   };
 
+  // Obtener puntaje dependiendo del rol si es docente
+
+  // Cargar datos al iniciar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -149,11 +170,11 @@ const InformacionPersonalDocente = () => {
               />
             </div>
 
-            {/* <div className="flex sm:justify-end">
-              <Puntaje
-                value="0.0"
-              />
-            </div> */}
+            {rol === "Docente" && (
+              <div className="flex sm:justify-end">
+                <Puntaje value="0.0" />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 col-span-full gap-x-8 gap-y-6 border-t-1 py-4 border-gray-200">

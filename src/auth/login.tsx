@@ -12,6 +12,7 @@ import InputErrors from "../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../componentes/formularios/ButtonPrimary";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logoClaro from "../assets/images/logoClaro.jpg";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   email: string;
@@ -44,24 +45,22 @@ const Login = () => {
       pending: "Iniciando sesión...",
       success: {
         render({ data }) {
-          const { token, rol } = data.data;
+          const { token } = data.data;
 
           Cookies.set("token", token, {
             sameSite: "Strict",
             path: "/",
-            expires: 1
+            expires: 1,
           });
 
-          Cookies.set("rol", rol, {
-            // Guardar el rol en cookies
-            sameSite: "Strict",
-            path: "/",
-            expires: 1
-          });
+          // Decodifica el token para obtener el rol
+          const decoded = jwtDecode<{ rol: string }>(token);
+
+          const rol = decoded.rol;
 
           // Redirige después de un pequeño delay dependiendo su rol
           setTimeout(() => {
-            if (rol === "Aspirante") {
+            if (rol === "Aspirante" || rol === "Docente") {
               navigate("/index");
             } else if (rol === "Administrador") {
               navigate("/dashboard");
@@ -117,7 +116,10 @@ const Login = () => {
             tu correo y contraseña
           </h3>
         </div>
-        <form className="flex flex-col gap-6 w-full" onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="flex flex-col gap-6 w-full"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="">
             <InputLabel htmlFor="email" value="Email" />
             <TextInput

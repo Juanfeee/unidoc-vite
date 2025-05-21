@@ -8,33 +8,49 @@ import axios from "axios";
 import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
 import InputErrors from "../../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
+import { RolesValidos } from "../../types/roles";
 
 type Inputs = {
   archivo: FileList;
 };
 
 const FotoPerfil = () => {
-
+  const rol = Cookies.get("rol") as RolesValidos;
   //navigate = useNavigate();
-  
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(null);
+  const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
+    null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<Inputs>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
   const archivoWatch = watch("archivo");
 
   // Cargar y manejar imágenes
   useEffect(() => {
     const loadProfileImage = async () => {
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
       try {
-        const { data } = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`, {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-        });
+        const { data } = await axiosInstance.get(endpoint);
 
-        const imageUrl = data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
+        const imageUrl =
+          data?.fotoPerfil?.documentos_foto_perfil?.[0]?.archivo_url;
         if (imageUrl) {
           setCurrentProfileImage(imageUrl);
           setProfileImage(imageUrl);
@@ -50,7 +66,8 @@ const FotoPerfil = () => {
   useEffect(() => {
     if (archivoWatch?.[0]) {
       const reader = new FileReader();
-      reader.onload = (e) => e.target?.result && setProfileImage(e.target.result as string);
+      reader.onload = (e) =>
+        e.target?.result && setProfileImage(e.target.result as string);
       reader.readAsDataURL(archivoWatch[0]);
     }
   }, [archivoWatch]);
@@ -62,27 +79,25 @@ const FotoPerfil = () => {
     formData.append("archivo", data.archivo[0]);
 
     try {
-      await toast.promise(
-        axiosInstance.post(`${import.meta.env.VITE_API_URL}/aspirante/crear-foto-perfil`, formData, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-            "Content-Type": "multipart/form-data",
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_FOTO_PERFIL_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_FOTO_PERFIL_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      await toast.promise(axiosInstance.post(endpoint, formData), {
+        pending: "Enviando datos...",
+        success: {
+          render() {
+            setTimeout(() => (window.location.href = "/index"), 1500);
+            return "Foto de perfil actualizada correctamente";
           },
-          timeout: 10000,
-        }),
-        {
-          pending: "Enviando datos...",
-          success: {
-            render() {
-              setTimeout(() =>
-                
-                window.location.href = "/index", 1500);
-              return "Foto de perfil actualizada correctamente";
-            },
-          },
-          error: handleApiError("guardar la imagen")
-        }
-      );
+        },
+        error: handleApiError("guardar la imagen"),
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -93,10 +108,17 @@ const FotoPerfil = () => {
     setIsDeleting(true);
 
     try {
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_FOTO_PERFIL_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_FOTO_PERFIL_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
       await toast.promise(
-        axiosInstance.delete(`${import.meta.env.VITE_API_URL}/aspirante/eliminar-foto-perfil`, {
-          headers: { Authorization: `Bearer ${Cookies.get("token")}` }
-        }),
+        axiosInstance.delete(endpoint),
         {
           pending: "Eliminando foto...",
           success: {
@@ -107,7 +129,7 @@ const FotoPerfil = () => {
               return "Foto eliminada correctamente";
             },
           },
-          error: handleApiError("eliminar la imagen")
+          error: handleApiError("eliminar la imagen"),
         }
       );
     } finally {
@@ -129,13 +151,15 @@ const FotoPerfil = () => {
         return "Sin respuesta del servidor";
       }
       return "Error inesperado";
-    }
+    },
   });
 
   return (
     <form className="" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-center mb-8">
-        <Link to="/index" className="mr-4"><ButtonRegresar /></Link>
+        <Link to="/index" className="mr-4">
+          <ButtonRegresar />
+        </Link>
         <h1 className="text-2xl font-bold text-gray-800">Foto de Perfil</h1>
       </div>
 
@@ -144,14 +168,19 @@ const FotoPerfil = () => {
           className={`w-40 h-40 rounded-full overflow-hidden border-4 border-blue-500 shadow-lg mb-4 ${
             !currentProfileImage ? "cursor-pointer" : "cursor-default"
           }`}
-          onClick={() => !currentProfileImage && document.getElementById("archivo")?.click()}
+          onClick={() =>
+            !currentProfileImage && document.getElementById("archivo")?.click()
+          }
         >
           {profileImage ? (
             <img
               src={profileImage}
               alt="Vista previa"
               className="w-full h-full object-cover"
-              onError={(e) => (e.target as HTMLImageElement).src = "https://via.placeholder.com/150"}
+              onError={(e) =>
+                ((e.target as HTMLImageElement).src =
+                  "https://via.placeholder.com/150")
+              }
             />
           ) : (
             <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -171,7 +200,9 @@ const FotoPerfil = () => {
               accept="image/jpeg, image/png, image/webp"
               className="hidden"
             />
-            <p className="text-sm text-gray-500 mt-2">Formatos soportados: JPEG, PNG, WEBP (Max. 2MB)</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Formatos soportados: JPEG, PNG, WEBP (Max. 2MB)
+            </p>
             <InputErrors errors={errors} name="archivo" />
           </>
         )}

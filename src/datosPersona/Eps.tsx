@@ -16,6 +16,8 @@ import { AdjuntarArchivo } from "../componentes/formularios/AdjuntarArchivo";
 import { MostrarArchivo } from "../componentes/formularios/MostrarArchivo";
 import { useArchivoPreview } from "../hooks/ArchivoPreview";
 import axiosInstance from "../utils/axiosConfig";
+import { RolesValidos } from "../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   tipo_afiliacion: string;
@@ -25,10 +27,15 @@ type Inputs = {
   fecha_finalizacion_afiliacion?: string;
   tipo_afiliado: string;
   numero_afiliado?: string;
-  archivo?: FileList
-}
+  archivo?: FileList;
+};
 
 export const EpsFormulario = () => {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
+
   const [isEpsRegistered, setIsEpsRegistered] = useState(false);
 
   const schema = isEpsRegistered ? epsSchemaUpdate : epsSchema;
@@ -48,17 +55,19 @@ export const EpsFormulario = () => {
 
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
-
   // Traer los datos del usuario al cargar el componente
   const fetchEpsData = async () => {
-    const URL = `${import.meta.env.VITE_API_URL}/aspirante/obtener-eps`;
     try {
-      const response = await axios.get(URL, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_EPS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_EPS_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       const data = response.data.eps;
       if (data) {
@@ -66,8 +75,14 @@ export const EpsFormulario = () => {
         setValue("tipo_afiliacion", data.tipo_afiliacion || "");
         setValue("nombre_eps", data.nombre_eps || "");
         setValue("estado_afiliacion", data.estado_afiliacion || "");
-        setValue("fecha_afiliacion_efectiva", data.fecha_afiliacion_efectiva || "");
-        setValue("fecha_finalizacion_afiliacion", data.fecha_finalizacion_afiliacion || "");
+        setValue(
+          "fecha_afiliacion_efectiva",
+          data.fecha_afiliacion_efectiva || ""
+        );
+        setValue(
+          "fecha_finalizacion_afiliacion",
+          data.fecha_finalizacion_afiliacion || ""
+        );
         setValue("tipo_afiliado", data.tipo_afiliado || "");
         setValue("numero_afiliado", data.numero_afiliado || "");
 
@@ -89,8 +104,7 @@ export const EpsFormulario = () => {
 
   useEffect(() => {
     fetchEpsData();
-  }
-    , []);
+  }, []);
 
   // Enviar los datos del formulario
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
@@ -98,8 +112,14 @@ export const EpsFormulario = () => {
     formData.append("tipo_afiliacion", data.tipo_afiliacion);
     formData.append("nombre_eps", data.nombre_eps);
     formData.append("estado_afiliacion", data.estado_afiliacion);
-    formData.append("fecha_afiliacion_efectiva", data.fecha_afiliacion_efectiva);
-    formData.append("fecha_finalizacion_afiliacion", data.fecha_finalizacion_afiliacion || "");
+    formData.append(
+      "fecha_afiliacion_efectiva",
+      data.fecha_afiliacion_efectiva
+    );
+    formData.append(
+      "fecha_finalizacion_afiliacion",
+      data.fecha_finalizacion_afiliacion || ""
+    );
     formData.append("tipo_afiliado", data.tipo_afiliado);
     formData.append("numero_afiliado", data.numero_afiliado || "");
 
@@ -111,31 +131,34 @@ export const EpsFormulario = () => {
     if (isEpsRegistered) {
       formData.append("_method", "PUT");
     }
-    const token = Cookies.get("token");
-    const url = isEpsRegistered
-      ? `${import.meta.env.VITE_API_URL}/aspirante/actualizar-eps` // Ruta para actualizar
-      : `${import.meta.env.VITE_API_URL}/aspirante/crear-eps`; // Ruta para crear
+    const ENDPOINTS_POST = {
+      Aspirante: {
+        crear: import.meta.env.VITE_ENDPOINT_CREAR_EPS_ASPIRANTE,
+        actualizar: import.meta.env.VITE_ENDPOINT_ACTUALIZAR_EPS_ASPIRANTE,
+      },
+      Docente: {
+        crear: import.meta.env.VITE_ENDPOINT_CREAR_EPS_DOCENTE,
+        actualizar: import.meta.env.VITE_ENDPOINT_ACTUALIZAR_EPS_DOCENTE,
+      },
+    };
+
+    const url = `${import.meta.env.VITE_API_URL}${
+      isEpsRegistered
+        ? ENDPOINTS_POST[rol].actualizar
+        : ENDPOINTS_POST[rol].crear
+    }`;
 
     try {
-      await toast.promise(
-        axiosInstance.post(url, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+      await toast.promise(axiosInstance.post(url, formData), {
+        pending: "Enviando datos...",
+        success: {
+          render() {
+            setIsEpsRegistered(true); // Actualiza el estado después de guardar
+            return "Datos guardados correctamente";
           },
-          timeout: 20000,
-        }),
-        {
-          pending: "Enviando datos...",
-          success: {
-            render() {
-              setIsEpsRegistered(true); // Actualiza el estado después de guardar
-              return "Datos guardados correctamente";
-            }
-          },
-          error: "Error al guardar los datos",
-        }
-      );
+        },
+        error: "Error al guardar los datos",
+      });
     } catch (error) {
       console.error("Error al enviar el formulario:", error);
     }
@@ -146,7 +169,10 @@ export const EpsFormulario = () => {
     <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Formulario EPS</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+      >
         {/* Tipo de afiliación */}
         <div>
           <InputLabel htmlFor="tipo_afiliacion" value="Tipo de afiliación" />
@@ -162,13 +188,20 @@ export const EpsFormulario = () => {
         {/* Nombre de la EPS */}
         <div>
           <InputLabel htmlFor="nombre_eps" value="Nombre EPS" />
-          <TextInput id="nombre_eps" {...register("nombre_eps")} placeholder="Nombre de EPS..." />
+          <TextInput
+            id="nombre_eps"
+            {...register("nombre_eps")}
+            placeholder="Nombre de EPS..."
+          />
           <InputErrors errors={errors} name="nombre_eps" />
         </div>
 
         {/* Estado de afiliación */}
         <div>
-          <InputLabel htmlFor="estado_afiliacion" value="Estado de afiliación" />
+          <InputLabel
+            htmlFor="estado_afiliacion"
+            value="Estado de afiliación"
+          />
           <SelectForm
             id="estado_afiliacion"
             register={register("estado_afiliacion")}
@@ -180,7 +213,10 @@ export const EpsFormulario = () => {
 
         {/* Fecha de afiliación efectiva */}
         <div>
-          <InputLabel htmlFor="fecha_afiliacion_efectiva" value="Fecha afiliación efectiva" />
+          <InputLabel
+            htmlFor="fecha_afiliacion_efectiva"
+            value="Fecha afiliación efectiva"
+          />
           <TextInput
             type="date"
             id="fecha_afiliacion_efectiva"
@@ -191,7 +227,10 @@ export const EpsFormulario = () => {
 
         {/* Fecha finalización */}
         <div>
-          <InputLabel htmlFor="fecha_finalizacion_afiliacion" value="Fecha finalización afiliación" />
+          <InputLabel
+            htmlFor="fecha_finalizacion_afiliacion"
+            value="Fecha finalización afiliación"
+          />
           <TextInput
             type="date"
             id="fecha_finalizacion_afiliacion"

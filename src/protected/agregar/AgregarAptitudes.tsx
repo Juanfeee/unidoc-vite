@@ -13,6 +13,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
+import { RolesValidos } from "../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   nombre_aptitud: string;
@@ -36,54 +38,54 @@ const AgregarAptitudes = () => {
       formData.append("descripcion_aptitud", data.descripcion_aptitud);
 
       const token = Cookies.get("token");
-      const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-aptitud`;
+      if (!token) throw new Error("No authentication token found");
+      const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+      const rol = decoded.rol;
 
-      await toast.promise(
-        axiosInstance.post(url, formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data",
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_APTITUDES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+
+      await toast.promise(axiosInstance.post(endpoint, formData), {
+        pending: "Enviando datos...",
+        success: {
+          render() {
+            setTimeout(() => {
+              window.location.href = "/index";
+            }, 1500);
+            return "Datos guardados correctamente";
           },
-          timeout: 10000,
-        }),
-        {
-          pending: "Enviando datos...",
-          success: {
-            render() {
-              setTimeout(() => {
-                window.location.href = "/index";
-              }, 1500);
-              return "Datos guardados correctamente";
-            },
-            autoClose: 1500,
-          },
-          error: {
-            render({ data }) {
-              const error = data;
-              if (axios.isAxiosError(error)) {
-                if (error.code === "ECONNABORTED") {
-                  return "Tiempo de espera agotado. Intenta de nuevo.";
-                } else if (error.response) {
-                  const errores = error.response.data?.errors;
-                  if (errores && typeof errores === "object") {
-                    return `Errores: ${Object.values(errores)
-                      .flat()
-                      .join(", ")}`;
-                  }
-                  return (
-                    error.response.data?.message ||
-                    "Error al guardar los datos."
-                  );
-                } else if (error.request) {
-                  return "No se recibió respuesta del servidor.";
+          autoClose: 1500,
+        },
+        error: {
+          render({ data }) {
+            const error = data;
+            if (axios.isAxiosError(error)) {
+              if (error.code === "ECONNABORTED") {
+                return "Tiempo de espera agotado. Intenta de nuevo.";
+              } else if (error.response) {
+                const errores = error.response.data?.errors;
+                if (errores && typeof errores === "object") {
+                  return `Errores: ${Object.values(errores).flat().join(", ")}`;
                 }
+                return (
+                  error.response.data?.message || "Error al guardar los datos."
+                );
+              } else if (error.request) {
+                return "No se recibió respuesta del servidor.";
               }
-              return "Error inesperado al guardar los datos.";
-            },
-            autoClose: 3000,
+            }
+            return "Error inesperado al guardar los datos.";
           },
-        }
-      );
+          autoClose: 3000,
+        },
+      });
     } catch (error) {
       console.error("Error en el envío:", error);
     } finally {
@@ -92,12 +94,11 @@ const AgregarAptitudes = () => {
   };
 
   return (
-      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md sm:w-xl max-w-4xl gap-y-4">
-        <div className="flex gap-x-4 col-span-full items-center">
-
-          <Link to={"/index"}>
-            <ButtonRegresar />
-          </Link>
+    <div className="flex flex-col bg-white p-8 rounded-xl shadow-md sm:w-xl max-w-4xl gap-y-4">
+      <div className="flex gap-x-4 col-span-full items-center">
+        <Link to={"/index"}>
+          <ButtonRegresar />
+        </Link>
         <h4 className="font-bold text-xl">Agregar aptitud</h4>
       </div>
       <form

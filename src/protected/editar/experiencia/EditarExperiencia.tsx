@@ -17,6 +17,8 @@ import { AdjuntarArchivo } from "../../../componentes/formularios/AdjuntarArchiv
 import { LabelRadio } from "../../../componentes/formularios/LabelRadio";
 import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
 import { MostrarArchivo } from "../../../componentes/formularios/MostrarArchivo";
+import { RolesValidos } from "../../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   tipo_experiencia: string;
@@ -32,7 +34,10 @@ type Inputs = {
 };
 
 const EditarExperiencia = () => {
-
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -47,11 +52,10 @@ const EditarExperiencia = () => {
     resolver: zodResolver(experienciaSchemaUpdate),
     defaultValues: {
       experiencia_universidad: "No",
-
     },
   });
 
-  const archivoValue = watch('archivo')
+  const archivoValue = watch("archivo");
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
   const experiencia_universidad = watch("experiencia_universidad");
 
@@ -62,101 +66,116 @@ const EditarExperiencia = () => {
       setValue("institucion_experiencia", "");
     }
   }, [experiencia_universidad, setValue]);
+
   useEffect(() => {
+    const fetchExperiencia = async () => {
+      try {
+        const ENDPOINTS = {
+          Aspirante: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_EXPERIENCIAS_ID_ASPIRANTE
+          }`,
+          Docente: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_EXPERIENCIAS_ID_DOCENTE
+          }`,
+        };
+        const endpoint = ENDPOINTS[rol];
+        const response = await axiosInstance.get(`${endpoint}/${id}`);
+        if (response.data?.experiencia) {
+          const data = response.data.experiencia;
+          setValue("tipo_experiencia", data.tipo_experiencia);
+          setValue("institucion_experiencia", data.institucion_experiencia);
+          setValue("trabajo_actual", data.trabajo_actual);
+          setValue("cargo", data.cargo);
+          setValue("intensidad_horaria", data.intensidad_horaria);
+          setValue("fecha_inicio", data.fecha_inicio);
+          setValue("fecha_finalizacion", data.fecha_finalizacion ?? "");
 
-    const URL = `${import.meta.env.VITE_API_URL}/aspirante/obtener-experiencia/${id}`;
-
-    axiosInstance
-      .get(URL, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      })
-      .then((response) => {
-        const data = response.data.experiencia;
-        setValue("tipo_experiencia", data.tipo_experiencia);
-        setValue("institucion_experiencia", data.institucion_experiencia);
-        setValue("trabajo_actual", data.trabajo_actual);
-        setValue("cargo", data.cargo);
-        setValue("intensidad_horaria", data.intensidad_horaria);
-        setValue("fecha_inicio", data.fecha_inicio);
-        setValue("fecha_finalizacion", data.fecha_finalizacion ?? "");
-
-        if (data.documentos_experiencia && data.documentos_experiencia.length > 0) {
-          const archivo = data.documentos_experiencia[0];
-          setExistingFile({
-            url: archivo.archivo_url,
-            name: archivo.archivo.split("/").pop() || "Archivo existente",
-          });
+          if (
+            data.documentos_experiencia &&
+            data.documentos_experiencia.length > 0
+          ) {
+            const archivo = data.documentos_experiencia[0];
+            setExistingFile({
+              url: archivo.archivo_url,
+              name: archivo.archivo.split("/").pop() || "Archivo existente",
+            });
+          }
         }
-      }).catch((error) => {
-        console.error("Error al obtener la experiencia:", error);
-      });
-  }, [setValue]);
-
+      } catch {
+        console.log("");
+      }
+    };
+    fetchExperiencia();
+  }, [id, setValue]);
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("_method", "PUT");
-    formData.append("tipo_experiencia", data.tipo_experiencia);
-    formData.append("institucion_experiencia", data.institucion_experiencia);
-    formData.append("trabajo_actual", data.trabajo_actual);
-    formData.append("cargo", data.cargo);
-    formData.append("intensidad_horaria", data.intensidad_horaria.toString());
-    formData.append("fecha_inicio", data.fecha_inicio);
-    formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
-    if (data.archivo && data.archivo.length > 0) {
-      formData.append("archivo", data.archivo[0]);
-    }
+    try {
+      const formData = new FormData();
+      formData.append("_method", "PUT");
+      formData.append("tipo_experiencia", data.tipo_experiencia);
+      formData.append("institucion_experiencia", data.institucion_experiencia);
+      formData.append("trabajo_actual", data.trabajo_actual);
+      formData.append("cargo", data.cargo);
+      formData.append("intensidad_horaria", data.intensidad_horaria.toString());
+      formData.append("fecha_inicio", data.fecha_inicio);
+      formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
+      if (data.archivo && data.archivo.length > 0) {
+        formData.append("archivo", data.archivo[0]);
+      }
 
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_EXPERIENCIAS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_EXPERIENCIAS_DOCENTE
+        }`,
+      };
 
-    const token = Cookies.get("token");
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/actualizar-experiencia/${id}`;
-
-    const putPromise = axiosInstance.post(url, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 10000,
-    });
-
-    toast.promise(putPromise, {
-      pending: "Actualizando datos...",
-      success: {
-        render() {
-          setTimeout(() => {
-            window.location.href = "/index";
-          }, 1500);
-          return "Datos actualizados correctamente";
+      const endpoint = ENDPOINTS[rol];
+      const putPromise = axiosInstance.post(`${endpoint}/${id}`, formData);
+      toast.promise(putPromise, {
+        pending: "Actualizando datos...",
+        success: {
+          render() {
+            setTimeout(() => {
+              window.location.href = "/index";
+            }, 1500);
+            return "Datos actualizados correctamente";
+          },
+          autoClose: 1500,
         },
-        autoClose: 1500,
-      },
-      error: {
-        render({ data }) {
-          const error = data;
-          if (axios.isAxiosError(error)) {
-            if (error.code === "ECONNABORTED") {
-              return "Tiempo de espera agotado. Intenta de nuevo.";
-            } else if (error.response) {
-              const errores = error.response.data?.errors;
-              if (errores && typeof errores === "object") {
-                const mensajes = Object.values(errores)
-                  .flat()
-                  .join("\n");
-                return `Errores del formulario:\n${mensajes}`;
+        error: {
+          render({ data }) {
+            const error = data;
+            if (axios.isAxiosError(error)) {
+              if (error.code === "ECONNABORTED") {
+                return "Tiempo de espera agotado. Intenta de nuevo.";
+              } else if (error.response) {
+                const errores = error.response.data?.errors;
+                if (errores && typeof errores === "object") {
+                  const mensajes = Object.values(errores).flat().join("\n");
+                  return `Errores del formulario:\n${mensajes}`;
+                }
+                return (
+                  error.response.data?.message ||
+                  "Error al actualizar los datos."
+                );
+              } else if (error.request) {
+                return "No se recibió respuesta del servidor.";
               }
-              return error.response.data?.message || "Error al actualizar los datos.";
-            } else if (error.request) {
-              return "No se recibió respuesta del servidor.";
             }
-          }
-          return "Error inesperado al actualizar los datos.";
+            return "Error inesperado al actualizar los datos.";
+          },
+          autoClose: 3000,
         },
-        autoClose: 3000,
-      },
-    });
+      });
+    } catch (error) {
+      console.error("Error en la actualización:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const trabajo_actual = watch("trabajo_actual");
@@ -166,7 +185,6 @@ const EditarExperiencia = () => {
     }
   }, [trabajo_actual, setValue]);
   return (
-    
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
       <div className="flex gap-x-4 col-span-full items-center">
         <Link to={"/index"}>
@@ -184,7 +202,7 @@ const EditarExperiencia = () => {
           <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia" />
           <SelectForm
             id="tipo_experiencia"
-            register={register('tipo_experiencia')}
+            register={register("tipo_experiencia")}
             url="tipos-experiencia"
             data_url="tipo_experiencia"
           />
@@ -193,7 +211,10 @@ const EditarExperiencia = () => {
 
         {/* Experiencia en universidad en universidad del cauca */}
         <div className="col-span-full">
-          <InputLabel htmlFor="experiencia_universidad" value="Experiencia en universidad autónoma" />
+          <InputLabel
+            htmlFor="experiencia_universidad"
+            value="Experiencia en universidad autónoma"
+          />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="experiencia-si"
@@ -217,7 +238,7 @@ const EditarExperiencia = () => {
           <TextInput
             id="institucion_experiencia"
             placeholder="Institución"
-            {...register('institucion_experiencia')}
+            {...register("institucion_experiencia")}
           />
           <InputErrors errors={errors} name="institucion_experiencia" />
         </div>
@@ -225,11 +246,7 @@ const EditarExperiencia = () => {
         {/* Cargo */}
         <div className="">
           <InputLabel htmlFor="cargo" value="Cargo" />
-          <TextInput
-            id="cargo"
-            placeholder="Cargo"
-            {...register('cargo')}
-          />
+          <TextInput id="cargo" placeholder="Cargo" {...register("cargo")} />
           <InputErrors errors={errors} name="cargo" />
         </div>
 
@@ -255,12 +272,15 @@ const EditarExperiencia = () => {
 
         {/* Intensidad horaria */}
         <div className="">
-          <InputLabel htmlFor="intensidad_horaria" value="Intensidad horaria (Horas)" />
+          <InputLabel
+            htmlFor="intensidad_horaria"
+            value="Intensidad horaria (Horas)"
+          />
           <TextInput
             type="number"
             id="intensidad_horaria"
             placeholder="Intensidad horaria"
-            {...register('intensidad_horaria', { valueAsNumber: true })}
+            {...register("intensidad_horaria", { valueAsNumber: true })}
           />
           <InputErrors errors={errors} name="intensidad_horaria" />
         </div>
@@ -271,30 +291,29 @@ const EditarExperiencia = () => {
           <TextInput
             type="date"
             id="fecha_inicio"
-            {...register('fecha_inicio')}
+            {...register("fecha_inicio")}
           />
           <InputErrors errors={errors} name="fecha_inicio" />
         </div>
         {watch("trabajo_actual") === "No" && (
           <div className="">
-            <InputLabel htmlFor="fecha_finalizacion" value="Fecha de finalización" />
+            <InputLabel
+              htmlFor="fecha_finalizacion"
+              value="Fecha de finalización"
+            />
             <TextInput
               type="date"
               id="fecha_finalizacion"
-              {...register('fecha_finalizacion')}
+              {...register("fecha_finalizacion")}
             />
             <InputErrors errors={errors} name="fecha_finalizacion" />
           </div>
         )}
 
-
         {/* Archivo */}
         <div className="col-span-full">
           <InputLabel htmlFor="archivo" value="Archivo" />
-          <AdjuntarArchivo
-            id="archivo"
-            register={register('archivo')}
-          />
+          <AdjuntarArchivo id="archivo" register={register("archivo")} />
           <InputErrors errors={errors} name="archivo" />
           <MostrarArchivo file={existingFile} />
         </div>
@@ -308,7 +327,6 @@ const EditarExperiencia = () => {
         </div>
       </form>
     </div>
-
   );
 };
 

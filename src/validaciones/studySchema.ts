@@ -103,8 +103,7 @@ export const studySchema = z
           return fecha < hoy;
         },
         {
-          message:
-            "La fecha no puede ser hoy ni una fecha futura",
+          message: "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
 
@@ -214,12 +213,31 @@ export const studySchemaUpdate = z
       }),
     resolucion_convalidacion: z
       .string()
-      .min(7, { message: "Minimo 7 caracteres" })
-      .max(100, { message: "Campo demasiado largo" })
-      .regex(regexSinEmojis, {
-        message: "No se permiten emojis ni caracteres especiales",
-      })
-      .optional(),
+      .optional()
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length >= 7,
+        {
+          message: "Debe tener mínimo 7 caracter.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null || val === undefined || val === "" || val.length <= 100,
+        {
+          message: "Debe tener máximo 100 caracteres.",
+        }
+      )
+      .refine(
+        (val) =>
+          val === null ||
+          val === undefined ||
+          val === "" ||
+          regexSinEmojis.test(val),
+        {
+          message: "No se permiten emojis ni caracteres especiales.",
+        }
+      ),
 
     titulo_convalidado: z.enum(["Si", "No"], {
       errorMap: () => ({ message: "Seleccione una opcion" }),
@@ -268,8 +286,7 @@ export const studySchemaUpdate = z
           return fecha < hoy;
         },
         {
-          message:
-            "La fecha no puede ser hoy ni una fecha futura",
+          message: "La fecha no puede ser hoy ni una fecha futura",
         }
       ),
 
@@ -342,4 +359,3 @@ export const studySchemaUpdate = z
       path: ["fecha_grado"],
     }
   );
-  

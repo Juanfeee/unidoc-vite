@@ -5,7 +5,9 @@ import { useEffect, useState } from 'react';
 import AgregarLink from '../../../componentes/ButtonAgregar';
 import EstadoDocumento from '../../../componentes/Estado';
 import { BeakerIcons } from '../../../assets/icons/Iconos';
-
+import Cookies from 'js-cookie';
+import { RolesValidos } from '../../../types/roles';
+import { jwtDecode } from 'jwt-decode';
 
 const FormacionProduccion = () => {
 
@@ -19,8 +21,23 @@ const FormacionProduccion = () => {
         setProduccion(JSON.parse(cachedData));
       }
 
-      // 2. Hacer petición al servidor
-      const response = await axiosInstance.get('/aspirante/obtener-producciones');
+        const token = Cookies.get("token");
+        if (!token) throw new Error("No authentication token found");
+        const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+        const rol = decoded.rol;
+
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_PRODUCCIONES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_PRODUCCIONES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+
+      const response = await axiosInstance.get(endpoint);
+
       // 3. Actualizar estado y sessionStorage
       if (response.data?.producciones) {
         const producciones = response.data.producciones;

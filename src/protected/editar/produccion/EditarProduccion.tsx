@@ -16,6 +16,8 @@ import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
 import axiosInstance from "../../../utils/axiosConfig";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { RolesValidos } from "../../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   titulo: string;
@@ -28,6 +30,10 @@ type Inputs = {
 };
 
 const EditarProduccion = () => {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { id } = useParams();
 
@@ -43,25 +49,29 @@ const EditarProduccion = () => {
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
   const fetchProduccionAcademica = async () => {
-    const URL = import.meta.env.VITE_API_URL;
-
     try {
-      const response = await axiosInstance.get(
-        `${URL}/aspirante/obtener-produccion/${id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
+      const URL = `${import.meta.env.VITE_API_URL}`;
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_PRODUCCIONES_ID_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_PRODUCCIONES_ID_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(`${endpoint}/${id}`);
+
       const produccionAcademica = response.data.produccion;
 
       const respAmbito = await axiosInstance.get(
         `${URL}/tiposProduccionAcademica/ambito-divulgacion-completo/${produccionAcademica.ambito_divulgacion_id}`
       );
 
-      setValue("productos_academicos_id", respAmbito.data.producto_academico_id);
+      setValue(
+        "productos_academicos_id",
+        respAmbito.data.producto_academico_id
+      );
       await new Promise((resolve) => setTimeout(resolve, 500));
       setValue("ambito_divulgacion_id", respAmbito.data.id_ambito_divulgacion);
       setValue("titulo", produccionAcademica.titulo);
@@ -90,70 +100,74 @@ const EditarProduccion = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
     setIsSubmitting(true);
-    const formData = new FormData();
-    formData.append("_method", "PUT");
-    formData.append(
-      "ambito_divulgacion_id",
-      data.ambito_divulgacion_id.toString()
-    );
-    formData.append("titulo", data.titulo);
-    formData.append("numero_autores", data.numero_autores.toString());
-    formData.append("medio_divulgacion", data.medio_divulgacion);
-    formData.append("fecha_divulgacion", data.fecha_divulgacion);
-    
-    if (data.archivo && data.archivo.length > 0) {
-      formData.append("archivo", data.archivo[0]);
-    }
+    try {
+      const formData = new FormData();
+      formData.append("_method", "PUT");
+      formData.append(
+        "ambito_divulgacion_id",
+        data.ambito_divulgacion_id.toString()
+      );
+      formData.append("titulo", data.titulo);
+      formData.append("numero_autores", data.numero_autores.toString());
+      formData.append("medio_divulgacion", data.medio_divulgacion);
+      formData.append("fecha_divulgacion", data.fecha_divulgacion);
 
-    const token = Cookies.get("token");
-    const url = `${
-      import.meta.env.VITE_API_URL
-    }/aspirante/actualizar-produccion/${id}`;
+      if (data.archivo && data.archivo.length > 0) {
+        formData.append("archivo", data.archivo[0]);
+      }
 
-    const putPromise = axiosInstance.post(url, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 10000,
-    });
-
-    toast.promise(putPromise, {
-      pending: "Actualizando datos...",
-      success: {
-        render() {
-          // Redirige después de actualizar
-          setTimeout(() => {
-            window.location.href = "/index";
-          }, 1500);
-          return "Datos actualizados correctamente";
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_PRODUCCIONES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ACTUALIZAR_PRODUCCIONES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const putPromise = axiosInstance.post(`${endpoint}/${id}`, formData);
+      toast.promise(putPromise, {
+        pending: "Actualizando datos...",
+        success: {
+          render() {
+            // Redirige después de actualizar
+            setTimeout(() => {
+              window.location.href = "/index";
+            }, 1500);
+            return "Datos actualizados correctamente";
+          },
+          autoClose: 1500,
         },
-        autoClose: 1500,
-      },
-      error: {
-        render({ data }) {
-          const error = data;
-          if (axios.isAxiosError(error)) {
-            if (error.code === "ECONNABORTED") {
-              return "Tiempo de espera agotado. Intenta de nuevo.";
-            } else if (error.response) {
-              const errores = error.response.data?.errors;
-              if (errores && typeof errores === "object") {
-                const mensajes = Object.values(errores).flat().join("\n");
-                return `Errores del formulario:\n${mensajes}`;
+        error: {
+          render({ data }) {
+            const error = data;
+            if (axios.isAxiosError(error)) {
+              if (error.code === "ECONNABORTED") {
+                return "Tiempo de espera agotado. Intenta de nuevo.";
+              } else if (error.response) {
+                const errores = error.response.data?.errors;
+                if (errores && typeof errores === "object") {
+                  const mensajes = Object.values(errores).flat().join("\n");
+                  return `Errores del formulario:\n${mensajes}`;
+                }
+                return (
+                  error.response.data?.message ||
+                  "Error al actualizar los datos."
+                );
+              } else if (error.request) {
+                return "No se recibió respuesta del servidor.";
               }
-              return (
-                error.response.data?.message || "Error al actualizar los datos."
-              );
-            } else if (error.request) {
-              return "No se recibió respuesta del servidor.";
             }
-          }
-          return "Error inesperado al actualizar los datos.";
+            return "Error inesperado al actualizar los datos.";
+          },
+          autoClose: 3000,
         },
-        autoClose: 3000,
-      },
-    });
+      });
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const produccionSeleccionado = watch("productos_academicos_id");

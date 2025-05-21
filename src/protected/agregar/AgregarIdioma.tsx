@@ -16,6 +16,9 @@ import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import { AdjuntarArchivo } from "../../componentes/formularios/AdjuntarArchivo";
 import { useArchivoPreview } from "../../hooks/ArchivoPreview";
 import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
+import { RolesValidos } from "../../types/roles";
+import axiosInstance from "../../utils/axiosConfig";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   idioma: string;
@@ -49,15 +52,20 @@ const AgregarIdioma = () => {
     formData.append("archivo", data.archivo[0]);
 
     const token = Cookies.get("token");
-    const url = `${import.meta.env.VITE_API_URL}/aspirante/crear-idioma`;
+    if (!token) throw new Error("No authentication token found");
+    const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+    const rol = decoded.rol;
 
-    const postPromise = axios.post(url, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data",
-      },
-      timeout: 10000,
-    });
+    const ENDPOINTS = {
+      Aspirante: `${import.meta.env.VITE_API_URL}${
+        import.meta.env.VITE_ENDPOINT_CREAR_IDIOMAS_ASPIRANTE
+      }`,
+      Docente: `${import.meta.env.VITE_API_URL}${
+        import.meta.env.VITE_ENDPOINT_CREAR_IDIOMAS_DOCENTE
+      }`,
+    };
+    const endpoint = ENDPOINTS[rol];
+    const postPromise = axiosInstance.post(endpoint, formData);
 
     toast.promise(postPromise, {
       pending: "Enviando datos...",

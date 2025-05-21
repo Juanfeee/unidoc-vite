@@ -4,6 +4,8 @@ import Cookies from "js-cookie";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import axiosInstance from "../utils/axiosConfig";
+import { RolesValidos } from "../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 const Header = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
@@ -12,19 +14,29 @@ const Header = () => {
     const fetchProfileImage = async () => {
       try {
         // 2. Hacer petición al servidor
-        const response = await axiosInstance.get(
-          `${import.meta.env.VITE_API_URL}/aspirante/obtener-foto-perfil`,
-          {
-            headers: { Authorization: `Bearer ${Cookies.get("token")}` },
-          }
-        );
+        const token = Cookies.get("token");
+        if (!token) throw new Error("No authentication token found");
+        const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+        const rol = decoded.rol;
 
-      const documentos = response.data.fotoPerfil?.documentos_foto_perfil;
+        const ENDPOINTS = {
+          Aspirante: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
+          }`,
+          Docente: `${import.meta.env.VITE_API_URL}${
+            import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
+          }`,
+        };
+        const endpoint = rol ? ENDPOINTS[rol] : undefined;
+        if (!endpoint) throw new Error("No endpoint found for user role");
+        
+        const response = await axiosInstance.get(endpoint);
+        const documentos = response.data.fotoPerfil?.documentos_foto_perfil;
 
-      if (documentos && documentos.length > 0) {
-        const imageUrl = documentos[0].archivo_url;
-        setProfileImageUrl(imageUrl);
-      }
+        if (documentos && documentos.length > 0) {
+          const imageUrl = documentos[0].archivo_url;
+          setProfileImageUrl(imageUrl);
+        }
       } catch (error) {
         console.error("Error al cargar foto:", error);
         // Si hay error, se mantiene la imagen de cache (si existía)

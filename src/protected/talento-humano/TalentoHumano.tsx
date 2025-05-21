@@ -22,13 +22,14 @@ const TalentoHumano = () => {
           </div>
         </div>
       </Link>
-
+      <Link to="contrataciones">
       <div className=" relative flex flex-col gap-4  text-white rounded-lg bg-red-500 items-end justify-end fondo-image  h-full bg-cover bg-center hover:scale-105 transition-transform duration-300">
         <div className="backdrop-brightness-20 p-4 rounded bottom-0 w-full">
-          <h3 className="text-2xl font-bold">Postulaciones</h3>
-          <p>Mira quien esta interesado en entrar a nuestra instucion.</p>
+          <h3 className="text-2xl font-bold">Contrataciones</h3>
+          <p>Mira las contrataciones que haz hecho anteriormente y editalas o eliminalas.</p>
         </div>
       </div>
+      </Link >
     </div>
   );
 };
