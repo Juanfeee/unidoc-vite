@@ -175,6 +175,19 @@ createRoot(document.getElementById("root")!).render(
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
 
+
+        {/* Rutas protegidas para ayuda profesoral */}
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["Apoyo Profesoral"]}>
+              <AdminLayouts />
+            </ProtectedRoute>
+          }
+        >
+          {/* Aquí puedes agregar las rutas específicas para el administrador */}
+          <Route path="apoyo-profesoral" element={<h1>Hola apoyo-profesoral</h1>} />
+        </Route>
+
         {/* Ruta catch-all para 404 */}
         <Route
           path="*"

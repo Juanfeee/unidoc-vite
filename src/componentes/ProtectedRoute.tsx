@@ -5,7 +5,6 @@ import { ReactNode } from "react";
 import { jwtDecode } from "jwt-decode";
 
 // Definición de tipos para los roles de usuario
-type userRole = "Administrador" | "Aspirante" | "Talento Humano" | "Docente";
 
 type Props = {
   children: ReactNode;
