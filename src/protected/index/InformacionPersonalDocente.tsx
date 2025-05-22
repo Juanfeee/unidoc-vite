@@ -4,11 +4,36 @@ import { Texto } from "../../componentes/formularios/Texto";
 import axiosInstance from "../../utils/axiosConfig";
 import Cookies from "js-cookie";
 import { Link } from "react-router";
-import { PlusIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+  EllipsisVerticalIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 import { Puntaje } from "../../componentes/formularios/puntaje";
 import { RolesValidos } from "../../types/roles";
 import { jwtDecode } from "jwt-decode";
+
+// Nuevo componente Evaluaciones
+type EvaluacionesProps = {
+  evaluacion?: string; // Valor de la evaluación
+  className?: string; // Clases adicionales para estilos
+};
+
+export const Evaluaciones = ({
+  className = " ",
+  evaluacion,
+  ...props
+}: EvaluacionesProps) => {
+  return (
+    <p
+      {...props}
+      className={`${className} text-base font-semibold rounded-xl text-white bg-[#266AAE] w-fit px-6 py-1`}
+    >
+      Evaluaciones: {evaluacion || "Sin datos"}
+    </p>
+  );
+};
 
 const InformacionPersonalDocente = () => {
   const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
@@ -21,17 +46,18 @@ const InformacionPersonalDocente = () => {
   const [datos, setDatos] = useState<any>();
   const [municipio, setMunicipio] = useState<any>([]);
   const [aptitudes, setAptitudes] = useState<any[]>([]);
+  const [evaluaciones, setEvaluaciones] = useState<any[]>([]); // Estado para las evaluaciones
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Estado para desplegable
   const URL = import.meta.env.VITE_API_URL;
 
   // Obtener imagen de perfil
   const fetchProfileImage = async () => {
     try {
-      // 2. Hacer petición al servidor
       const ENDPOINTS = {
-        Aspirante: `${import.meta.env.VITE_API_URL}${
+        Aspirante: `${URL}${
           import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
         }`,
-        Docente: `${import.meta.env.VITE_API_URL}${
+        Docente: `${URL}${
           import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
         }`,
       };
@@ -52,21 +78,17 @@ const InformacionPersonalDocente = () => {
   // Obtener datos del usuario
   const fetchDatos = async () => {
     try {
-      // 2. Hacer petición al servidor para obtener los datos del usuario
       const response = await axiosInstance.get(
         "/auth/obtener-usuario-autenticado"
       );
 
-      // 3. Si el usuario existe, actualizamos el estado y sessionStorage
       const user = response.data.user;
       setDatos(user);
 
-      // 4. Verificamos si existe municipio_id y si es así, hacemos la petición para obtener el municipio
-      const municipio = user.municipio_id;
-      if (municipio) {
+      if (user.municipio_id) {
         try {
           const responseMunicipio = await axiosInstance.get(
-            `${URL}/ubicaciones/municipio/${municipio}`
+            `${URL}/ubicaciones/municipio/${user.municipio_id}`
           );
           setMunicipio(responseMunicipio.data);
         } catch (municipioError) {
@@ -86,10 +108,10 @@ const InformacionPersonalDocente = () => {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
       const ENDPOINTS = {
-        Aspirante: `${import.meta.env.VITE_API_URL}${
+        Aspirante: `${URL}${
           import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
         }`,
-        Docente: `${import.meta.env.VITE_API_URL}${
+        Docente: `${URL}${
           import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
         }`,
       };
@@ -108,7 +130,19 @@ const InformacionPersonalDocente = () => {
     }
   };
 
-  // Obtener puntaje dependiendo del rol si es docente
+  // Obtener evaluaciones
+  const fetchEvaluaciones = async () => {
+    try {
+      const endpoint = `${URL}${
+        import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE
+      }`;
+      const response = await axiosInstance.get(endpoint);
+      const evaluacionesData = response.data.data.promedio_evaluacion_docente;
+      setEvaluaciones(evaluacionesData);
+    } catch (error) {
+      console.error("Error al obtener las evaluaciones:", error);
+    }
+  };
 
   // Cargar datos al iniciar el componente
   useEffect(() => {
@@ -118,6 +152,7 @@ const InformacionPersonalDocente = () => {
           fetchAptitudes(),
           fetchProfileImage(),
           fetchDatos(),
+          fetchEvaluaciones(),
         ]);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
@@ -139,7 +174,7 @@ const InformacionPersonalDocente = () => {
     <>
       <div className="flex flex-col w-full rounded-md lg:w-[800px] xl:w-[1000px] 2xl:w-[1200px] m-auto relative">
         <div className="grid grid-cols-1 sm:grid-cols-2 bg-white py-12 px-8 rounded-xl gap-7">
-          <div className="flex  col-span-full md:flex-row gap-y-2 justify-between">
+          <div className="flex col-span-full md:flex-row gap-y-2 justify-between">
             <h2 className="font-bold text-3xl">Hoja de vida</h2>
           </div>
 
@@ -171,8 +206,37 @@ const InformacionPersonalDocente = () => {
             </div>
 
             {rol === "Docente" && (
-              <div className="flex sm:justify-end">
+              <div className="flex sm:justify-end items-center gap-6">
+                {/* Puntaje y Evaluaciones al lado */}
                 <Puntaje value="0.0" />
+                <div className="relative text-base font-semibold rounded-xl text-white bg-[#266AAE] w-fit px-6">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="text-white font-semibold px-3 py-1 rounded-md flex items-center gap-2"
+                  >
+                    Evaluación:{" "}
+                    {evaluaciones !== null && evaluaciones !== undefined
+                      ? evaluaciones
+                      : "Sin datos"}
+                    <ChevronDownIcon className="w-4 h-4" />
+                  </button>
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white text-[#1E3A8A] rounded-md shadow-lg z-10">
+                      <Link
+                        to="/agregar/evaluacion"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Agregar evaluación
+                      </Link>
+                      <Link
+                        to="/editar/evaluacion"
+                        className="block px-4 py-2 hover:bg-gray-100"
+                      >
+                        Editar evaluación
+                      </Link>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -227,6 +291,20 @@ const InformacionPersonalDocente = () => {
               </ul>
             </div>
           </div>
+
+          {/*<div className="grid col-span-full gap-y-4">
+            <h3 className="font-semibold text-lg">Evaluaciones recientes</h3>
+            <ul className="space-y-3">
+              {evaluaciones.map((evaluacion, index) => (
+                <li
+                  key={index}
+                  className="bg-gray-100 p-3 rounded-md shadow-sm flex justify-between items-center"
+                >
+                  <span>Promedio: {evaluacion.promedio_evaluacion_docente}</span>
+                </li>
+              ))}
+            </ul>
+          </div>*/}
         </div>
       </div>
     </>

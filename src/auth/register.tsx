@@ -14,6 +14,7 @@ import { InputLabel } from "../componentes/formularios/InputLabel";
 import TextInput from "../componentes/formularios/TextInput";
 import InputErrors from "../componentes/formularios/InputErrors";
 import { SelectFormUbicaciones } from "../componentes/formularios/SelectFormUbicacion";
+import InputPassword from "../componentes/formularios/InputPassword";
 
 type Inputs = {
   primer_nombre: string;
@@ -416,7 +417,7 @@ const Registro = () => {
 
                   <div className="">
                     <InputLabel htmlFor="password" value="Contraseña" />
-                    <TextInput
+                    <InputPassword
                       id="password"
                       type="password"
                       placeholder="Contraseña..."
@@ -429,7 +430,7 @@ const Registro = () => {
                       htmlFor="password_confirmation"
                       value="Confirmar contraseña"
                     />
-                    <TextInput
+                    <InputPassword
                       id="password_confirmation"
                       type="password"
                       placeholder="Confirmar contraseña..."

@@ -39,8 +39,7 @@ const EditarEvaluacion = () => {
         );
 
       } catch (error) {
-        console.error("Error al obtener la aptitud:", error);
-        toast.error("Error al cargar los datos de la aptitud");
+        console.error("Error al obtener la evaluacion:", error);
       }
     };
 
@@ -71,7 +70,7 @@ const EditarEvaluacion = () => {
             return "Evaluación actualizada con éxito";
           },
         },
-        error: "Error al actualizar la evaluación",
+        error: "Error al enviar la evaluación",
       });
     } catch (error) {
       console.error("Error al enviar los datos:", error);
@@ -85,19 +84,19 @@ const EditarEvaluacion = () => {
         <Link to={"/index"}>
           <ButtonRegresar />
         </Link>
-        <h4 className="font-bold text-xl">Agregar evaluacion</h4>
+        <h4 className="font-bold text-xl">Editar evaluación</h4>
       </div>
       <form
         className="grid grid-cols-1 gap-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="">
-          <InputLabel htmlFor="Aptitud" value="Aptitud" />
+          <InputLabel htmlFor="Evaluacion" value="Evaluacion" />
           <TextInput
             type="number"
             id="promedio_evaluacion_docente"
             step="0.01"
-            placeholder="Promedio de evaluacion..."
+            placeholder="Promedio de evaluación..."
             {...register("promedio_evaluacion_docente", {
               valueAsNumber: true,
               required: true,
@@ -108,7 +107,7 @@ const EditarEvaluacion = () => {
 
         <div className="flex justify-center col-span-full">
           <ButtonPrimary
-            value={isSubmitting ? "Enviando..." : "Agregar aptitud"}
+            value={isSubmitting ? "Enviando..." : "Editar evaluación"}
             disabled={isSubmitting}
           />
         </div>
