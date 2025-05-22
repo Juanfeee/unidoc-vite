@@ -66,7 +66,9 @@ const VerPostulaciones = () => {
       setContrataciones(contratacionesRes.data.contrataciones);
 
       // Extrae los IDs de los usuarios ya contratados
-      const idsContratados = contratacionesRes.data.contrataciones.map((c: any) => c.user_id);
+      const idsContratados = contratacionesRes.data.contrataciones.map(
+        (c: any) => c.user_id
+      );
       setUsuariosContratados(idsContratados);
     } catch (error) {
       console.error("Error al obtener datos:", error);
@@ -193,7 +195,9 @@ const VerPostulaciones = () => {
       {
         header: "Acciones",
         cell: ({ row }) => {
-          const yaContratado = usuariosContratados.includes(row.original.user_id);
+          const yaContratado = usuariosContratados.includes(
+            row.original.user_id
+          );
           const VerContratacionesPorUsuario = contrataciones.find(
             (c) => c.user_id === row.original.user_id
           );
@@ -209,10 +213,12 @@ const VerPostulaciones = () => {
                     e.target.value as "Aceptada" | "Rechazada"
                   )
                 }
-                value={row.original.estado_postulacion}
-                disabled={yaContratado} // Deshabilita si el usuario ya está contratado
+                value={row.original.estado_postulacion || ""} // Usa cadena vacía si no hay valor
+                disabled={yaContratado}
               >
-                <option value="" disabled>
+                <option value="" disabled selected>
+                  {" "}
+                  {/* Añade el atributo selected */}
                   Seleccionar
                 </option>
                 <option value="Aceptada">Aceptar</option>
@@ -233,8 +239,8 @@ const VerPostulaciones = () => {
               </button>
 
               {/* Botón para contratar o ver contrato */}
-              {row.original.estado_postulacion === "Aceptada" && (
-                yaContratado ? (
+              {row.original.estado_postulacion === "Aceptada" &&
+                (yaContratado ? (
                   <Link
                     to={`/talento-humano/contrataciones/usuario/${row.original.user_id}`}
                     className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"

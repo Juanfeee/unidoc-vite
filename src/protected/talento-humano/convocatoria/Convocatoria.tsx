@@ -12,7 +12,7 @@ import {
 } from "../../../validaciones/talento-humano.ts/convocatoriaSchema";
 import TextArea from "../../../componentes/formularios/TextArea";
 import { useArchivoPreview } from "../../../hooks/ArchivoPreview";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 import { SelectLocales } from "../../../componentes/formularios/SelectsLocales";
 import { toast } from "react-toastify";
@@ -41,6 +41,7 @@ const Convocatoria = () => {
     : convocatoriaSchema;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -131,7 +132,8 @@ const Convocatoria = () => {
           success: {
             render() {
               setTimeout(() => {
-                // window.location.href = "/talento-humano";
+                navigate("/talento-humano/convocatorias");
+
               }, 1500);
               return "Convocatoria creada con éxito";
             },
