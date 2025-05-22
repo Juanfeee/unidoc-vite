@@ -11,6 +11,8 @@ import axiosInstance from "../../../utils/axiosConfig"; // Instancia configurada
 import { toast } from "react-toastify"; // Para notificaciones
 import Cookies from "js-cookie"; // Manejo de cookies
 import { Link } from "react-router-dom"; // Navegación
+import { jwtDecode } from "jwt-decode";
+import { RolesValidos } from "../../../types/roles";
 
 // Interfaces para tipado
 interface Documento {
@@ -38,7 +40,10 @@ const ListaConvocatorias = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [postulando, setPostulando] = useState<number | null>(null);
-
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
   /**
    * Función para obtener las convocatorias desde el API
    */
@@ -47,11 +52,17 @@ const ListaConvocatorias = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get("aspirante/ver-convocatorias", {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_CONVOCATORIAS_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_CONVOCATORIAS_DOCENTE
+        }`,
+      };
+
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.get(endpoint);
 
       if (!response.data?.convocatorias) {
         throw new Error('La respuesta no contiene el campo "convocatorias"');
@@ -118,16 +129,18 @@ const ListaConvocatorias = () => {
   const handlePostularse = async (idConvocatoria: number) => {
     try {
       setPostulando(idConvocatoria);
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_POSTULACION_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_CREAR_POSTULACION_DOCENTE
+        }`,
+      };
 
-      await axiosInstance.post(
-        `aspirante/crear-postulacion/${idConvocatoria}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
-      );
+      const endpoint = ENDPOINTS[rol];
+
+      await axiosInstance.post(`${endpoint}/${idConvocatoria}`);
 
       toast.success("¡Postulación enviada correctamente!");
 

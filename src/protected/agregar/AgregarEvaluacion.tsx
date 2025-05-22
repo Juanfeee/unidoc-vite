@@ -7,8 +7,6 @@ import TextInput from "../../componentes/formularios/TextInput";
 import InputErrors from "../../componentes/formularios/InputErrors";
 import { evaluacionSchema } from "../../validaciones/docente/evaluacionSchema";
 import { useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { RolesValidos } from "../../types/roles";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosConfig";
@@ -42,9 +40,6 @@ const AgregarEvaluacion = () => {
       const token = Cookies.get("token");
       if (!token) throw new Error("No se encontró token de autenticación");
 
-      // Decodificar el token para obtener el rol
-      const decoded = jwtDecode<{ rol: RolesValidos }>(token);
-      const rol = decoded.rol;
 
       // Construir la URL del endpoint
       const endpoint = `${import.meta.env.VITE_API_URL}${

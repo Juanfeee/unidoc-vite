@@ -49,7 +49,7 @@ const EditarIdioma = () => {
   const { existingFile, setExistingFile } = useArchivoPreview(archivoValue);
 
   useEffect(() => {
-    const URL = `${import.meta.env.VITE_API_URL}`; // URL para obtener el idioma específico
+
 
     const fetchIdioma = async () => {
       try {

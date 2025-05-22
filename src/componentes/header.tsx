@@ -13,7 +13,7 @@ const Header = () => {
   if (!token) throw new Error("No authentication token found");
   const decoded = jwtDecode<{ rol: RolesValidos }>(token);
   const rol = decoded.rol;
-  
+
   useEffect(() => {
     const fetchProfileImage = async () => {
       try {
@@ -141,6 +141,18 @@ const Header = () => {
               <li>
                 <Link
                   className={`hover:border-b-2 ${
+                    pathname === "/convocatorias"
+                      ? "border-b-2 border-blue-500"
+                      : ""
+                  }`}
+                  to="/convocatorias"
+                >
+                  Convocatorias
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className={`hover:border-b-2 ${
                     pathname === "/normativas"
                       ? "border-b-2 border-blue-500"
                       : ""
@@ -150,32 +162,7 @@ const Header = () => {
                   Normativas
                 </Link>
               </li>
-              {/* <li>
-                <Link
-                  className={`hover:border-b-2 ${
-                    pathname === "/convocatorias"
-                      ? "border-b-2 border-blue-500"
-                      : ""
-                  }`}
-                  to="/convocatorias"
-                >
-                  Convocatorias
-                </Link>
-              </li> */}
-              {rol === "Docente" && (
-                <li>
-                  <Link
-                    className={`hover:border-b-2 ${
-                      pathname === "/convocatorias"
-                        ? "border-b-2 border-blue-500"
-                        : ""
-                    }`}
-                    to="/mi-perfil"
-                  >
-                    Mi perfil
-                  </Link>
-                </li>
-              )}
+
               <li className="relative" ref={dropdownRef}>
                 <div
                   onClick={toggleDropdown}
@@ -196,6 +183,15 @@ const Header = () => {
                 </div>
                 {isDropdownOpen && (
                   <div className="absolute right-0 top-full w-48 bg-white rounded-md shadow-lg z-50 text-sm border border-gray-200">
+                    {rol === "Docente" && (
+                      <Link
+                        className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200"
+                        to="/contratacion"
+                      >
+                        Contratación
+                      </Link>
+                    )}
+
                     <Link
                       to="/configuracion"
                       className="block px-4 py-2 hover:bg-gray-100 border-b border-gray-200"
@@ -258,17 +254,19 @@ const Header = () => {
                   Normativas
                 </Link>
               </li>
-              {/* <li>
+              <li>
                 <Link
-                  to="/convocatorias"
+                  to="/contratacion"
                   className={`${
-                    pathname === "/convocatorias" ? "font-bold text-blue-600" : ""
+                    pathname === "/convocatorias"
+                      ? "font-bold text-blue-600"
+                      : ""
                   }`}
                   onClick={toggleMobileMenu}
                 >
-                  Convocatorias
+                  Contratación
                 </Link>
-              </li> */}
+              </li>
               <li>
                 <Link to="/configuracion" onClick={toggleMobileMenu}>
                   Configuración

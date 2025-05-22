@@ -20,7 +20,7 @@ import PreExperiencia from "./protected/editar/experiencia/pre-experiencia.tsx";
 import AgregarAptitudes from "./protected/agregar/AgregarAptitudes.tsx";
 import Normativas from "./protected/normativas/page.tsx";
 import AgregarProduccion from "./protected/agregar/AgregarProduccion.tsx";
-import MiPerfil from "./protected/configuracion/MiPerfil";
+import MiPerfil from "./protected/configuracion/contrataciones.tsx";
 import PreProduccion from "./protected/editar/produccion/pre-produccion.tsx";
 import EditarProduccion from "./protected/editar/produccion/EditarProduccion.tsx";
 import RestablecerContrasena from "./auth/restablecerContrasena.tsx";
@@ -39,11 +39,12 @@ import Convocatorias from "./protected/convocatorias/page.tsx";
 import Postulaciones from "./protected/postulaciones/page.tsx";
 import VerContrataciones from "./protected/talento-humano/contratacion/VerContratacion.tsx";
 import Contratacion from "./protected/talento-humano/contratacion/Contratacion.tsx";
-import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
+
 import EditarEvaluacion from "./protected/editar/evaluacion/EditarEvaluacion.tsx";
-import ListarDocenes from "./protected/apoyo-profesoral/documentos/ListarDocentes.tsx";
 import ListarDocentes from "./protected/apoyo-profesoral/documentos/ListarDocentes.tsx";
 import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
+import Contrataciones from "./protected/configuracion/contrataciones.tsx";
+import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -85,11 +86,13 @@ createRoot(document.getElementById("root")!).render(
             <Route path="idioma" element={<AgregarIdioma />} />
             <Route path="produccion" element={<AgregarProduccion />} />
             <Route path="aptitudes" element={<AgregarAptitudes />} />
+
+            {/* Rutas protegida solo para docente */}
             <Route
               path="evaluacion"
               element={
                 <ProtectedRoute allowedRoles={["Docente"]}>
-                  <EditarEvaluacion />
+                  <AgregarEvaluacion />
                 </ProtectedRoute>
               }
             />
@@ -123,10 +126,10 @@ createRoot(document.getElementById("root")!).render(
             />
           </Route>
           <Route
-            path="mi-perfil"
+            path="contratacion"
             element={
               <ProtectedRoute allowedRoles={["Docente"]}>
-                <MiPerfil />
+                <Contrataciones />
               </ProtectedRoute>
             }
           />
@@ -186,8 +189,13 @@ createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
-          <Route path="apoyo-profesoral" element={<ListarDocentes />}/>
-          <Route path="documentos-docente" element={<DocumentosDocente />} />
+          <Route path="apoyo-profesoral">
+            <Route index element={<ListarDocentes />} />
+            <Route
+              path="documentos-docente/:id"
+              element={<DocumentosDocente />}
+            />
+          </Route>
         </Route>
 
         {/* Ruta catch-all para 404 */}

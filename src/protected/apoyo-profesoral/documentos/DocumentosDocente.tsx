@@ -1,12 +1,35 @@
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
-import InputSearch from "../../../componentes/formularios/InputSearch";
-import { DataTable } from "../../../componentes/tablas/DataTable";
 
-
-
+import VerEstudios from "../trayectoria-docente/VerEstudios";
+import VerIdiomas from "../trayectoria-docente/VerIdiomas";
+import { useState } from "react";
+import FiltroDesplegable from "../../../componentes/filtro";
+import VerProducciones from "../trayectoria-docente/VerProducciones";
 
 const DocumentosDocente = () => {
+  const [filtroActivo, setFiltroActivo] = useState("estudios");
+  const { id } = useParams();
+  const renderizarComponente = () => {
+    switch (filtroActivo) {
+      case "estudios":
+        return <VerEstudios idDocente={id} />;
+      case "idiomas":
+        return <VerIdiomas idDocente={id} />;
+      case "producciones":
+        return <VerProducciones idDocente={id} />; 
+      default:
+        return <VerEstudios idDocente={id} />;
+    }
+  };
+
+
+  const opcionesFiltro = [
+  { valor: "estudios", etiqueta: "Estudios" },
+  { valor: "idiomas", etiqueta: "Idiomas" },
+  { valor: "producciones", etiqueta: "Producciones" }
+];
+
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
       {/* Encabezado */}
@@ -18,26 +41,25 @@ const DocumentosDocente = () => {
             </Link>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
-            Docentes
+            Docentes documentos
           </h1>
         </div>
       </div>
 
-      <div className="flex justify-between items-center w-full">
-        <InputSearch
-          type="text"
-          placeholder="Buscar..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
+      <div>
+        <FiltroDesplegable
+          opciones={opcionesFiltro}
+          valorInicial="estudios"
+          onChange={(valor) => setFiltroActivo(valor)}
+          className="w-64 mb-6"
+          estiloBoton="bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          estiloLista="bg-white border border-gray-300 rounded-lg shadow-lg"
+          estiloItem="hover:bg-gray-100"
         />
       </div>
 
-      <DataTable
-        data={docentes}
-        columns={columns}
-        globalFilter={globalFilter}
-        loading={loading}
-      />
+      {/* Componente que se renderiza según el filtro */}
+      {renderizarComponente()}
     </div>
   );
 };

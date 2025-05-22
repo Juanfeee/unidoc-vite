@@ -9,14 +9,17 @@ import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
 import InputErrors from "../../componentes/formularios/InputErrors";
 import { ButtonPrimary } from "../../componentes/formularios/ButtonPrimary";
 import { RolesValidos } from "../../types/roles";
+import { jwtDecode } from "jwt-decode";
 
 type Inputs = {
   archivo: FileList;
 };
 
 const FotoPerfil = () => {
-  const rol = Cookies.get("rol") as RolesValidos;
-  //navigate = useNavigate();
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [currentProfileImage, setCurrentProfileImage] = useState<string | null>(
@@ -117,21 +120,18 @@ const FotoPerfil = () => {
         }`,
       };
       const endpoint = ENDPOINTS[rol];
-      await toast.promise(
-        axiosInstance.delete(endpoint),
-        {
-          pending: "Eliminando foto...",
-          success: {
-            render() {
-              setProfileImage(null);
-              setCurrentProfileImage(null);
-              reset();
-              return "Foto eliminada correctamente";
-            },
+      await toast.promise(axiosInstance.delete(endpoint), {
+        pending: "Eliminando foto...",
+        success: {
+          render() {
+            setProfileImage(null);
+            setCurrentProfileImage(null);
+            reset();
+            return "Foto eliminada correctamente";
           },
-          error: handleApiError("eliminar la imagen"),
-        }
-      );
+        },
+        error: handleApiError("eliminar la imagen"),
+      });
     } finally {
       setIsDeleting(false);
     }

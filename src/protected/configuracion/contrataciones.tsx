@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
 
-const MiPerfil = () => {
+const Contrataciones = () => {
   const [datosContrato, setDatosContrato] = useState<{
     tipo_contrato: string;
     area: string;
@@ -179,4 +179,4 @@ const MiPerfil = () => {
   );
 };
 
-export default MiPerfil;
+export default Contrataciones;

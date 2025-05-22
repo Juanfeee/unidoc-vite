@@ -38,7 +38,7 @@ export function DataTable<TData extends Record<string, any>>({
 
   return (
     <div className="overflow-x-auto w-full rounded-lg border border-bg-[#266AAE]">
-      <table className="w-fit">
+      <table className="w-full">
         <thead className="bg-[#266AAE]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr 

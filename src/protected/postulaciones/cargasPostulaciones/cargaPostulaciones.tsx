@@ -1,14 +1,13 @@
-import {
-  DocumentTextIcon,
-  ArrowPathIcon,
-} from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
-import axiosInstance from '../../../utils/axiosConfig';
-import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
-import EliminarBoton from '../../../componentes/EliminarBoton';
-import { Link } from 'react-router-dom';
-import { ButtonRegresar } from '../../../componentes/formularios/ButtonRegresar';
+import { DocumentTextIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import axiosInstance from "../../../utils/axiosConfig";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import EliminarBoton from "../../../componentes/EliminarBoton";
+import { Link } from "react-router-dom";
+import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
+import { jwtDecode } from "jwt-decode";
+import { RolesValidos } from "../../../types/roles";
 
 /**
  * Representa una convocatoria a la que se puede postular
@@ -34,6 +33,10 @@ interface Postulacion {
 }
 
 const VerPostulaciones = () => {
+  const token = Cookies.get("token");
+  if (!token) throw new Error("No authentication token found");
+  const decoded = jwtDecode<{ rol: RolesValidos }>(token);
+  const rol = decoded.rol;
   // Estados del componente
   const [postulaciones, setPostulaciones] = useState<Postulacion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,11 +51,17 @@ const VerPostulaciones = () => {
       setLoading(true);
       setError(null);
 
-      const response = await axiosInstance.get('aspirante/ver-postulaciones', {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
-        },
-      });
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDOPOINT_OBTENER_POSTULACIONES_ASPIRANTE
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDOPOINT_OBTENER_POSTULACIONES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+
+      const response = await axiosInstance.get(endpoint);
 
       if (!response.data?.postulaciones) {
         throw new Error('La respuesta no contiene el campo "postulaciones"');
@@ -60,8 +69,10 @@ const VerPostulaciones = () => {
 
       setPostulaciones(response.data.postulaciones);
     } catch (err) {
-      console.error('Error al obtener postulaciones:', err);
-      setError('Error al cargar las postulaciones. Por favor intente nuevamente.');
+      console.error("Error al obtener postulaciones:", err);
+      setError(
+        "Error al cargar las postulaciones. Por favor intente nuevamente."
+      );
     } finally {
       setLoading(false);
     }
@@ -72,17 +83,25 @@ const VerPostulaciones = () => {
    */
   const eliminarPostulacion = async (id: number) => {
     try {
-      const response = await axiosInstance.delete(`aspirante/eliminar-postulacion/${id}`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
-        },
-      });
+      const ENDPOINTS = {
+        Aspirante: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_POSTULACIONES_ASPIRANTES
+        }`,
+        Docente: `${import.meta.env.VITE_API_URL}${
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_POSTULACIONES_DOCENTE
+        }`,
+      };
+      const endpoint = ENDPOINTS[rol];
+      const response = await axiosInstance.delete(`${endpoint}/${id}`);
 
       toast.success(response.data.message);
-      setPostulaciones(prev => prev.filter(p => p.id_postulacion !== id));
+      setPostulaciones((prev) => prev.filter((p) => p.id_postulacion !== id));
     } catch (err: any) {
-      console.error('Error al eliminar postulación:', err);
-      toast.error(err.response?.data?.message || 'Ocurrió un error al eliminar la postulación.');
+      console.error("Error al eliminar postulación:", err);
+      toast.error(
+        err.response?.data?.message ||
+          "Ocurrió un error al eliminar la postulación."
+      );
     }
   };
 
@@ -97,7 +116,9 @@ const VerPostulaciones = () => {
       <div className="flex flex-col items-center justify-center h-64 w-full bg-white rounded-lg shadow p-6">
         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mb-4"></div>
         <p className="text-blue-600 font-medium">Cargando postulaciones...</p>
-        <p className="text-gray-500 text-sm mt-1">Por favor espere un momento</p>
+        <p className="text-gray-500 text-sm mt-1">
+          Por favor espere un momento
+        </p>
       </div>
     );
   }
@@ -130,7 +151,9 @@ const VerPostulaciones = () => {
               <ButtonRegresar />
             </Link>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Mis Postulaciones</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+            Mis Postulaciones
+          </h1>
         </div>
       </div>
 
@@ -138,14 +161,21 @@ const VerPostulaciones = () => {
       {postulaciones.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64 w-full bg-white rounded-xl shadow-md p-8 text-center border border-blue-200">
           <DocumentTextIcon className="h-10 w-10 text-blue-500 mb-4" />
-          <p className="text-blue-600 font-semibold text-lg">No tienes postulaciones registradas.</p>
-          <p className="text-gray-500 text-sm mt-2">Explora las convocatorias disponibles y postúlate.</p>
+          <p className="text-blue-600 font-semibold text-lg">
+            No tienes postulaciones registradas.
+          </p>
+          <p className="text-gray-500 text-sm mt-2">
+            Explora las convocatorias disponibles y postúlate.
+          </p>
         </div>
       ) : (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {postulaciones.map((postulacion) => {
             // Normaliza el estado (usa estado_postulacion o estado como fallback)
-            const estado = postulacion.estado_postulacion || postulacion.estado || 'desconocido';
+            const estado =
+              postulacion.estado_postulacion ||
+              postulacion.estado ||
+              "desconocido";
 
             return (
               <div
@@ -176,13 +206,17 @@ const VerPostulaciones = () => {
                     <div>
                       <p className="text-gray-500">Fecha publicación</p>
                       <p>
-                        {new Date(postulacion.convocatoria_postulacion.fecha_publicacion).toLocaleDateString()}
+                        {new Date(
+                          postulacion.convocatoria_postulacion.fecha_publicacion
+                        ).toLocaleDateString()}
                       </p>
                     </div>
                     <div>
                       <p className="text-gray-500">Fecha cierre</p>
                       <p>
-                        {new Date(postulacion.convocatoria_postulacion.fecha_cierre).toLocaleDateString()}
+                        {new Date(
+                          postulacion.convocatoria_postulacion.fecha_cierre
+                        ).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -199,13 +233,18 @@ const VerPostulaciones = () => {
 
                   {/* Estado de la postulación */}
                   <div className="mt-4">
-                    <p className="text-sm text-gray-500 mb-2">Estado de la postulación:</p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      Estado de la postulación:
+                    </p>
                     <div className="bg-blue-50 px-3 py-1 rounded-md inline-block border border-blue-100">
                       <p className="text-blue-800 font-medium">
-                        {estado === 'Faltan documentos' ? 'Documentación incompleta' :
-                          estado === 'Aceptada' ? 'Aceptada' :
-                            estado === 'Rechazada' ? 'Rechazada' :
-                              estado}
+                        {estado === "Faltan documentos"
+                          ? "Documentación incompleta"
+                          : estado === "Aceptada"
+                          ? "Aceptada"
+                          : estado === "Rechazada"
+                          ? "Rechazada"
+                          : estado}
                       </p>
                     </div>
                   </div>
