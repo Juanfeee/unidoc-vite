@@ -54,8 +54,12 @@ const InformacionPersonalDocente = () => {
   const fetchProfileImage = async () => {
     try {
       const ENDPOINTS = {
-        Aspirante: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE}`,
-        Docente: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE}`,
+        Aspirante: `${URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
+        }`,
+        Docente: `${URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
+        }`,
       };
       const endpoint = ENDPOINTS[rol];
       const response = await axiosInstance.get(endpoint);
@@ -104,8 +108,12 @@ const InformacionPersonalDocente = () => {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
       const ENDPOINTS = {
-        Aspirante: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE}`,
-        Docente: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE}`,
+        Aspirante: `${URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
+        }`,
+        Docente: `${URL}${
+          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
+        }`,
       };
       const endpoint = ENDPOINTS[rol];
       const response = await axiosInstance.get(endpoint);
@@ -125,9 +133,12 @@ const InformacionPersonalDocente = () => {
   // Obtener evaluaciones
   const fetchEvaluaciones = async () => {
     try {
-      const endpoint = `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE}`;
+      const endpoint = `${URL}${
+        import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE
+      }`;
       const response = await axiosInstance.get(endpoint);
-      setEvaluaciones(response.data.data || []); // Guardar evaluaciones
+      const evaluacionesData = response.data.data.promedio_evaluacion_docente;
+      setEvaluaciones(evaluacionesData);
     } catch (error) {
       console.error("Error al obtener las evaluaciones:", error);
     }
@@ -188,8 +199,9 @@ const InformacionPersonalDocente = () => {
                 />
               </div>
               <Texto
-                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${datos.primer_apellido
-                  } ${datos?.segundo_apellido || ""}`}
+                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${
+                  datos.primer_apellido
+                } ${datos?.segundo_apellido || ""}`}
               />
             </div>
 
@@ -203,8 +215,8 @@ const InformacionPersonalDocente = () => {
                     className="text-white font-semibold px-3 py-1 rounded-md flex items-center gap-2"
                   >
                     Evaluación:{" "}
-                    {evaluaciones.length > 0
-                      ? evaluaciones[0].promedio_evaluacion_docente
+                    {evaluaciones !== null && evaluaciones !== undefined
+                      ? evaluaciones
                       : "Sin datos"}
                     <ChevronDownIcon className="w-4 h-4" />
                   </button>
@@ -237,8 +249,9 @@ const InformacionPersonalDocente = () => {
             <div>
               <LabelText value="Ubicación" />
               <Texto
-                value={`${municipio.municipio_nombre || ""}, ${municipio.departamento_nombre || ""
-                  }`}
+                value={`${municipio.municipio_nombre || ""}, ${
+                  municipio.departamento_nombre || ""
+                }`}
               />
             </div>
           </div>
@@ -292,7 +305,6 @@ const InformacionPersonalDocente = () => {
               ))}
             </ul>
           </div>*/}
-
         </div>
       </div>
     </>
