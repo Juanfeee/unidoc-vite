@@ -45,6 +45,8 @@ import ListarDocentes from "./protected/apoyo-profesoral/documentos/ListarDocent
 import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
 import Contrataciones from "./protected/configuracion/contrataciones.tsx";
 import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
+import VerContratacionesPorUsuario from "./protected/talento-humano/contratacion/VerContratacionesPorUsuario.tsx";
+import AgregarCertificados from "./protected/apoyo-profesoral/certificados/AgregarCertificados.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -166,7 +168,10 @@ createRoot(document.getElementById("root")!).render(
             </Route>
           </Route>
 
-          {/* rutas obtener en talento humano */}
+          <Route
+            path="/talento-humano/contrataciones/usuario/:user_id"
+            element={<VerContratacionesPorUsuario />}
+          />
         </Route>
 
         {/* Ruta protegidas para administrador */}
@@ -195,6 +200,10 @@ createRoot(document.getElementById("root")!).render(
               path="documentos-docente/:id"
               element={<DocumentosDocente />}
             />
+            <Route path="agregar">
+              <Route index element={<span>No found</span>} />
+              <Route path="certificado" element={<AgregarCertificados />} />
+            </Route>
           </Route>
         </Route>
 

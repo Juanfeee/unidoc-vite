@@ -10,6 +10,7 @@ import Cookie from "js-cookie";
 import { Link } from "react-router-dom";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 
+// Interfaz para definir la estructura de los datos de las postulaciones
 interface Postulaciones {
   id_postulacion: number;
   convocatoria_id: number;
@@ -28,6 +29,7 @@ interface Postulaciones {
   };
 }
 
+// Interfaz para definir la estructura de los datos de contrataciones
 interface Contratacion {
   id_contratacion: number;
   user_id: number;
@@ -39,35 +41,42 @@ interface Contratacion {
 }
 
 const VerPostulaciones = () => {
+  // Estado para almacenar las postulaciones
   const [postulaciones, setPostulaciones] = useState<Postulaciones[]>([]);
+  // Estado para almacenar los IDs de los usuarios ya contratados
   const [usuariosContratados, setUsuariosContratados] = useState<number[]>([]);
+  // Estado para almacenar las contrataciones
   const [contrataciones, setContrataciones] = useState<Contratacion[]>([]);
+  // Estado para manejar el filtro global de búsqueda
   const [globalFilter, setGlobalFilter] = useState("");
+  // Estado para manejar el indicador de carga
   const [loading, setLoading] = useState(true);
 
+  // Función para obtener datos de postulaciones y contrataciones
   const fetchDatos = async () => {
     try {
-      setLoading(true);
+      setLoading(true); // Indica que los datos están en proceso de carga
       const [postulacionesRes, contratacionesRes] = await Promise.all([
         axiosInstance.get("/talentoHumano/obtener-postulaciones"),
         axiosInstance.get("/talentoHumano/obtener-contrataciones"),
       ]);
 
+      // Actualiza el estado con los datos obtenidos
       setPostulaciones(postulacionesRes.data.postulaciones);
       setContrataciones(contratacionesRes.data.contrataciones);
 
-      const idsContratados = contratacionesRes.data.contrataciones.map(
-        (c: any) => c.user_id
-      );
+      // Extrae los IDs de los usuarios ya contratados
+      const idsContratados = contratacionesRes.data.contrataciones.map((c: any) => c.user_id);
       setUsuariosContratados(idsContratados);
     } catch (error) {
       console.error("Error al obtener datos:", error);
-      toast.error("Error al cargar los datos");
+      toast.error("Error al cargar los datos"); // Muestra un mensaje de error
     } finally {
-      setLoading(false);
+      setLoading(false); // Indica que la carga ha finalizado
     }
   };
 
+  // Llama a la función fetchDatos al montar el componente
   useEffect(() => {
     fetchDatos();
   }, []);
@@ -101,6 +110,7 @@ const VerPostulaciones = () => {
         estado_postulacion: nuevoEstado,
       });
 
+      // Actualiza el estado de la postulación en el frontend
       setPostulaciones((prev) =>
         prev.map((item) =>
           item.id_postulacion === id
@@ -108,15 +118,16 @@ const VerPostulaciones = () => {
             : item
         )
       );
-      toast.success(`Postulación ${nuevoEstado.toLowerCase()} correctamente`);
+      toast.success(`Postulación ${nuevoEstado.toLowerCase()} correctamente`); // Muestra un mensaje de éxito
     } catch (error) {
       console.error("Error al actualizar:", error);
       if (axios.isAxiosError(error)) {
-        toast.error(`Error al ${nuevoEstado.toLowerCase()} la postulación`);
+        toast.error(`Error al ${nuevoEstado.toLowerCase()} la postulación`); // Muestra un mensaje de error
       }
     }
   };
 
+  // Función para ver la hoja de vida de un postulante en formato PDF
   const handleVerHojaVida = async (convocatoriaId: number, userId: number) => {
     const url = `${
       import.meta.env.VITE_API_URL
@@ -124,9 +135,9 @@ const VerPostulaciones = () => {
     console.log("URL de la hoja de vida:", url);
     try {
       const response = await axios.get(url, {
-        responseType: "blob",
+        responseType: "blob", // Indica que la respuesta es un archivo binario
         headers: {
-          Authorization: `Bearer ${Cookie.get("token")}`,
+          Authorization: `Bearer ${Cookie.get("token")}`, // Incluye el token de autorización
         },
         withCredentials: true,
       });
@@ -144,6 +155,7 @@ const VerPostulaciones = () => {
     }
   };
 
+  // Define las columnas de la tabla
   const columns = useMemo<ColumnDef<Postulaciones>[]>(
     () => [
       {
@@ -181,15 +193,14 @@ const VerPostulaciones = () => {
       {
         header: "Acciones",
         cell: ({ row }) => {
-          const yaContratado = usuariosContratados.includes(
-            row.original.user_id
-          );
-          const contratoUsuario = contrataciones.find(
+          const yaContratado = usuariosContratados.includes(row.original.user_id);
+          const VerContratacionesPorUsuario = contrataciones.find(
             (c) => c.user_id === row.original.user_id
           );
 
           return (
             <div className="flex space-x-2">
+              {/* Selector para aceptar o rechazar postulaciones */}
               <select
                 className="border rounded px-2 py-1"
                 onChange={(e) =>
@@ -198,13 +209,8 @@ const VerPostulaciones = () => {
                     e.target.value as "Aceptada" | "Rechazada"
                   )
                 }
-                value={
-                  row.original.estado_postulacion === "Aceptada" ||
-                  row.original.estado_postulacion === "Rechazada"
-                    ? row.original.estado_postulacion
-                    : ""
-                }
-                disabled={yaContratado}
+                value={row.original.estado_postulacion}
+                disabled={yaContratado} // Deshabilita si el usuario ya está contratado
               >
                 <option value="" disabled>
                   Seleccionar
@@ -213,6 +219,7 @@ const VerPostulaciones = () => {
                 <option value="Rechazada">Rechazar</option>
               </select>
 
+              {/* Botón para visualizar la hoja de vida */}
               <button
                 className="bg-blue-500 text-white px-2 py-1 rounded"
                 onClick={() =>
@@ -225,10 +232,11 @@ const VerPostulaciones = () => {
                 Hoja de Vida
               </button>
 
-              {row.original.estado_postulacion === "Aceptada" &&
-                (yaContratado ? (
+              {/* Botón para contratar o ver contrato */}
+              {row.original.estado_postulacion === "Aceptada" && (
+                yaContratado ? (
                   <Link
-                    to={`/talento-humano/contrataciones/contratacion/${contratoUsuario?.id_contratacion}`}
+                    to={`/talento-humano/contrataciones/usuario/${row.original.user_id}`}
                     className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
                   >
                     Ver Contrato
@@ -249,6 +257,7 @@ const VerPostulaciones = () => {
     [usuariosContratados, contrataciones]
   );
 
+  // Renderiza el contenido del componente
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
       {/* Encabezado */}
@@ -264,6 +273,8 @@ const VerPostulaciones = () => {
           </h1>
         </div>
       </div>
+
+      {/* Campo de búsqueda */}
       <div className="flex justify-between items-center w-full">
         <InputSearch
           type="text"
@@ -273,11 +284,12 @@ const VerPostulaciones = () => {
         />
       </div>
 
+      {/* Tabla de datos */}
       <DataTable
-        data={postulaciones}
-        columns={columns}
-        globalFilter={globalFilter}
-        loading={loading}
+        data={postulaciones} // Datos de la tabla
+        columns={columns} // Columnas de la tabla
+        globalFilter={globalFilter} // Filtro global
+        loading={loading} // Estado de carga
       />
     </div>
   );
