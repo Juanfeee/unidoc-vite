@@ -121,7 +121,7 @@ const VerContrataciones = () => {
                 header: "Acciones",
                 cell: ({ row }) => (
                     <div className="flex space-x-2">
-                        <Link to={`contratacion/${row.original.id_contratacion}`}>
+                        <Link to={`documentos-docente/${row.original.id_contratacion}`}>
                             <PencilIcon />
                         </Link>
                         <EliminarBoton

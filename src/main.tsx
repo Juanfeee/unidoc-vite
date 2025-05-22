@@ -41,6 +41,9 @@ import VerContrataciones from "./protected/talento-humano/contratacion/VerContra
 import Contratacion from "./protected/talento-humano/contratacion/Contratacion.tsx";
 import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
 import EditarEvaluacion from "./protected/editar/evaluacion/EditarEvaluacion.tsx";
+import ListarDocenes from "./protected/apoyo-profesoral/documentos/ListarDocentes.tsx";
+import ListarDocentes from "./protected/apoyo-profesoral/documentos/ListarDocentes.tsx";
+import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -175,7 +178,6 @@ createRoot(document.getElementById("root")!).render(
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
 
-
         {/* Rutas protegidas para ayuda profesoral */}
         <Route
           element={
@@ -184,8 +186,8 @@ createRoot(document.getElementById("root")!).render(
             </ProtectedRoute>
           }
         >
-          {/* Aquí puedes agregar las rutas específicas para el administrador */}
-          <Route path="apoyo-profesoral" element={<h1>Hola apoyo-profesoral</h1>} />
+          <Route path="apoyo-profesoral" element={<ListarDocentes />}/>
+          <Route path="documentos-docente" element={<DocumentosDocente />} />
         </Route>
 
         {/* Ruta catch-all para 404 */}
