@@ -225,10 +225,10 @@ const Convocatoria = () => {
         </div>
 
         <div className="col-span-full">
-          <InputLabel htmlFor="descripcion" value="Descripcion" />
+          <InputLabel htmlFor="descripcion" value="Descripción" />
           <TextArea
             id="descripcion"
-            placeholder="Descripcion"
+            placeholder="Descripción..."
             {...register("descripcion")}
           />
           <InputErrors errors={errors} name="descripcion" />

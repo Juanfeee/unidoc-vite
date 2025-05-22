@@ -49,17 +49,18 @@ const InformacionPersonalDocente = () => {
   const [evaluaciones, setEvaluaciones] = useState<any[]>([]); // Estado para las evaluaciones
   const [dropdownOpen, setDropdownOpen] = useState(false); // Estado para desplegable
   const URL = import.meta.env.VITE_API_URL;
+  const [puntaje, setPuntaje] = useState<string>("0.0"); // Estado para el puntaje
+  const [categoria, setCategoria] = useState<string>(""); // Estado para la categoria segun el puntaje
+
 
   // Obtener imagen de perfil
   const fetchProfileImage = async () => {
     try {
       const ENDPOINTS = {
-        Aspirante: `${URL}${
-          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
-        }`,
-        Docente: `${URL}${
-          import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
-        }`,
+        Aspirante: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_ASPIRANTE
+          }`,
+        Docente: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_FOTO_PERFIL_DOCENTE
+          }`,
       };
       const endpoint = ENDPOINTS[rol];
       const response = await axiosInstance.get(endpoint);
@@ -72,6 +73,18 @@ const InformacionPersonalDocente = () => {
       }
     } catch (error) {
       console.error("Error al obtener la imagen de perfil:", error);
+    }
+  };
+
+  // obtener datos del puntaje
+  const fetchPuntaje = async () => {
+    try {
+      const response = await axiosInstance.get(import.meta.env.VITE_ENDPOINT_EVALUAR_PUNTAJE);
+      // La estructura coincide con el backend
+      setPuntaje(response.data.resultado.puntaje_total?.toFixed(1) || "0.0");
+      setCategoria(response.data.resultado.categoria_lograda || "");
+    } catch (error) {
+      console.error("Error al obtener el puntaje:", error);
     }
   };
 
@@ -108,12 +121,10 @@ const InformacionPersonalDocente = () => {
         setAptitudes(JSON.parse(cachedAptitudes));
       }
       const ENDPOINTS = {
-        Aspirante: `${URL}${
-          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
-        }`,
-        Docente: `${URL}${
-          import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
-        }`,
+        Aspirante: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_ASPIRANTE
+          }`,
+        Docente: `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_APTITUDES_DOCENTE
+          }`,
       };
       const endpoint = ENDPOINTS[rol];
       const response = await axiosInstance.get(endpoint);
@@ -133,9 +144,8 @@ const InformacionPersonalDocente = () => {
   // Obtener evaluaciones
   const fetchEvaluaciones = async () => {
     try {
-      const endpoint = `${URL}${
-        import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE
-      }`;
+      const endpoint = `${URL}${import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE
+        }`;
       const response = await axiosInstance.get(endpoint);
       const evaluacionesData = response.data.data.promedio_evaluacion_docente;
       setEvaluaciones(evaluacionesData);
@@ -153,6 +163,7 @@ const InformacionPersonalDocente = () => {
           fetchProfileImage(),
           fetchDatos(),
           fetchEvaluaciones(),
+          fetchPuntaje(),
         ]);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
@@ -199,16 +210,15 @@ const InformacionPersonalDocente = () => {
                 />
               </div>
               <Texto
-                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${
-                  datos.primer_apellido
-                } ${datos?.segundo_apellido || ""}`}
+                value={`${datos.primer_nombre} ${datos?.segundo_nombre || ""} ${datos.primer_apellido
+                  } ${datos?.segundo_apellido || ""}`}
               />
             </div>
 
             {rol === "Docente" && (
               <div className="flex sm:justify-end items-center gap-6">
-                {/* Puntaje y Evaluaciones al lado */}
-                <Puntaje value="0.0" />
+                {/* Puntaje y Evaluaciones */}
+                <Puntaje value={puntaje} />
                 <div className="relative text-base font-semibold rounded-xl text-white bg-[#266AAE] w-fit px-6">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -249,11 +259,16 @@ const InformacionPersonalDocente = () => {
             <div>
               <LabelText value="Ubicación" />
               <Texto
-                value={`${municipio.municipio_nombre || ""}, ${
-                  municipio.departamento_nombre || ""
-                }`}
+                value={`${municipio.municipio_nombre || ""}, ${municipio.departamento_nombre || ""
+                  }`}
               />
             </div>
+            {rol === "Docente" && (
+              <div>
+                <LabelText value="Categoría lograda" />
+                <Texto value={categoria || "Sin categoría"} />
+              </div>
+            )}
           </div>
 
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">

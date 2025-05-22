@@ -248,7 +248,7 @@ const AgregarEstudio = () => {
 
         {/* Convalidado */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="convalido" value="¿Convalidó?" />
+          <InputLabel htmlFor="convalido" value="¿Título convalidado?" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="convalido-si"
