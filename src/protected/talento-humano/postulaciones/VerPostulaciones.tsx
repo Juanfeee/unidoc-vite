@@ -161,11 +161,6 @@ const VerPostulaciones = () => {
   const columns = useMemo<ColumnDef<Postulaciones>[]>(
     () => [
       {
-        accessorKey: "id_postulacion",
-        header: "ID Postulación",
-        size: 50,
-      },
-      {
         accessorKey: "convocatoria_postulacion.nombre_convocatoria",
         header: "Convocatoria",
         size: 100,
@@ -198,27 +193,28 @@ const VerPostulaciones = () => {
           const yaContratado = usuariosContratados.includes(
             row.original.user_id
           );
-          const VerContratacionesPorUsuario = contrataciones.find(
-            (c) => c.user_id === row.original.user_id
-          );
+          const estadoActual = row.original.estado_postulacion;
+
+          // Determina si mostrar "Seleccionar" como opción seleccionada
+          const mostrarSeleccionar =
+            !estadoActual || estadoActual === "Enviada";
 
           return (
             <div className="flex space-x-2">
               {/* Selector para aceptar o rechazar postulaciones */}
               <select
                 className="border rounded px-2 py-1"
-                onChange={(e) =>
-                  handleActualizar(
-                    row.original.id_postulacion,
-                    e.target.value as "Aceptada" | "Rechazada"
-                  )
-                }
-                value={row.original.estado_postulacion || ""} // Usa cadena vacía si no hay valor
-                disabled={yaContratado}
+                onChange={(e) => {
+                  const nuevoEstado = e.target.value as
+                    | "Aceptada"
+                    | "Rechazada";
+                  if (nuevoEstado) {
+                    handleActualizar(row.original.id_postulacion, nuevoEstado);
+                  }
+                }}
+                value={mostrarSeleccionar ? "" : estadoActual}
               >
-                <option value="" disabled selected>
-                  {" "}
-                  {/* Añade el atributo selected */}
+                <option value="" disabled>
                   Seleccionar
                 </option>
                 <option value="Aceptada">Aceptar</option>

@@ -85,7 +85,7 @@ const VerPostulaciones = () => {
     try {
       const ENDPOINTS = {
         Aspirante: `${import.meta.env.VITE_API_URL}${
-          import.meta.env.VITE_ENDPOINT_ELIMINAR_POSTULACIONES_ASPIRANTES
+          import.meta.env.VITE_ENDPOINT_ELIMINAR_POSTULACIONES_ASPIRANTE
         }`,
         Docente: `${import.meta.env.VITE_API_URL}${
           import.meta.env.VITE_ENDPOINT_ELIMINAR_POSTULACIONES_DOCENTE

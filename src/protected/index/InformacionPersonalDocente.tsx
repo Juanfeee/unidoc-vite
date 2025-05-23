@@ -13,6 +13,7 @@ import AptitudesCarga from "../../componentes/formularios/AptitudesCarga";
 import { Puntaje } from "../../componentes/formularios/puntaje";
 import { RolesValidos } from "../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 // Nuevo componente Evaluaciones
 type EvaluacionesProps = {
@@ -49,6 +50,8 @@ const InformacionPersonalDocente = () => {
   const [evaluaciones, setEvaluaciones] = useState<any[]>([]); // Estado para las evaluaciones
   const [dropdownOpen, setDropdownOpen] = useState(false); // Estado para desplegable
   const URL = import.meta.env.VITE_API_URL;
+  const [puntaje, setPuntaje] = useState<string>("0.0"); // Estado para el puntaje
+  const [categoria, setCategoria] = useState<string>(""); // Estado para la categoria segun el puntaje
 
   // Obtener imagen de perfil
   const fetchProfileImage = async () => {
@@ -72,6 +75,57 @@ const InformacionPersonalDocente = () => {
       }
     } catch (error) {
       console.error("Error al obtener la imagen de perfil:", error);
+    }
+  };
+
+  // obtener datos del puntaje
+  const fetchPuntaje = async () => {
+    try {
+      // 1. Verificar autenticación y rol
+      const token = Cookies.get("token");
+      if (!token) {
+        return;
+      }
+
+      const decoded = jwtDecode<{ rol: string }>(token);
+      if (decoded.rol !== "docente") {
+        // Cambia "docente" por el rol requerido
+        console.log(
+          `Usuario con rol ${decoded.rol} no requiere puntaje, omitiendo petición`
+        );
+        return;
+      }
+
+      // 3. Hacer la petición
+      const response = await axiosInstance.get(
+        import.meta.env.VITE_ENDPOINT_EVALUAR_PUNTAJE
+      );
+
+      // 4. Procesar respuesta
+      if (response.data?.resultado) {
+        setPuntaje(response.data.resultado.puntaje_total?.toFixed(1) || "0.0");
+        setCategoria(response.data.resultado.categoria_lograda || "");
+      } else {
+        setPuntaje("0.0");
+        setCategoria("");
+      }
+    } catch (error) {
+      // 5. Manejo de errores específico
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 403) {
+          console.log("Acceso no autorizado para obtener puntaje");
+        } else {
+          console.error("Error al obtener el puntaje:", error.message);
+          // Opcional: Mostrar feedback al usuario para errores no relacionados a permisos
+          // toast.error("Error al cargar el puntaje");
+        }
+      } else {
+        console.error("Error desconocido al obtener puntaje:", error);
+      }
+
+      // Establecer valores por defecto en caso de error
+      setPuntaje("0.0");
+      setCategoria("");
     }
   };
 
@@ -133,14 +187,26 @@ const InformacionPersonalDocente = () => {
   // Obtener evaluaciones
   const fetchEvaluaciones = async () => {
     try {
-      const endpoint = `${URL}${
+      // Verificar si el usuario es docente antes de hacer la petición
+      const token = Cookies.get("token");
+      if (!token) throw new Error("No autenticado");
+
+      const decoded = jwtDecode<{ rol: string }>(token);
+      if (decoded.rol !== "docente") {
+        return; // No hacer la petición si no es docente
+      }
+
+      const endpoint = `${import.meta.env.VITE_API_URL}${
         import.meta.env.VITE_ENDPOINT_OBTENER_EVALUACIONES_DOCENTE
       }`;
       const response = await axiosInstance.get(endpoint);
+
       const evaluacionesData = response.data.data.promedio_evaluacion_docente;
       setEvaluaciones(evaluacionesData);
     } catch (error) {
-      console.error("Error al obtener las evaluaciones:", error);
+      if (axios.isAxiosError(error) && error.response?.status !== 403) {
+        console.error("Error al obtener las evaluaciones:", error);
+      }
     }
   };
 
@@ -153,6 +219,7 @@ const InformacionPersonalDocente = () => {
           fetchProfileImage(),
           fetchDatos(),
           fetchEvaluaciones(),
+          fetchPuntaje(),
         ]);
       } catch (error) {
         console.error("Error al cargar los datos:", error);
@@ -207,8 +274,8 @@ const InformacionPersonalDocente = () => {
 
             {rol === "Docente" && (
               <div className="flex sm:justify-end items-center gap-6">
-                {/* Puntaje y Evaluaciones al lado */}
-                <Puntaje value="0.0" />
+                {/* Puntaje y Evaluaciones */}
+                <Puntaje value={puntaje} />
                 <div className="relative text-base font-semibold rounded-xl text-white bg-[#266AAE] w-fit px-6">
                   <button
                     onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -254,6 +321,12 @@ const InformacionPersonalDocente = () => {
                 }`}
               />
             </div>
+            {rol === "Docente" && (
+              <div>
+                <LabelText value="Categoría lograda" />
+                <Texto value={categoria || "Sin categoría"} />
+              </div>
+            )}
           </div>
 
           <div className="grid col-span-full gap-y-6 border-t-1 py-4 border-gray-200">

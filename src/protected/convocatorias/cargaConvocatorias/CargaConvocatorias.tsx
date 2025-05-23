@@ -71,9 +71,6 @@ const ListaConvocatorias = () => {
       setConvocatorias(response.data.convocatorias);
     } catch (err) {
       console.error("Error al obtener convocatorias:", err);
-      setError(
-        "Error al cargar las convocatorias. Por favor intente nuevamente."
-      );
     } finally {
       setLoading(false);
     }
