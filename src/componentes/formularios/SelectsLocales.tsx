@@ -1,4 +1,4 @@
-import { mappeoAreasContratacion, mappeoTipoContratacion } from "../../validaciones/talento-humano.ts/contratacionSchema";
+import { mappeoAreaContratacion, mappeoTipoContratacion } from "../../validaciones/talento-humano.ts/contratacionSchema";
 import { mappeoEstadoConvocatoria } from "../../validaciones/talento-humano.ts/convocatoriaSchema";
 
 type Props = {
@@ -12,7 +12,7 @@ export const SelectLocales = ({ id, className, register, error = false }: Props)
   const optionsMap = {
     estado_convocatoria: mappeoEstadoConvocatoria,
     tipo_contrato: mappeoTipoContratacion,
-    area: mappeoAreasContratacion,
+    area: mappeoAreaContratacion,
   };
 
   const options = optionsMap[id as keyof typeof optionsMap];

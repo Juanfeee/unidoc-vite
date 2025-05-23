@@ -1,29 +1,36 @@
 import { z } from "zod";
 
-const areasContratacion = [
+const areas_contratacion = [
   "Facultad de Ciencias Administrativas, Contables y Economicas",
   "Facultad de Ciencias Ambientales y Desarrollo Sostenible",
   "Facultad de Derecho, Ciencias Sociales y Politicas",
   "Facultad de Educacion",
   "Facultad de Ingenieria",
 ] as const;
-
 const tipoContratacion = ["Planta", "Ocasional", "Cátedra"] as const;
 
-export type AreaContratacion = (typeof areasContratacion)[number];
+export type AreaContratacion = (typeof areas_contratacion)[number];
 export type TipoContratacion = (typeof tipoContratacion)[number];
 
-export const mappeoAreasContratacion: { [key in AreaContratacion]: string } = 
-  areasContratacion.reduce(
-    (acc, area) => ({ ...acc, [area]: area }),
-    {} as { [key in AreaContratacion]: string }
-  );
-
-export const mappeoTipoContratacion: { [key in TipoContratacion]: string } = 
-  tipoContratacion.reduce(
-    (acc, tipo) => ({ ...acc, [tipo]: tipo }),
-    {} as { [key in TipoContratacion]: string }
-  );
+export const mappeoAreaContratacion: {
+  [key in AreaContratacion]: string;
+} = {
+  "Facultad de Ciencias Administrativas, Contables y Economicas":
+    "Facultad de Ciencias Administrativas, Contables y Economicas",
+  "Facultad de Ciencias Ambientales y Desarrollo Sostenible":
+    "Facultad de Ciencias Ambientales y Desarrollo Sostenible",
+  "Facultad de Derecho, Ciencias Sociales y Politicas":
+    "Facultad de Derecho, Ciencias Sociales y Politicas",
+  "Facultad de Educacion": "Facultad de Educacion",
+  "Facultad de Ingenieria": "Facultad de Ingenieria",
+};
+export const mappeoTipoContratacion: {
+  [key in TipoContratacion]: string;
+} = {
+  Planta: "Planta",
+  Ocasional: "Ocasional",
+  Cátedra: "Cátedra",
+};
 
 // Esquema base para creación
 export const contratacionSchema = z
@@ -32,7 +39,7 @@ export const contratacionSchema = z
       errorMap: () => ({ message: "Seleccione un tipo de contrato válido" }),
     }),
 
-    area: z.enum(areasContratacion, {
+    area: z.enum(areas_contratacion, {
       errorMap: () => ({ message: "Seleccione un área válida" }),
     }),
 
@@ -53,12 +60,9 @@ export const contratacionSchema = z
       }),
 
     valor_contrato: z
-      .preprocess(
-        (val) => Number(val), 
-        z.number().positive({
-          message: "El valor del contrato debe ser mayor que cero",
-        })
-      ),
+      .number({ invalid_type_error: "Debe ser un número" })
+      .int({ message: "Debe ser un número entero" })
+      .positive({ message: "Debe ser un número positivo" }),
 
     observaciones: z
       .string()
@@ -72,7 +76,8 @@ export const contratacionSchema = z
       return fechaFin >= fechaInicio;
     },
     {
-      message: "La fecha de finalización no puede ser menor que la fecha de inicio",
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
       path: ["fecha_fin"],
     }
   );
@@ -82,11 +87,11 @@ export const contratacionSchemaUpdate = z
   .object({
     tipo_contrato: z.enum(tipoContratacion, {
       errorMap: () => ({ message: "Seleccione un tipo de contrato válido" }),
-    }).optional(),
+    }),
 
-    area: z.enum(areasContratacion, {
+    area: z.enum(areas_contratacion, {
       errorMap: () => ({ message: "Seleccione un área válida" }),
-    }).optional(),
+    }),
 
     fecha_inicio: z
       .string({
@@ -94,8 +99,7 @@ export const contratacionSchemaUpdate = z
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      })
-      .optional(),
+      }),
 
     fecha_fin: z
       .string({
@@ -103,23 +107,19 @@ export const contratacionSchemaUpdate = z
       })
       .refine((val) => !isNaN(Date.parse(val)), {
         message: "Formato de fecha incorrecto",
-      })
-      .optional(),
+      }),
 
-    valor_contrato: z
-      .preprocess(
-        (val) => Number(val), 
-        z.number().positive({
-          message: "El valor del contrato debe ser mayor que cero",
-        })
-      )
-      .optional(),
+    valor_contrato: z.preprocess(
+      (val) => Number(val),
+      z.number().positive({
+        message: "El valor del contrato debe ser mayor que cero",
+      })
+    ),
 
     observaciones: z
       .string()
       .min(1, { message: "Campo vacío" })
-      .max(1000, { message: "Máximo 1000 caracteres" })
-      .optional(),
+      .max(1000, { message: "Máximo 1000 caracteres" }),
   })
   .refine(
     (data) => {
@@ -129,7 +129,8 @@ export const contratacionSchemaUpdate = z
       return fechaFin >= fechaInicio;
     },
     {
-      message: "La fecha de finalización no puede ser menor que la fecha de inicio",
+      message:
+        "La fecha de finalización no puede ser menor que la fecha de inicio",
       path: ["fecha_fin"],
     }
   );

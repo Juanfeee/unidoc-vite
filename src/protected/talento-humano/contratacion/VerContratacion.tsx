@@ -140,7 +140,7 @@ const VerContrataciones = () => {
         cell: ({ row }) => (
           <div className="flex space-x-2">
             <Link
-              to={`apoyo-profesoral/documentos-docente/${row.original.id_contratacion}`}
+              to={`contratacion/${row.original.id_contratacion}`}
             >
               <PencilIcon />
             </Link>
