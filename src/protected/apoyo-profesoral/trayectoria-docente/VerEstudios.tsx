@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import axiosInstance from "../../../utils/axiosConfig";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -30,6 +29,7 @@ interface Estudio {
   documentos_estudio: DocumentoEstudio[];
   created_at: string;
 }
+
 
 const VerEstudios = ({ idDocente }: { idDocente: string }) => {
   const [estudios, setEstudios] = useState<Estudio[]>([]);

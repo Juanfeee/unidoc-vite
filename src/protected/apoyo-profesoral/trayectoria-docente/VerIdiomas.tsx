@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import InputSearch from "../../../componentes/formularios/InputSearch";
 import { DataTable } from "../../../componentes/tablas/DataTable";
-import { useParams } from "react-router";
 import axiosInstance from "../../../utils/axiosConfig";
 import { toast } from "react-toastify";
 import { ColumnDef } from "@tanstack/react-table";
@@ -23,8 +22,8 @@ interface Idiomas {
   documentos_idioma?: DocumentoIdioma[];
 }
 
-const VerIdiomas = () => {
-  const { id } = useParams();
+
+const VerIdiomas = ({ idDocente }: { idDocente: string }) => {
   const [idiomas, setIdiomas] = useState<Idiomas[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,7 +32,7 @@ const VerIdiomas = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/apoyoProfesoral/filtrar-docentes-idioma-id/${id}`
+        `/apoyoProfesoral/filtrar-docentes-idioma-id/${idDocente}`
       );
       setIdiomas(response.data.data);
     } catch (error) {
@@ -46,7 +45,7 @@ const VerIdiomas = () => {
 
   useEffect(() => {
     fetchIdiomas();
-  }, [id]);
+  }, [idDocente]);
 
   const actualizarEstadoDocumento = async (
     idDocumento: number,

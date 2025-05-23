@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router";
+import { Link } from "react-router";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 import InputSearch from "../../../componentes/formularios/InputSearch";
 import { DataTable } from "../../../componentes/tablas/DataTable";
@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { ColumnDef } from "@tanstack/react-table";
 import axiosInstance from "../../../utils/axiosConfig";
-import { PencilIcon, VerDocumentos } from "../../../assets/icons/Iconos";
+import {  VerDocumentos } from "../../../assets/icons/Iconos";
 
 interface Docente {
   id: number;

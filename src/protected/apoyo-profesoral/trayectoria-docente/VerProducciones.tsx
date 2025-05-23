@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router";
 import axiosInstance from "../../../utils/axiosConfig";
 import { toast } from "react-toastify";
 import { ColumnDef } from "@tanstack/react-table";
@@ -24,8 +23,7 @@ interface Experiencia {
   documentos_experiencia?: DocumentoExperiencia[];
 }
 
-const VerExperiencia = () => {
-  const { id } = useParams();
+const VerExperiencia = ({ idDocente }: { idDocente: string }) => {
   const [experiencias, setExperiencias] = useState<Experiencia[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -34,7 +32,7 @@ const VerExperiencia = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `/apoyoProfesoral/filtrar-docentes-experiencia-id/${id}`
+        `/apoyoProfesoral/filtrar-docentes-experiencia-id/${idDocente}`
       );
       setExperiencias(response.data.data);
     } catch (error) {
@@ -69,7 +67,7 @@ const VerExperiencia = () => {
 
   useEffect(() => {
     fetchExperiencias();
-  }, [id]);
+  }, [idDocente]);
 
   const columns = useMemo<ColumnDef<Experiencia>[]>(() => [
     {

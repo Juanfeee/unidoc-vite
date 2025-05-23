@@ -18,7 +18,7 @@ type Inputs = {
 };
 
 const AgregarEvaluacion = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting] = useState(false);
 
   const {
     register,

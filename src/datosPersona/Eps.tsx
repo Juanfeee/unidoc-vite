@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { epsSchema, epsSchemaUpdate } from "../validaciones/epsSchema";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { InputLabel } from "../componentes/formularios/InputLabel";

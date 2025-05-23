@@ -1,4 +1,4 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 import InputErrors from "../../../componentes/formularios/InputErrors";
@@ -16,7 +16,7 @@ type Inputs = {
 };
 
 const EditarEvaluacion = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting] = useState(false);
 
   const {
     register,

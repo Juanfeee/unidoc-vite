@@ -5,7 +5,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { rutSchema, rutSchemaUpdate } from "../validaciones/rutSchema";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { InputLabel } from "../componentes/formularios/InputLabel";
 import TextInput from "../componentes/formularios/TextInput";

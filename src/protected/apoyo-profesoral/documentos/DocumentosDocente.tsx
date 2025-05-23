@@ -5,22 +5,22 @@ import VerEstudios from "../trayectoria-docente/VerEstudios";
 import VerIdiomas from "../trayectoria-docente/VerIdiomas";
 import { useState } from "react";
 import FiltroDesplegable from "../../../componentes/filtro";
-import VerProducciones from "../trayectoria-docente/VerProducciones";
 import VerExperiencia from "../trayectoria-docente/VerProducciones";
 
 const DocumentosDocente = () => {
   const [filtroActivo, setFiltroActivo] = useState("estudios");
+  
   const { id } = useParams();
   const renderizarComponente = () => {
     switch (filtroActivo) {
       case "estudios":
-        return <VerEstudios idDocente={id} />;
+        return <VerEstudios idDocente={id!} />;
       case "idiomas":
-        return <VerIdiomas idDocente={id} />;
+        return <VerIdiomas idDocente={id!} />;
       case "experiencias":
-        return <VerExperiencia idDocente={id} />;
+        return <VerExperiencia idDocente={id!} />;
       default:
-        return <VerEstudios idDocente={id} />;
+        return <VerEstudios idDocente={id!} />;
     }
   };
   // funcion para ver documentos

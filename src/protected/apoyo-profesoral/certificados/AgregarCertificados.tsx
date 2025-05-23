@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router";
+import { Link } from "react-router";
 import { ButtonPrimary } from "../../../componentes/formularios/ButtonPrimary";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 import InputErrors from "../../../componentes/formularios/InputErrors";
@@ -32,9 +32,8 @@ type DocenteOption = {
 };
 
 const AgregarCertificados = () => {
-  const { id } = useParams();
-  const navigate = useNavigate(); // Función para redirigir navegaciones
-  const [isCertificadoRegistered, setIsCertificadoRegistered] = useState(false);
+ // Función para redirigir navegaciones
+  const [isCertificadoRegistered] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // Estado para controlar el envío del formulario
   const [selectedDocentes, setSelectedDocentes] = useState<DocenteOption[]>([]);
   const [isLoadingDocentes, setIsLoadingDocentes] = useState(false);
