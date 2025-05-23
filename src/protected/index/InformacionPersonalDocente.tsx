@@ -288,7 +288,7 @@ const InformacionPersonalDocente = () => {
                     <ChevronDownIcon className="w-4 h-4" />
                   </button>
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
                       <Link
                         to="/agregar/evaluacion"
                         className="block px-4 py-2 hover:bg-gray-100"
