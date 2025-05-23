@@ -88,7 +88,7 @@ const InformacionPersonalDocente = () => {
       }
 
       const decoded = jwtDecode<{ rol: string }>(token);
-      if (decoded.rol !== "docente") {
+      if (decoded.rol !== "Docente") {
         // Cambia "docente" por el rol requerido
         console.log(
           `Usuario con rol ${decoded.rol} no requiere puntaje, omitiendo petición`
@@ -192,7 +192,7 @@ const InformacionPersonalDocente = () => {
       if (!token) throw new Error("No autenticado");
 
       const decoded = jwtDecode<{ rol: string }>(token);
-      if (decoded.rol !== "docente") {
+      if (decoded.rol !== "Docente") {
         return; // No hacer la petición si no es docente
       }
 
@@ -288,7 +288,7 @@ const InformacionPersonalDocente = () => {
                     <ChevronDownIcon className="w-4 h-4" />
                   </button>
                   {dropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white text-[#1E3A8A] rounded-md shadow-lg z-10">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
                       <Link
                         to="/agregar/evaluacion"
                         className="block px-4 py-2 hover:bg-gray-100"

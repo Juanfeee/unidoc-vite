@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { Link, useLocation} from "react-router-dom";
 import { useState } from "react";
 
-const HeaderTalentoHumano = () => {
+const HeaderApoyoProfesoral = () => {
   const { pathname } = useLocation();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -72,7 +72,7 @@ const HeaderTalentoHumano = () => {
           <nav className="hidden md:flex h-full">
             <ul className="flex items-center gap-8 text-base">
               <li>
-                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/talento-humano">
+                <Link className={`hover:border-b-2 ${pathname === "/index" ? "border-b-2 border-blue-500" : ""}`} to="/apoyo-profesoral">
                   Inicio
                 </Link>
               </li>
@@ -99,7 +99,7 @@ const HeaderTalentoHumano = () => {
                       ? "text-blue-600 font-semibold"
                       : "text-gray-700"
                   }`}
-                  to="/dashboard"
+                  to="/appoy-profesoral"
                   onClick={toggleMobileMenu}
                 >
                   Inicio
@@ -124,4 +124,4 @@ const HeaderTalentoHumano = () => {
   );
 };
 
-export default HeaderTalentoHumano;
+export default HeaderApoyoProfesoral;

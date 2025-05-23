@@ -16,14 +16,15 @@ export const mappeoAreaContratacion: {
   [key in AreaContratacion]: string;
 } = {
   "Facultad de Ciencias Administrativas, Contables y Economicas":
-    "Facultad de Ciencias Administrativas, Contables y Economicas",
+    "Facultad de Ciencias Administrativas, Contables y Económicas",
   "Facultad de Ciencias Ambientales y Desarrollo Sostenible":
     "Facultad de Ciencias Ambientales y Desarrollo Sostenible",
   "Facultad de Derecho, Ciencias Sociales y Politicas":
-    "Facultad de Derecho, Ciencias Sociales y Politicas",
-  "Facultad de Educacion": "Facultad de Educacion",
-  "Facultad de Ingenieria": "Facultad de Ingenieria",
+    "Facultad de Derecho, Ciencias Sociales y Políticas",
+  "Facultad de Educacion": "Facultad de Educación",
+  "Facultad de Ingenieria": "Facultad de Ingeniería",
 };
+
 export const mappeoTipoContratacion: {
   [key in TipoContratacion]: string;
 } = {

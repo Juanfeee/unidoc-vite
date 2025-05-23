@@ -48,6 +48,7 @@ import VerContratacionesPorUsuario from "./protected/talento-humano/contratacion
 import AgregarCertificados from "./protected/apoyo-profesoral/certificados/AgregarCertificados.tsx";
 import ApoyoProfesoral from "./protected/apoyo-profesoral/ApoyoProfesoral.tsx";
 import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
+import ApoyoProfesoralLayouts from "./layouts/ApoyoProfesoral.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -191,7 +192,7 @@ createRoot(document.getElementById("root")!).render(
         <Route
           element={
             <ProtectedRoute allowedRoles={["Apoyo Profesoral"]}>
-              <AdminLayouts />
+              <ApoyoProfesoralLayouts />
             </ProtectedRoute>
           }
         >

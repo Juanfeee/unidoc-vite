@@ -114,7 +114,7 @@ const AgregarCertificados = () => {
   return (
     <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
       <div className="flex gap-x-4 col-span-full items-center">
-        <Link to={"/talento-humano/contrataciones"}>
+        <Link to={"/apoyo-profesoral"}>
           <ButtonRegresar /> {/* Botón para regresar */}
         </Link>
         <h3 className="font-bold text-3xl col-span-full">
