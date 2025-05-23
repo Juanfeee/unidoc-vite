@@ -6,6 +6,7 @@ import VerIdiomas from "../trayectoria-docente/VerIdiomas";
 import { useState } from "react";
 import FiltroDesplegable from "../../../componentes/filtro";
 import VerProducciones from "../trayectoria-docente/VerProducciones";
+import VerExperiencia from "../trayectoria-docente/VerProducciones";
 
 const DocumentosDocente = () => {
   const [filtroActivo, setFiltroActivo] = useState("estudios");
@@ -16,19 +17,19 @@ const DocumentosDocente = () => {
         return <VerEstudios idDocente={id} />;
       case "idiomas":
         return <VerIdiomas idDocente={id} />;
-      case "producciones":
-        return <VerProducciones idDocente={id} />; 
+      case "experiencias":
+        return <VerExperiencia idDocente={id} />;
       default:
         return <VerEstudios idDocente={id} />;
     }
   };
-
+  // funcion para ver documentos
 
   const opcionesFiltro = [
-  { valor: "estudios", etiqueta: "Estudios" },
-  { valor: "idiomas", etiqueta: "Idiomas" },
-  { valor: "producciones", etiqueta: "Producciones" }
-];
+    { valor: "estudios", etiqueta: "Estudios" },
+    { valor: "idiomas", etiqueta: "Idiomas" },
+    { valor: "experiencias", etiqueta: "Experiencias" },
+  ];
 
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
@@ -36,7 +37,7 @@ const DocumentosDocente = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
           <div className="flex gap-1">
-            <Link to={"/talento-humano"}>
+            <Link to={"/apoyo-profesoral/docentes"}>
               <ButtonRegresar />
             </Link>
           </div>
@@ -56,10 +57,10 @@ const DocumentosDocente = () => {
           estiloLista="bg-white border border-gray-300 rounded-lg shadow-lg"
           estiloItem="hover:bg-gray-100"
         />
+        {renderizarComponente()}
       </div>
 
       {/* Componente que se renderiza según el filtro */}
-      {renderizarComponente()}
     </div>
   );
 };

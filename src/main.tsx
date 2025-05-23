@@ -42,11 +42,12 @@ import Contratacion from "./protected/talento-humano/contratacion/Contratacion.t
 
 import EditarEvaluacion from "./protected/editar/evaluacion/EditarEvaluacion.tsx";
 import ListarDocentes from "./protected/apoyo-profesoral/documentos/ListarDocentes.tsx";
-import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
 import Contrataciones from "./protected/configuracion/contrataciones.tsx";
 import AgregarEvaluacion from "./protected/agregar/AgregarEvaluacion.tsx";
 import VerContratacionesPorUsuario from "./protected/talento-humano/contratacion/VerContratacionesPorUsuario.tsx";
 import AgregarCertificados from "./protected/apoyo-profesoral/certificados/AgregarCertificados.tsx";
+import ApoyoProfesoral from "./protected/apoyo-profesoral/ApoyoProfesoral.tsx";
+import DocumentosDocente from "./protected/apoyo-profesoral/documentos/DocumentosDocente.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -195,11 +196,11 @@ createRoot(document.getElementById("root")!).render(
           }
         >
           <Route path="apoyo-profesoral">
-            <Route index element={<ListarDocentes />} />
-            <Route
-              path="documentos-docente/:id"
-              element={<DocumentosDocente />}
-            />
+            <Route index element={<ApoyoProfesoral />} />
+
+            <Route path="docentes" element={<ListarDocentes />}></Route>
+            <Route path="docentes/documentos/:id" element={<DocumentosDocente />} />
+
             <Route path="agregar">
               <Route index element={<span>No found</span>} />
               <Route path="certificado" element={<AgregarCertificados />} />

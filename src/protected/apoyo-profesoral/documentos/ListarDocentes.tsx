@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, Outlet } from "react-router";
 import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar";
 import InputSearch from "../../../componentes/formularios/InputSearch";
 import { DataTable } from "../../../componentes/tablas/DataTable";
@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { ColumnDef } from "@tanstack/react-table";
 import axiosInstance from "../../../utils/axiosConfig";
-import { PencilIcon } from "../../../assets/icons/Iconos";
+import { PencilIcon, VerDocumentos } from "../../../assets/icons/Iconos";
 
 interface Docente {
   id: number;
@@ -60,8 +60,10 @@ const ListarDocentes = () => {
         id: "acciones",
         header: "Acciones",
         cell: ({ row }) => (
-            <Link to={`documentos-docente/${row.original.id}`}>
-              <PencilIcon />
+            <Link to={`documentos/${row.original.id}`}>
+              <VerDocumentos
+                texto="Ver documentos"
+              />
             </Link>
         ),
       },
@@ -71,11 +73,10 @@ const ListarDocentes = () => {
 
   return (
     <div className="flex flex-col gap-4 h-full min-w-5xl max-w-6xl bg-white rounded-3xl p-8 min-h-screen">
-      {/* Encabezado */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
           <div className="flex gap-1">
-            <Link to={"/talento-humano"}>
+            <Link to={"/apoyo-profesoral"}>
               <ButtonRegresar />
             </Link>
           </div>

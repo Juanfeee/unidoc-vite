@@ -27,4 +27,18 @@ export const PencilIcon = () => {
     <PencilSquareIcon className="size-10 p-2 rounded-lg bg-orange-400 text-white" />
 
   )
+  
+}
+
+interface VerDocumentosProps {
+  texto: string;
+}
+export const VerDocumentos = ({ texto }: VerDocumentosProps
+) => {
+  return (
+    <p className=" p-2 rounded-lg bg-blue-500 text-white" >
+      {texto}
+    </p>
+
+  )
 }
