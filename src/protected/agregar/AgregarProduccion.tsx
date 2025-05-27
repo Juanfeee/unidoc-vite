@@ -133,7 +133,7 @@ const AgregarProduccion = () => {
           <div className="flex flex-col w-full">
             <InputLabel
               htmlFor="productos_academicos_id"
-              value="Productos académicos"
+              value="Productos académicos *"
             />
             <SelectFormProduccionAcademica
               id="productos_academicos_id"
@@ -148,7 +148,7 @@ const AgregarProduccion = () => {
           <div>
             <InputLabel
               htmlFor="ambito_divulgacion_id"
-              value="Ámbito de divulgación"
+              value="Ámbito de divulgación *"
             />
             <SelectFormProduccionAcademica
               id="ambito_divulgacion_id"
@@ -163,7 +163,7 @@ const AgregarProduccion = () => {
           </div>
 
           <div className="flex flex-col w-full">
-            <InputLabel htmlFor="titulo" value="Título" />
+            <InputLabel htmlFor="titulo" value="Título *" />
             <TextInput
               id="titulo"
               placeholder="Título..."
@@ -172,7 +172,7 @@ const AgregarProduccion = () => {
             <InputErrors errors={errors} name="titulo" />
           </div>
           <div className="flex flex-col w-full">
-            <InputLabel htmlFor="numero_autores" value="Número de autores" />
+            <InputLabel htmlFor="numero_autores" value="Número de autores *" />
             <TextInput
               type="number"
               id="numero_autores"
@@ -184,7 +184,7 @@ const AgregarProduccion = () => {
           <div className="flex flex-col w-full">
             <InputLabel
               htmlFor="medio_divulgacion"
-              value="Medio de divulgación"
+              value="Medio de divulgación *"
             />
             <TextInput
               id="medio_divulgacion"
@@ -196,7 +196,7 @@ const AgregarProduccion = () => {
           <div className="flex flex-col w-full">
             <InputLabel
               htmlFor="fecha_divulgacion"
-              value="Fecha de divulgación"
+              value="Fecha de divulgación *"
             />
             <TextInput
               id="fecha_divulgacion"

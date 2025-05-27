@@ -174,7 +174,7 @@ export const EpsFormulario = () => {
       >
         {/* Tipo de afiliación */}
         <div>
-          <InputLabel htmlFor="tipo_afiliacion" value="Tipo de afiliación" />
+          <InputLabel htmlFor="tipo_afiliacion" value="Tipo de afiliación *" />
           <SelectForm
             id="tipo_afiliacion"
             register={register("tipo_afiliacion")}
@@ -186,7 +186,7 @@ export const EpsFormulario = () => {
 
         {/* Nombre de la EPS */}
         <div>
-          <InputLabel htmlFor="nombre_eps" value="Nombre EPS" />
+          <InputLabel htmlFor="nombre_eps" value="Nombre EPS *" />
           <TextInput
             id="nombre_eps"
             {...register("nombre_eps")}
@@ -199,7 +199,7 @@ export const EpsFormulario = () => {
         <div>
           <InputLabel
             htmlFor="estado_afiliacion"
-            value="Estado de afiliación"
+            value="Estado de afiliación *"
           />
           <SelectForm
             id="estado_afiliacion"
@@ -214,7 +214,7 @@ export const EpsFormulario = () => {
         <div>
           <InputLabel
             htmlFor="fecha_afiliacion_efectiva"
-            value="Fecha afiliación efectiva"
+            value="Fecha afiliación efectiva *"
           />
           <TextInput
             type="date"
@@ -240,7 +240,7 @@ export const EpsFormulario = () => {
 
         {/* Tipo afiliado */}
         <div>
-          <InputLabel htmlFor="tipo_afiliado" value="Tipo afiliado" />
+          <InputLabel htmlFor="tipo_afiliado" value="Tipo afiliado *" />
           <SelectForm
             id="tipo_afiliado"
             register={register("tipo_afiliado")}
@@ -266,7 +266,7 @@ export const EpsFormulario = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
-            nombre="EPS"
+            nombre="EPS *"
           />
           <InputErrors errors={errors} name="archivo" />
           <MostrarArchivo file={existingFile} />

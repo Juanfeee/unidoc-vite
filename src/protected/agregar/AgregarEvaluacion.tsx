@@ -100,7 +100,7 @@ const AgregarEvaluacion = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="">
-          <InputLabel htmlFor="Evaluacion" value="Evaluacion" />
+          <InputLabel htmlFor="Evaluacion" value="Evaluacion *" />
           <TextInput
             type="number"
             id="promedio_evaluacion_docente"

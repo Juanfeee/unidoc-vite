@@ -166,7 +166,7 @@ const EditarIdioma = () => {
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="">
-            <InputLabel htmlFor="idioma" value="Idioma" />
+            <InputLabel htmlFor="idioma" value="Idioma *" />
             <TextInput
               id="idioma"
               placeholder="Ingrese el idioma"
@@ -176,7 +176,7 @@ const EditarIdioma = () => {
           </div>
 
           <div className="">
-            <InputLabel htmlFor="institucion" value="Institución" />
+            <InputLabel htmlFor="institucion" value="Institución *" />
             <TextInput
               id="institucion_idioma"
               placeholder="Nombre de la institución"
@@ -186,7 +186,7 @@ const EditarIdioma = () => {
           </div>
 
           <div className="">
-            <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma" />
+            <InputLabel htmlFor="nivel_idioma" value="Nivel de idioma *" />
             <SelectForm
               id="nivel"
               register={register("nivel")}
@@ -199,7 +199,7 @@ const EditarIdioma = () => {
           <div className="">
             <InputLabel
               htmlFor="fecha_certificado"
-              value="Fecha de certificado"
+              value="Fecha de certificado *"
             />
             <TextInput
               type="date"

@@ -161,7 +161,7 @@ export const DatosPersonales = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 
         <div>
-          <InputLabel htmlFor="pais" value="País de nacimiento" />
+          <InputLabel htmlFor="pais" value="País de nacimiento *" />
           <SelectFormUbicaciones
             id="pais"
             register={register("pais", { valueAsNumber: true, required: true })}
@@ -171,7 +171,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="departamento" value="Departamento de nacimiento" />
+          <InputLabel htmlFor="departamento" value="Departamento de nacimiento *" />
           <SelectFormUbicaciones
             id="departamento"
             register={register("departamento", { valueAsNumber: true, required: true })}
@@ -182,7 +182,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="municipio_id" value="Municipio de nacimiento" />
+          <InputLabel htmlFor="municipio_id" value="Municipio de nacimiento *" />
           <SelectFormUbicaciones
             id="municipio_id"
             register={register("municipio_id", { valueAsNumber: true, required: true })}
@@ -194,7 +194,7 @@ export const DatosPersonales = () => {
         </div>
         {/* Identificación */}
         <div>
-          <InputLabel htmlFor="tipo_identificacion" value="Tipo de identificación" />
+          <InputLabel htmlFor="tipo_identificacion" value="Tipo de identificación *" />
           <SelectForm
             id="tipo_identificacion"
             register={register("tipo_identificacion")}
@@ -204,7 +204,7 @@ export const DatosPersonales = () => {
           <InputErrors errors={errors} name="tipo_identificacion" />
         </div>
         <div>
-          <InputLabel htmlFor="numero_identificacion" value="Número de identificación" />
+          <InputLabel htmlFor="numero_identificacion" value="Número de identificación *" />
           <TextInput
             className="w-full"
             id="numero_identificacion"
@@ -216,7 +216,7 @@ export const DatosPersonales = () => {
         </div>
         {/* Nombres */}
         <div>
-          <InputLabel htmlFor="primer_nombre" value="Primer nombre" />
+          <InputLabel htmlFor="primer_nombre" value="Primer nombre *" />
           <TextInput
             className="w-full"
             id="primer_nombre"
@@ -240,7 +240,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="primer_apellido" value="Primer apellido" />
+          <InputLabel htmlFor="primer_apellido" value="Primer apellido *" />
           <TextInput
             className="w-full"
             id="primer_apellido"
@@ -265,7 +265,7 @@ export const DatosPersonales = () => {
 
         {/* Fecha y Estado civil */}
         <div>
-          <InputLabel htmlFor="fecha_nacimiento" value="Fecha de nacimiento" />
+          <InputLabel htmlFor="fecha_nacimiento" value="Fecha de nacimiento *" />
           <TextInput
             className="w-full"
             id="fecha_nacimiento"
@@ -276,7 +276,7 @@ export const DatosPersonales = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="estado_civil" value="Estado civil" />
+          <InputLabel htmlFor="estado_civil" value="Estado civil *" />
           <SelectForm
             id="estado_civil"
             register={register("estado_civil")}
@@ -288,7 +288,7 @@ export const DatosPersonales = () => {
 
         {/* Género */}
         <div className="">
-          <InputLabel htmlFor="genero" value="Género" />
+          <InputLabel htmlFor="genero" value="Género *" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 min-h-[44px] px-4 ">
             <LabelRadio
               htmlFor="masculino"
@@ -316,7 +316,7 @@ export const DatosPersonales = () => {
           <AdjuntarArchivo
             id="archivo"
             register={register("archivo")}
-            nombre="identificación"
+            nombre="identificación *"
 
           />
           <InputErrors errors={errors} name="archivo" />

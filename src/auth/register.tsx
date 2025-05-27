@@ -170,7 +170,7 @@ const Registro = () => {
                     </h3>
                   </div>
                   <div className="">
-                    <InputLabel htmlFor="primer_nombre" value="Primer nombre" />
+                    <InputLabel htmlFor="primer_nombre" value="Primer nombre*" />
                     <TextInput
                       id="primer_nombre"
                       type="text"
@@ -197,7 +197,7 @@ const Registro = () => {
                   <div className="">
                     <InputLabel
                       htmlFor="primer_apellido"
-                      value="Primer apellido"
+                      value="Primer apellido*"
                     />
                     <TextInput
                       id="primer_apellido"
@@ -238,7 +238,7 @@ const Registro = () => {
                 <div className="">
                   <InputLabel
                     htmlFor="tipo_identificacion"
-                    value="Tipo identificación"
+                    value="Tipo identificación*"
                   />
                   <SelectForm
                     id="tipo_identificacion"
@@ -252,7 +252,7 @@ const Registro = () => {
                 <div className="">
                   <InputLabel
                     htmlFor="identificación"
-                    value="Numero identificación"
+                    value="Numero identificación*"
                   />
                   <TextInput
                     id="numero_identificacion"
@@ -278,7 +278,7 @@ const Registro = () => {
                     </h3>
                   </div>
                   <div className="">
-                    <InputLabel htmlFor="estado_civil" value="Estado civil" />
+                    <InputLabel htmlFor="estado_civil" value="Estado civil*" />
                     <SelectForm
                       id="estado_civil"
                       register={register("estado_civil")}
@@ -291,7 +291,7 @@ const Registro = () => {
                   <div className="">
                     <InputLabel
                       htmlFor="fecha_nacimiento"
-                      value="Fecha de nacimiento"
+                      value="Fecha de nacimiento*"
                     />
                     <TextInput
                       id="fecha_nacimiento"
@@ -302,7 +302,7 @@ const Registro = () => {
                   </div>
 
                   <div className="">
-                    <InputLabel htmlFor="genero" value="Género" />
+                    <InputLabel htmlFor="genero" value="Género*" />
 
                     <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 min-h-[44px] px-4">
                       <LabelRadio
@@ -347,7 +347,7 @@ const Registro = () => {
                     </h3>
                   </div>
                   <div>
-                    <InputLabel htmlFor="pais" value="País" />
+                    <InputLabel htmlFor="pais" value="País*" />
                     <SelectFormUbicaciones
                       id="pais"
                       register={register("pais", {
@@ -360,7 +360,7 @@ const Registro = () => {
                   </div>
 
                   <div>
-                    <InputLabel htmlFor="departamento" value="Departamento" />
+                    <InputLabel htmlFor="departamento" value="Departamento*" />
                     <SelectFormUbicaciones
                       id="departamento"
                       register={register("departamento", {
@@ -375,7 +375,7 @@ const Registro = () => {
                   </div>
 
                   <div>
-                    <InputLabel htmlFor="municipio_id" value="Municipio" />
+                    <InputLabel htmlFor="municipio_id" value="Municipio*" />
                     <SelectFormUbicaciones
                       id="municipio_id"
                       register={register("municipio_id", {
@@ -405,7 +405,7 @@ const Registro = () => {
                     </h3>
                   </div>
                   <div className="">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="Email*" />
                     <TextInput
                       id="email"
                       type="text"
@@ -416,7 +416,7 @@ const Registro = () => {
                   </div>
 
                   <div className="">
-                    <InputLabel htmlFor="password" value="Contraseña" />
+                    <InputLabel htmlFor="password" value="Contraseña*" />
                     <InputPassword
                       id="password"
                       type="password"
@@ -428,7 +428,7 @@ const Registro = () => {
                   <div className="">
                     <InputLabel
                       htmlFor="password_confirmation"
-                      value="Confirmar contraseña"
+                      value="Confirmar contraseña*"
                     />
                     <InputPassword
                       id="password_confirmation"

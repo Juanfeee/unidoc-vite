@@ -230,7 +230,7 @@ export const InformacionContacto = () => {
         className="grid grid-cols-1 sm:grid-cols-2 gap-6"
       >
         <div>
-          <InputLabel htmlFor="pais" value="País de residencia" />
+          <InputLabel htmlFor="pais" value="País de residencia *" />
           <SelectFormUbicaciones
             id="pais"
             register={register("pais", { valueAsNumber: true, required: true })}
@@ -242,7 +242,7 @@ export const InformacionContacto = () => {
         <div>
           <InputLabel
             htmlFor="departamento"
-            value="Departamento de residencia"
+            value="Departamento de residencia *"
           />
           <SelectFormUbicaciones
             id="departamento"
@@ -256,7 +256,7 @@ export const InformacionContacto = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="municipio_id" value="Municipio de residencia" />
+          <InputLabel htmlFor="municipio_id" value="Municipio de residencia *" />
           <SelectFormUbicaciones
             id="municipio_id"
             register={register("municipio_id", {
@@ -271,7 +271,7 @@ export const InformacionContacto = () => {
         <div>
           <InputLabel
             htmlFor="categoria_libreta_militar"
-            value="Categoría libreta militar"
+            value="Categoría libreta militar *"
           />
           <SelectForm
             id="categoria_libreta_militar"
@@ -342,7 +342,7 @@ export const InformacionContacto = () => {
           <InputErrors errors={errors} name="barrio" />
         </div>
         <div>
-          <InputLabel htmlFor="telefono_movil" value="Teléfono móvil" />
+          <InputLabel htmlFor="telefono_movil" value="Teléfono móvil *" />
           <TextInput
             className="w-full"
             id="telefono_movil"

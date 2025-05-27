@@ -220,7 +220,7 @@ const EditarEstudio = () => {
       >
         {/* Tipo de estudio */}
         <div className="">
-          <InputLabel htmlFor="tipo_estudio" value="Tipo de estudio" />
+          <InputLabel htmlFor="tipo_estudio" value="Tipo de estudio *" />
           <SelectForm
             id="tipo_estudio"
             register={register("tipo_estudio")}
@@ -232,7 +232,7 @@ const EditarEstudio = () => {
 
         {/* Graduado */}
         <div className="">
-          <InputLabel htmlFor="graduado" value="Graduado" />
+          <InputLabel htmlFor="graduado" value="Graduado *" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="graduado-si"
@@ -281,7 +281,7 @@ const EditarEstudio = () => {
 
         {/* Institución */}
         <div className="">
-          <InputLabel htmlFor="institucion" value="Institución" />
+          <InputLabel htmlFor="institucion" value="Institución *" />
           <TextInput
             id="institucion"
             placeholder="Institución"
@@ -292,7 +292,7 @@ const EditarEstudio = () => {
 
         {/* Título */}
         <div className="">
-          <InputLabel htmlFor="titulo" value="Título" />
+          <InputLabel htmlFor="titulo" value="Título *" />
           <TextInput
             id="titulo"
             placeholder="Título"
@@ -303,7 +303,7 @@ const EditarEstudio = () => {
 
         {/* Convalidado */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="convalido" value="¿Título Convalidado?" />
+          <InputLabel htmlFor="convalido" value="¿Título Convalidado? *" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="convalido-si"
@@ -353,7 +353,7 @@ const EditarEstudio = () => {
 
         {/* Fecha de inicio */}
         <div className="">
-          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio" />
+          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio *" />
           <TextInput
             type="date"
             id="fecha_inicio"

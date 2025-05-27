@@ -153,7 +153,7 @@ export const Rut = () => {
         className="grid grid-cols-1 sm:grid-cols-2 gap-6"
       >
         <div>
-          <InputLabel htmlFor="numero_rut" value="Número RUT" />
+          <InputLabel htmlFor="numero_rut" value="Número RUT *" />
           <TextInput
             className="w-full"
             id="numero_rut"
@@ -166,7 +166,7 @@ export const Rut = () => {
 
         {/* Razón social */}
         <div>
-          <InputLabel htmlFor="razon_social" value="Razón social" />
+          <InputLabel htmlFor="razon_social" value="Razón social *" />
           <TextInput
             className="w-full"
             id="razon_social"
@@ -179,7 +179,7 @@ export const Rut = () => {
 
         {/* Tipo persona */}
         <div>
-          <InputLabel htmlFor="tipo_persona" value="Tipo de persona" />
+          <InputLabel htmlFor="tipo_persona" value="Tipo de persona *" />
           <SelectForm
             id="tipo_persona"
             register={register("tipo_persona")}
@@ -191,7 +191,7 @@ export const Rut = () => {
 
         {/* Código CIIU */}
         <div>
-          <InputLabel htmlFor="codigo_ciiu" value="Código CIIU" />
+          <InputLabel htmlFor="codigo_ciiu" value="Código CIIU *" />
           <SelectForm
             id="codigo_ciiu"
             register={register("codigo_ciiu")}
@@ -205,7 +205,7 @@ export const Rut = () => {
         <div className="sm:col-span-2">
           <InputLabel
             htmlFor="responsabilidades_tributarias"
-            value="Responsabilidades tributarias"
+            value="Responsabilidades tributarias *"
           />
           <TextInput
             className="w-full"

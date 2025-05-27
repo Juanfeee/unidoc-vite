@@ -191,7 +191,7 @@ const AgregarExperiencia = () => {
       >
         {/* Tipo de experiencia */}
         <div className="col-span-full">
-          <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia" />
+          <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia *" />
           <SelectForm
             id="tipo_experiencia"
             register={register("tipo_experiencia")}
@@ -226,7 +226,7 @@ const AgregarExperiencia = () => {
 
         {/* Institución */}
         <div className="">
-          <InputLabel htmlFor="institucion_experiencia" value="Institución" />
+          <InputLabel htmlFor="institucion_experiencia" value="Institución *" />
           <TextInput
             id="institucion_experiencia"
             placeholder="Institución"
@@ -237,14 +237,14 @@ const AgregarExperiencia = () => {
 
         {/* Cargo */}
         <div className="">
-          <InputLabel htmlFor="cargo" value="Cargo" />
+          <InputLabel htmlFor="cargo" value="Cargo *" />
           <TextInput id="cargo" placeholder="Cargo" {...register("cargo")} />
           <InputErrors errors={errors} name="cargo" />
         </div>
 
         {/* Trabajo actual */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="trabajo_actual" value="¿Es su trabajo actual?" />
+          <InputLabel htmlFor="trabajo_actual" value="¿Es su trabajo actual? *" />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="trabajo_actual-si"
@@ -266,7 +266,7 @@ const AgregarExperiencia = () => {
         <div className="">
           <InputLabel
             htmlFor="intensidad_horaria"
-            value="Intensidad horaria (Horas)"
+            value="Intensidad horaria (Horas) *"
           />
           <TextInput
             type="number"
@@ -279,7 +279,7 @@ const AgregarExperiencia = () => {
 
         {/* Fechas */}
         <div className="">
-          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio" />
+          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio *" />
           <TextInput
             type="date"
             id="fecha_inicio"
@@ -305,7 +305,7 @@ const AgregarExperiencia = () => {
         <div>
           <InputLabel
             htmlFor="fecha_expedicion_certificado"
-            value="Fecha de expedición del certificado"
+            value="Fecha de expedición del certificado *"
           />
           <TextInput
             type="date"

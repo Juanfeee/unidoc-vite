@@ -113,7 +113,7 @@ const EditarAptitud = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div>
-          <InputLabel htmlFor="Aptitud" value="Aptitud" />
+          <InputLabel htmlFor="Aptitud" value="Aptitud *" />
           <TextInput
             id="Aptitud"
             placeholder="Título de aptitud..."
@@ -123,7 +123,7 @@ const EditarAptitud = () => {
         </div>
 
         <div>
-          <InputLabel htmlFor="Descripcion" value="Descripción" />
+          <InputLabel htmlFor="Descripcion" value="Descripción *" />
           <TextArea
             id="Descripcion"
             placeholder="Descripción de la aptitud..."

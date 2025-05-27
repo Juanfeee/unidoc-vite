@@ -106,7 +106,7 @@ const AgregarAptitudes = () => {
         onSubmit={handleSubmit(onSubmit)}
       >
         <div className="">
-          <InputLabel htmlFor="Aptitud" value="Aptitud" />
+          <InputLabel htmlFor="Aptitud" value="Aptitud *" />
           <TextInput
             id="Aptitud"
             placeholder="Titulo de aptitud..."
@@ -115,7 +115,7 @@ const AgregarAptitudes = () => {
           <InputErrors errors={errors} name="nombre_aptitud" />
         </div>
         <div className="">
-          <InputLabel htmlFor="Descripcion" value="Descripción" />
+          <InputLabel htmlFor="Descripcion" value="Descripción *" />
           <TextArea
             id="Descripcion"
             placeholder="Descripción de la aptitud..."

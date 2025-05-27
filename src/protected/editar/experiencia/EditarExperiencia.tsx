@@ -89,6 +89,7 @@ const EditarExperiencia = () => {
           setValue("intensidad_horaria", data.intensidad_horaria);
           setValue("fecha_inicio", data.fecha_inicio);
           setValue("fecha_finalizacion", data.fecha_finalizacion ?? "");
+          setValue("fecha_expedicion_certificado", data.fecha_expedicion_certificado);
 
           if (
             data.documentos_experiencia &&
@@ -120,6 +121,10 @@ const EditarExperiencia = () => {
       formData.append("intensidad_horaria", data.intensidad_horaria.toString());
       formData.append("fecha_inicio", data.fecha_inicio);
       formData.append("fecha_finalizacion", data.fecha_finalizacion || " ");
+      formData.append(
+        "fecha_expedicion_certificado",
+        data.fecha_expedicion_certificado || ""
+      );
       if (data.archivo && data.archivo.length > 0) {
         formData.append("archivo", data.archivo[0]);
       }
@@ -199,7 +204,10 @@ const EditarExperiencia = () => {
       >
         {/* Tipo de experiencia */}
         <div className="col-span-full">
-          <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia" />
+          <InputLabel
+            htmlFor="tipo_experiencia"
+            value="Tipo de experiencia *"
+          />
           <SelectForm
             id="tipo_experiencia"
             register={register("tipo_experiencia")}
@@ -234,7 +242,7 @@ const EditarExperiencia = () => {
 
         {/* Institución */}
         <div className="">
-          <InputLabel htmlFor="institucion_experiencia" value="Institución" />
+          <InputLabel htmlFor="institucion_experiencia" value="Institución *" />
           <TextInput
             id="institucion_experiencia"
             placeholder="Institución"
@@ -245,14 +253,17 @@ const EditarExperiencia = () => {
 
         {/* Cargo */}
         <div className="">
-          <InputLabel htmlFor="cargo" value="Cargo" />
+          <InputLabel htmlFor="cargo" value="Cargo *" />
           <TextInput id="cargo" placeholder="Cargo" {...register("cargo")} />
           <InputErrors errors={errors} name="cargo" />
         </div>
 
         {/* Trabajo actual */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="trabajo_actual" value="¿Es su trabajo actual?" />
+          <InputLabel
+            htmlFor="trabajo_actual"
+            value="¿Es su trabajo actual? *"
+          />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="trabajo_actual-si"
@@ -274,7 +285,7 @@ const EditarExperiencia = () => {
         <div className="">
           <InputLabel
             htmlFor="intensidad_horaria"
-            value="Intensidad horaria (Horas)"
+            value="Intensidad horaria (Horas) *"
           />
           <TextInput
             type="number"
@@ -287,7 +298,7 @@ const EditarExperiencia = () => {
 
         {/* Fechas */}
         <div className="">
-          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio" />
+          <InputLabel htmlFor="fecha_inicio" value="Fecha de inicio *" />
           <TextInput
             type="date"
             id="fecha_inicio"
@@ -309,6 +320,19 @@ const EditarExperiencia = () => {
             <InputErrors errors={errors} name="fecha_finalizacion" />
           </div>
         )}
+        <div>
+          <InputLabel
+            htmlFor="fecha_expedicion_certificado"
+            value="Fecha de expedición del certificado *"
+          />
+          <TextInput
+            type="date"
+            id="fecha_expedicion_certificado"
+            placeholder="Fecha expedicion de certificado"
+            {...register("fecha_expedicion_certificado")}
+          />
+          <InputErrors errors={errors} name="fecha_expedicion_certificado" />
+        </div>
 
         {/* Archivo */}
         <div className="col-span-full">
