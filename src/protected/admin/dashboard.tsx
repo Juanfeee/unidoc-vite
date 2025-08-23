@@ -17,6 +17,10 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import WarningIcon from "@mui/icons-material/Warning"; // 👈 agregado
+import { toast } from "react-toastify";
 
 const pages = [
   { label: "Inicio", key: "inicio" },
@@ -33,6 +37,15 @@ const Dashboard = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  // Estado para editar
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editUser, setEditUser] = useState<any>(null);
+
+  // Estado para eliminar
+  const [openDelete, setOpenDelete] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
+
+  // Descargar usuarios en Excel
   const fetchDatos = async () => {
     try {
       const response = await axiosInstance.get("/admin/usuarios-excel", {
@@ -48,17 +61,21 @@ const Dashboard = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error al obtener usuarios:", error);
+      toast.error("Error al descargar usuarios");
     }
   };
 
-  // Buscar usuarios al abrir el modal o al cambiar el texto
+  // Buscar usuarios al abrir el modal
   React.useEffect(() => {
     if (openSearch) {
       setLoading(true);
       axiosInstance
-        .get("/admin/listar-usuarios") // <-- Cambia aquí
+        .get("/admin/listar-usuarios")
         .then((res) => setUsers(res.data))
-        .catch(() => setUsers([]))
+        .catch(() => {
+          setUsers([]);
+          toast.error("Error al obtener usuarios");
+        })
         .finally(() => setLoading(false));
     } else {
       setSearch("");
@@ -66,13 +83,79 @@ const Dashboard = () => {
     }
   }, [openSearch]);
 
-  // Filtrar usuarios por nombre o email
+  // Filtrar usuarios
   const filteredUsers = users.filter(
     (user) =>
       user.primer_nombre?.toLowerCase().includes(search.toLowerCase()) ||
       user.primer_apellido?.toLowerCase().includes(search.toLowerCase()) ||
       user.email?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Abrir modal eliminar
+  const handleDelete = (id: number) => {
+    setDeleteUserId(id);
+    setOpenDelete(true);
+  };
+
+  // Confirmar eliminación
+  const confirmDelete = async () => {
+    if (!deleteUserId) return;
+
+    try {
+      await toast.promise(
+        axiosInstance.delete(`/admin/eliminar-usuario/${deleteUserId}`),
+        {
+          pending: "Eliminando usuario...",
+          success: {
+            render() {
+              setUsers((prev) => prev.filter((u) => u.id !== deleteUserId));
+              setOpenDelete(false);
+              setDeleteUserId(null);
+              setSearch("");
+              return "Usuario eliminado correctamente";
+            },
+            autoClose: 2000,
+          },
+          error: "Error al eliminar usuario",
+        }
+      );
+    } catch (error) {
+      console.error("Error al eliminar usuario:", error);
+    }
+  };
+
+  // Abrir modal de edición
+  const handleEdit = (user: any) => {
+    setEditUser(user);
+    setOpenEdit(true);
+  };
+
+  // Guardar cambios de edición con toast
+  const handleSaveEdit = async () => {
+    try {
+      await toast.promise(
+        axiosInstance.put(`/admin/editar-usuario/${editUser.id}`, editUser),
+        {
+          pending: "Guardando cambios...",
+          success: {
+            render() {
+              setUsers((prev) =>
+                prev.map((u) => (u.id === editUser.id ? editUser : u))
+              );
+              setOpenEdit(false);
+              setEditUser(null);
+              setSearch("");
+              return "Usuario actualizado correctamente";
+            },
+            autoClose: 2000,
+          },
+          error: "Error al actualizar usuario",
+        }
+      );
+    } catch (error) {
+      console.error("Error al editar usuario:", error);
+    }
+  };
 
   return (
     <Box
@@ -83,6 +166,7 @@ const Dashboard = () => {
         fontFamily,
       }}
     >
+      {/* Drawer */}
       <Drawer
         variant="permanent"
         sx={{
@@ -135,6 +219,8 @@ const Dashboard = () => {
           ))}
         </List>
       </Drawer>
+
+      {/* Contenido */}
       <Box
         sx={{
           flexGrow: 1,
@@ -154,8 +240,6 @@ const Dashboard = () => {
             width: "100%",
             borderRadius: 4,
             fontFamily,
-            boxShadow:
-              "0 4px 20px 0 rgba(0,0,0,0.08), 0 1.5px 4px 0 rgba(0,0,0,0.06)",
           }}
         >
           {selectedPage === "inicio" && (
@@ -181,6 +265,7 @@ const Dashboard = () => {
               </Typography>
             </>
           )}
+
           {selectedPage === "usuarios" && (
             <Box
               sx={{
@@ -286,7 +371,7 @@ const Dashboard = () => {
         </Paper>
       </Box>
 
-      {/* Modal flotante para búsqueda, solo aparece al dar clic en el botón */}
+      {/* Modal flotante búsqueda */}
       <Modal
         open={openSearch}
         onClose={() => setOpenSearch(false)}
@@ -304,12 +389,7 @@ const Dashboard = () => {
             minWidth: 600,
             maxWidth: 700,
             borderRadius: 4,
-            fontFamily,
             position: "relative",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
           }}
         >
           <IconButton
@@ -318,47 +398,181 @@ const Dashboard = () => {
           >
             <CloseIcon />
           </IconButton>
-          <Typography
-            variant="h5"
-            fontWeight="bold"
-            sx={{ fontFamily, mb: 3, color: "primary.main" }}
-          >
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
             Buscar usuarios
           </Typography>
           <TextField
             fullWidth
             label="Nombre o correo"
-            variant="outlined"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            sx={{ mb: 3, fontFamily }}
+            sx={{ mb: 3 }}
             autoFocus
           />
+
           {loading ? (
-            <Typography sx={{ fontFamily }}>Cargando...</Typography>
+            <Typography>Cargando...</Typography>
           ) : (
             <Box sx={{ maxHeight: 350, overflowY: "auto", width: "100%" }}>
               {search.length === 0 ? (
-                <Typography sx={{ fontFamily, color: "#888" }}>
+                <Typography sx={{ color: "#888" }}>
                   Escribe para buscar usuarios...
                 </Typography>
               ) : filteredUsers.length === 0 ? (
-                <Typography sx={{ fontFamily }}>
-                  No se encontraron usuarios.
-                </Typography>
+                <Typography>No se encontraron usuarios.</Typography>
               ) : (
                 filteredUsers.map((user) => (
-                  <Paper key={user.id} sx={{ p: 2, mb: 2, borderRadius: 2 }}>
-                    <Typography>
-                      {user.primer_nombre} {user.segundo_nombre} {user.primer_apellido}{" "}
-                      {user.segundo_apellido}
-                    </Typography>
-                    <Typography>{user.email}</Typography>
+                  <Paper
+                    key={user.id}
+                    sx={{
+                      p: 2,
+                      mb: 2,
+                      borderRadius: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography>
+                        {user.primer_nombre} {user.segundo_nombre}{" "}
+                        {user.primer_apellido} {user.segundo_apellido}
+                      </Typography>
+                      <Typography>{user.email}</Typography>
+                    </Box>
+                    <Box>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEdit(user)}
+                        sx={{ mr: 1 }}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(user.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
                   </Paper>
                 ))
               )}
             </Box>
           )}
+        </Paper>
+      </Modal>
+
+      {/* Modal edición */}
+      <Modal
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+        aria-labelledby="modal-editar-usuario"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper sx={{ p: 5, minWidth: 200, borderRadius: 4 }}>
+          <Typography variant="h5" fontWeight="bold" sx={{ mb: 3 }}>
+            Editar usuario
+          </Typography>
+          {editUser && (
+            <>
+              <TextField
+                fullWidth
+                label="Primer nombre"
+                value={editUser.primer_nombre}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, primer_nombre: e.target.value })
+                }
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Segundo nombre"
+                value={editUser.segundo_nombre}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, segundo_nombre: e.target.value })
+                }
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Primer Apellido"
+                value={editUser.primer_apellido}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, primer_apellido: e.target.value })
+                }
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Segundo Apellido"
+                value={editUser.segundo_apellido}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, segundo_apellido: e.target.value })
+                }
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Email"
+                value={editUser.email}
+                onChange={(e) =>
+                  setEditUser({ ...editUser, email: e.target.value })
+                }
+                sx={{ mb: 2 }}
+              />
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                <Button
+                  onClick={() => setOpenEdit(false)}
+                  sx={{ mr: 2 }}
+                  variant="outlined"
+                >
+                  Cancelar
+                </Button>
+                <Button onClick={handleSaveEdit} variant="contained">
+                  Guardar
+                </Button>
+              </Box>
+            </>
+          )}
+        </Paper>
+      </Modal>
+
+      {/* Modal confirmación eliminación */}
+      <Modal
+        open={openDelete}
+        onClose={() => setOpenDelete(false)}
+        aria-labelledby="modal-eliminar-usuario"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Paper sx={{ p: 5, minWidth: 350, borderRadius: 4, textAlign: "center" }}>
+          <WarningIcon color="error" sx={{ fontSize: 60, mb: 2 }} />
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            Confirmar eliminación
+          </Typography>
+          <Typography sx={{ mb: 3 }}>
+            ¿Seguro que deseas eliminar este usuario?
+          </Typography>
+          <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
+            <Button variant="contained" color="error" onClick={confirmDelete}>
+              Eliminar
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setOpenDelete(false)}
+            >
+              Cancelar
+            </Button>
+          </Box>
         </Paper>
       </Modal>
     </Box>
