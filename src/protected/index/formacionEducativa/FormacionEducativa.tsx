@@ -1,16 +1,26 @@
-import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../utils/axiosConfig";
-import AgregarLink from "../../../componentes/ButtonAgregar";
 import EstadoDocumento from "../../../componentes/Estado";
 import { AcademicIcono } from "../../../assets/icons/Iconos";
 import Cookies from "js-cookie";
 import { RolesValidos } from "../../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import ButtonAgregar from "../../../componentes/formularios/buttons/ButtonAgregar";
+import CustomDialog from "../../../componentes/CustomDialogForm";
+import AgregarEstudio from "../../agregar/AgregarEstudio";
+import ButtonPreEditar from "../../../componentes/formularios/buttons/ButtonPreEditar";
+import PreEstudio from "../../editar/estudio/pre-estudio";
+import ButtonAgregarVacio from "../../../componentes/formularios/buttons/ButtonAgregarVacio";
 
 const FormacionEducativa = () => {
   const [estudios, setEstudios] = useState<any[]>([]);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openPreEdit, setOpenPreEdit] = useState(false);
+
+  const handleEstudioAgregado = () => {
+    fetchDatos(); // vuelve a traer la lista actualizada
+    setOpenAdd(false); // cierra el modal
+  };
 
   //Función para cargar los datos desde el servidor o sesionStorage
   const fetchDatos = async () => {
@@ -26,7 +36,7 @@ const FormacionEducativa = () => {
       const token = Cookies.get("token");
       if (!token) throw new Error("No authentication token found");
       const decoded = jwtDecode<{ rol: RolesValidos }>(token);
-      
+
       const rol = decoded.rol;
       const ENDPOINTS = {
         Aspirante: `${import.meta.env.VITE_API_URL}${
@@ -59,29 +69,19 @@ const FormacionEducativa = () => {
     fetchDatos();
   }, []);
 
-  if (!estudios) {
-    return (
-      <div className="flex justify-center items-center h-full">Cargando...</div>
-    );
-  }
-
   return (
     <>
       <div className="flex flex-col gap-4 h-full max-w-[400px]">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h4 className="font-bold text-xl">Formación educativa</h4>
           <div className="flex gap-1">
-            <Link to={"/agregar/estudio"}>
-              <PlusIcon className="size-10 p-2 stroke-2" />
-            </Link>
-            <Link to={"/editar/estudios"}>
-              <PencilSquareIcon className="size-10 p-2 stroke-2 " />
-            </Link>
+            <ButtonAgregar onClick={() => setOpenAdd(true)} />
+            <ButtonPreEditar onClick={() => setOpenPreEdit(true)} />
           </div>
         </div>
         <div>
           {estudios.length === 0 ? (
-            <AgregarLink to="/agregar/estudio" texto="Agregar estudio" />
+            <ButtonAgregarVacio onClick={() => setOpenAdd(true)} />
           ) : (
             <ul className="flex flex-col gap-6">
               {estudios.map((item, index) => (
@@ -101,6 +101,27 @@ const FormacionEducativa = () => {
             </ul>
           )}
         </div>
+
+        {/* MODAL AGREGAR */}
+        <CustomDialog
+          title="Agregar Estudios"
+          open={openAdd}
+          onClose={() => setOpenAdd(false)}
+        >
+          <AgregarEstudio onSuccess={handleEstudioAgregado} />
+        </CustomDialog>
+
+        {/* MODAL PRE-EDITAR */}
+        <CustomDialog
+          title="Editar Estudios"
+          open={openPreEdit}
+          onClose={() => setOpenPreEdit(false)}
+        >
+          <PreEstudio onSuccess={fetchDatos} />
+        </CustomDialog>
+        
+
+
       </div>
     </>
   );

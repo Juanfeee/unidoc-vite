@@ -1,4 +1,4 @@
-import { AcademicCapIcon, BeakerIcon, BriefcaseIcon, GlobeAmericasIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import { AcademicCapIcon, BeakerIcon, BriefcaseIcon, GlobeAmericasIcon, PencilSquareIcon, XMarkIcon,PlusIcon } from '@heroicons/react/24/outline'
 
 
 export const AcademicIcono = () => {
@@ -28,6 +28,24 @@ export const PencilIcon = () => {
 
   )
   
+}
+//Cerrar Icon
+export const CloseIcon = () => {
+  return (
+    <XMarkIcon className="size-8 p-1 rounded-full bg-red-500 text-white hover:bg-red-600 cursor-pointer " />
+  );
+};
+// Agregar Icon
+export const AddIcon = () => {
+  return (
+    <PlusIcon className="size-10 p-2 stroke-2 cursor-pointer hover:bg-gray-200 hover:rounded-xl" />
+  );
+}
+// Editar Icon Index
+export const EditIcon = () => {
+  return (
+    <PencilSquareIcon className="size-10 p-2 stroke-2 cursor-pointer hover:bg-gray-200 hover:rounded-xl" />
+  );
 }
 
 interface VerDocumentosProps {

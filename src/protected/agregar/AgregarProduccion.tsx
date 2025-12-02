@@ -20,6 +20,7 @@ import { useArchivoPreview } from "../../hooks/ArchivoPreview";
 import axiosInstance from "../../utils/axiosConfig";
 import { RolesValidos } from "../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import DivForm from "../../componentes/formularios/DivForm";
 
 type Inputs = {
   productos_academicos_id: number;
@@ -117,15 +118,7 @@ const AgregarProduccion = () => {
   const produccionSeleccionado = watch("productos_academicos_id");
   return (
     <>
-      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
-        <div className="flex gap-x-4 col-span-full">
-          <Link to={"/index"}>
-            <ButtonRegresar />
-          </Link>
-          <h3 className="font-bold text-3xl col-span-full">
-            Agregar producción académica
-          </h3>
-        </div>
+      <DivForm className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
         <form
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           onSubmit={handleSubmit(onSubmit)}
@@ -218,7 +211,7 @@ const AgregarProduccion = () => {
             />
           </div>
         </form>
-      </div>
+      </DivForm>
     </>
   );
 };

@@ -35,6 +35,7 @@ const EliminarBoton = ({ id, onConfirmDelete }: Props) => {
               onClick={() => {
                 onConfirmDelete(id);
                 setOpen(false);
+                
               }}
             >
               Eliminar

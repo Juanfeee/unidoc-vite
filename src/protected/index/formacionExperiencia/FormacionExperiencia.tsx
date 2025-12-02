@@ -9,10 +9,18 @@ import { BriefIcon } from "../../../assets/icons/Iconos";
 import Cookies from "js-cookie";
 import { RolesValidos } from "../../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import CustomDialog from "../../../componentes/CustomDialogForm";
+import AgregarExperiencia from "../../agregar/AgregarExperiencia";
+import PreExperiencia from "../../editar/experiencia/pre-experiencia";
+import ButtonAgregar from "../../../componentes/formularios/buttons/ButtonAgregar";
+import ButtonEditar from "../../../componentes/formularios/buttons/ButtonPreEditar";
+import ButtonAgregarVacio from "../../../componentes/formularios/buttons/ButtonAgregarVacio";
 
 const FormacionExperiencia = () => {
   const [experiencias, setExperiencias] = useState<any[]>([]);
   const { obtenerAno } = useObtenerAno();
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -69,20 +77,13 @@ const FormacionExperiencia = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h4 className="font-bold text-xl">Experiencia Profesional</h4>
         <div className="flex gap-1">
-          <Link to={"/agregar/experiencia"}>
-            <PlusIcon className="size-10 p-2 stroke-2" />
-          </Link>
-          <Link to={"/editar/experiencias"}>
-            <PencilSquareIcon className="size-10 p-2 stroke-2" />
-          </Link>
+          <ButtonAgregar onClick={() => setOpenAdd(true)} />
+          <ButtonEditar onClick={() => setOpenEdit(true)} />
         </div>
       </div>
       <div>
         {experiencias.length === 0 ? (
-          <AgregarLink
-            to="/agregar/experiencia"
-            texto="Agregar experiencia profesional"
-          />
+          <ButtonAgregarVacio onClick={() => setOpenAdd(true)} />
         ) : (
           <ul className="flex flex-col gap-6">
             {experiencias.map((item, index) => (
@@ -107,6 +108,23 @@ const FormacionExperiencia = () => {
           </ul>
         )}
       </div>
+      {/* MODAL AGREGAR */}
+      <CustomDialog
+        title="Agregar Experiencia"
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+      >
+        <AgregarExperiencia />
+      </CustomDialog>
+
+      {/* MODAL EDITAR */}
+      <CustomDialog
+        title="Editar Experiencia"
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+      >
+        <PreExperiencia />
+      </CustomDialog>
     </div>
   );
 };

@@ -19,6 +19,7 @@ import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
 import { RolesValidos } from "../../types/roles";
 import axiosInstance from "../../utils/axiosConfig";
 import { jwtDecode } from "jwt-decode";
+import DivForm from "../../componentes/formularios/DivForm";
 
 type Inputs = {
   idioma: string;
@@ -106,14 +107,7 @@ const AgregarIdioma = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl gap-y-4">
-        <div className="flex gap-x-4 col-span-full items-center">
-          <Link to={"/index"}>
-            <ButtonRegresar />
-          </Link>
-          <h3 className="font-bold text-3xl col-span-full">Agregar idioma</h3>
-        </div>
+      <DivForm>
 
         <form
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
@@ -172,8 +166,8 @@ const AgregarIdioma = () => {
             <ButtonPrimary value="Agregar idioma" />
           </div>
         </form>
-      </div>
-    </>
+      </DivForm>
+  
   );
 };
 

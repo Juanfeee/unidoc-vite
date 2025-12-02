@@ -8,8 +8,9 @@ import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar"
 import Cookies from "js-cookie";
 import { RolesValidos } from "../../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import DivForm from "../../../componentes/formularios/DivForm";
 
-const PreProduccion = () => {
+const PreIdioma = () => {
   const token = Cookies.get("token");
   if (!token) throw new Error("No authentication token found");
   const decoded = jwtDecode<{ rol: RolesValidos }>(token);
@@ -91,26 +92,14 @@ const PreProduccion = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">
+      <DivForm>
         Cargando...
-      </div>
+      </DivForm>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full w-[300px] sm:w-[600px] bg-white rounded-3xl p-8">
-      <div className="flex flex-col gap-4">
-        <Link to={"/index"}>
-          <ButtonRegresar />
-        </Link>
-        <div className="flex gap-4 items-center justify-between">
-          <h4 className="font-bold text-xl">Idiomas</h4>
-          <Link to={"/agregar/idioma"}>
-            <PlusIcon className="size-10 p-2 stroke-2" />
-          </Link>
-        </div>
-      </div>
-
+    <DivForm>
       <div>
         {idiomas.length === 0 ? (
           <p>No hay idiomas registrados.</p>
@@ -144,8 +133,8 @@ const PreProduccion = () => {
           </ul>
         )}
       </div>
-    </div>
+    </DivForm>
   );
 };
 
-export default PreProduccion;
+export default PreIdioma;

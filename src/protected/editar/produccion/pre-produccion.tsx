@@ -8,6 +8,7 @@ import { ButtonRegresar } from "../../../componentes/formularios/ButtonRegresar"
 import Cookies from "js-cookie";
 import { RolesValidos } from "../../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import DivForm from "../../../componentes/formularios/DivForm";
 
 const PreProduccion = () => {
   const token = Cookies.get("token");
@@ -92,25 +93,15 @@ const PreProduccion = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">
+      <DivForm className="flex flex-col gap-4 h-full w-[600px] bg-white rounded-3xl p-8 min-h-[600px]">
         Cargando...
-      </div>
+      </DivForm>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 h-full sm:w-[600px] bg-white rounded-3xl p-8">
-      <div className="flex flex-col gap-4">
-        <Link to={"/index"}>
-          <ButtonRegresar />
-        </Link>
-        <div className="flex gap-4 items-center justify-between">
-          <h4 className="font-bold text-xl">Producciones Académicas</h4>
-          <Link to={"/agregar/produccion"}>
-            <PlusIcon className="size-10 p-2 stroke-2" />
-          </Link>
-        </div>
-      </div>
+    <DivForm className="flex flex-col gap-4 h-full sm:w-[600px] bg-white rounded-3xl p-8">
+
 
       <div>
         {producciones.length === 0 ? (
@@ -152,7 +143,7 @@ const PreProduccion = () => {
           </ul>
         )}
       </div>
-    </div>
+    </DivForm>
   );
 };
 

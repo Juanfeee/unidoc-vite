@@ -6,8 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { experienciaSchema } from "../../validaciones/experienceSchema";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Link } from "react-router";
-import { ButtonRegresar } from "../../componentes/formularios/ButtonRegresar";
+
 import { InputLabel } from "../../componentes/formularios/InputLabel";
 import { SelectForm } from "../../componentes/formularios/SelectForm";
 import InputErrors from "../../componentes/formularios/InputErrors";
@@ -20,6 +19,8 @@ import { MostrarArchivo } from "../../componentes/formularios/MostrarArchivo";
 import { RolesValidos } from "../../types/roles";
 import axiosInstance from "../../utils/axiosConfig";
 import { jwtDecode } from "jwt-decode";
+import DivForm from "../../componentes/formularios/DivForm";
+
 
 type Inputs = {
   tipo_experiencia: string;
@@ -52,6 +53,7 @@ const AgregarExperiencia = () => {
 
   const archivoValue = watch("archivo");
   const { existingFile } = useArchivoPreview(archivoValue);
+
 
   const experiencia_universidad = watch("experiencia_universidad");
 
@@ -175,23 +177,17 @@ const AgregarExperiencia = () => {
     }
   };
   return (
-    <div className="flex flex-col bg-white p-8 rounded-xl shadow-md w-full max-w-4xl mx-auto gap-y-4">
-      <div className="flex gap-x-4 col-span-full items-center">
-        <Link to={"/index"}>
-          <ButtonRegresar />
-        </Link>
-        <h3 className="font-bold text-3xl col-span-full">
-          Agregar experiencia
-        </h3>
-      </div>
-
+    <DivForm>
       <form
         className="grid grid-cols-1 sm:grid-cols-2 gap-6"
         onSubmit={handleSubmit(onSubmit)}
       >
         {/* Tipo de experiencia */}
         <div className="col-span-full">
-          <InputLabel htmlFor="tipo_experiencia" value="Tipo de experiencia *" />
+          <InputLabel
+            htmlFor="tipo_experiencia"
+            value="Tipo de experiencia *"
+          />
           <SelectForm
             id="tipo_experiencia"
             register={register("tipo_experiencia")}
@@ -244,7 +240,10 @@ const AgregarExperiencia = () => {
 
         {/* Trabajo actual */}
         <div className="flex flex-col w-full">
-          <InputLabel htmlFor="trabajo_actual" value="¿Es su trabajo actual? *" />
+          <InputLabel
+            htmlFor="trabajo_actual"
+            value="¿Es su trabajo actual? *"
+          />
           <div className="flex flex-row flex-wrap gap-4 rounded-lg border-[1.8px] border-blue-600 bg-slate-100/40 h-[44px] px-4">
             <LabelRadio
               htmlFor="trabajo_actual-si"
@@ -332,7 +331,8 @@ const AgregarExperiencia = () => {
           />
         </div>
       </form>
-    </div>
+
+    </DivForm>
   );
 };
 

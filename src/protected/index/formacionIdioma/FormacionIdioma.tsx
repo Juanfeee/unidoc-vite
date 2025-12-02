@@ -1,16 +1,22 @@
-import { PencilSquareIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+
 import { useEffect, useState } from "react";
 import axiosInstance from "../../../utils/axiosConfig";
-import AgregarLink from "../../../componentes/ButtonAgregar";
 import EstadoDocumento from "../../../componentes/Estado";
 import { GlobeIcon } from "../../../assets/icons/Iconos";
 import Cookies from "js-cookie";
 import { RolesValidos } from "../../../types/roles";
 import { jwtDecode } from "jwt-decode";
+import ButtonAgregar from "../../../componentes/formularios/buttons/ButtonAgregar";
+import ButtonEditar from "../../../componentes/formularios/buttons/ButtonPreEditar";
+import ButtonAgregarVacio from "../../../componentes/formularios/buttons/ButtonAgregarVacio";
+import CustomDialog from "../../../componentes/CustomDialogForm";
+import AgregarIdioma from "../../agregar/AgregarIdioma";
+import PreIdioma from "../../editar/idioma/pre-idioma";
 
 const FormacionIdioma = () => {
   const [idiomas, setIdiomas] = useState<any[]>([]);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -67,17 +73,13 @@ const FormacionIdioma = () => {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h4 className="font-bold text-xl">Formación idioma</h4>
         <div className="flex gap-1">
-          <Link to={"/agregar/idioma"}>
-            <PlusIcon className="size-10 p-2 stroke-2" />
-          </Link>
-          <Link to={"/editar/idiomas"}>
-            <PencilSquareIcon className="size-10 p-2 stroke-2" />
-          </Link>
+          <ButtonAgregar onClick={() => setOpenAdd(true)} />
+          <ButtonEditar onClick={() => setOpenEdit(true)} />
         </div>
       </div>
       <div>
         {idiomas.length === 0 ? (
-          <AgregarLink to={"/agregar/idioma"} texto="Agregar idioma" />
+          <ButtonAgregarVacio onClick={() => setOpenAdd(true)} />
         ) : (
           <ul className="flex flex-col gap-6">
             {idiomas.map((item, index) => (
@@ -95,6 +97,22 @@ const FormacionIdioma = () => {
           </ul>
         )}
       </div>
+      {/* MODAL AGREGAR */}
+      <CustomDialog
+        title="Agregar Idioma"
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
+      >
+        <AgregarIdioma />
+      </CustomDialog>
+      {/* MODAL EDITAR */}
+      <CustomDialog
+        title="Editar Idioma"
+        open={openEdit}
+        onClose={() => setOpenEdit(false)}
+      >
+        <PreIdioma />
+      </CustomDialog>
     </div>
   );
 };

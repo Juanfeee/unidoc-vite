@@ -10,7 +10,7 @@ import { certificadosSchema } from "../../../validaciones/apoyo-profesoral/certi
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../utils/axiosConfig";
-import AsyncSelect from "react-select/async";
+// import AsyncSelect from "react-select/async";
 
 type Inputs = {
   institucion: string;
